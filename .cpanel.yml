@@ -1,8 +1,5 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/sabircon/portal.whitevillas.com.pk
-    - /bin/cp -R * $DEPLOYPATH
-    - /bin/cp -f .htaccess $DEPLOYPATH 2>/dev/null || true
-    - /bin/mkdir -p $DEPLOYPATH/app/tmp/cache/models $DEPLOYPATH/app/tmp/cache/persistent $DEPLOYPATH/app/tmp/cache/views $DEPLOYPATH/app/tmp/logs
-    - /bin/chmod -R 0777 $DEPLOYPATH/app/tmp 2>/dev/null || true
+    - /bin/mkdir -p app/tmp/cache/models app/tmp/cache/persistent app/tmp/cache/views app/tmp/logs
+    - /bin/chmod -R 0777 app/tmp 2>/dev/null || true
