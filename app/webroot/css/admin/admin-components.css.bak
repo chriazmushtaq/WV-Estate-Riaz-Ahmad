@@ -1,0 +1,208 @@
+body.wv-admin-theme .table,
+body.wv-admin-theme .table-responsive,
+body.wv-admin-theme .dataTables_wrapper {
+    background: var(--admin-theme-surface, #ffffff);
+}
+
+body.wv-admin-theme .table-responsive {
+    border: 1px solid var(--admin-theme-border, #dbe6f3);
+    border-radius: 16px;
+    overflow: auto;
+}
+
+body.wv-admin-theme .table > thead > tr > th,
+body.wv-admin-theme table.table > thead > tr > th {
+    background: linear-gradient(135deg, var(--admin-theme-accent, #0f172a), var(--admin-theme-accent-2, #1d4ed8)) !important;
+    border-color: rgba(255,255,255,.08) !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
+    letter-spacing: .2px;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+body.wv-admin-theme .table > tbody > tr > td,
+body.wv-admin-theme table.table > tbody > tr > td {
+    background: var(--admin-theme-surface, #ffffff) !important;
+    border-color: var(--admin-theme-border, #dbe6f3) !important;
+    color: var(--admin-theme-text, #10213a) !important;
+    vertical-align: middle !important;
+}
+
+body.wv-admin-theme .table > tbody > tr > td a,
+body.wv-admin-theme table.table > tbody > tr > td a {
+    color: var(--admin-theme-link, var(--admin-theme-primary, #2563eb)) !important;
+    font-weight: 700;
+}
+
+body.wv-admin-theme .table > tbody > tr > td a:hover,
+body.wv-admin-theme .table > tbody > tr > td a:focus,
+body.wv-admin-theme table.table > tbody > tr > td a:hover,
+body.wv-admin-theme table.table > tbody > tr > td a:focus {
+    color: var(--admin-theme-link-hover, var(--admin-theme-primary, #2563eb)) !important;
+}
+
+body.wv-admin-theme .table-hover > tbody > tr:hover > td,
+body.wv-admin-theme table.table-hover > tbody > tr:hover > td,
+body.wv-admin-theme .table > tbody > tr:hover > td {
+    background: var(--admin-theme-table-hover, var(--admin-theme-surface-2, #f8fbff)) !important;
+    color: var(--admin-theme-text, #10213a) !important;
+}
+
+body.wv-admin-theme .table-hover > tbody > tr:hover > td *,
+body.wv-admin-theme table.table-hover > tbody > tr:hover > td *,
+body.wv-admin-theme .table > tbody > tr:hover > td * {
+    color: inherit;
+}
+
+body.wv-admin-theme .table-hover > tbody > tr:hover > td a,
+body.wv-admin-theme table.table-hover > tbody > tr:hover > td a,
+body.wv-admin-theme .table > tbody > tr:hover > td a {
+    color: var(--admin-theme-link-hover, var(--admin-theme-primary, #2563eb)) !important;
+}
+
+body.wv-admin-theme .table > tbody > tr.selected > td,
+body.wv-admin-theme .table > tbody > tr.active > td,
+body.wv-admin-theme table.table > tbody > tr.selected > td,
+body.wv-admin-theme table.table > tbody > tr.active > td,
+body.wv-admin-theme .dataTable tbody tr.selected > td,
+body.wv-admin-theme .dataTable tbody tr.active > td,
+body.wv-admin-theme .dataTable tbody tr.row_selected > td,
+body.wv-admin-theme table.dataTable tbody tr.selected > td,
+body.wv-admin-theme table.dataTable tbody tr.active > td,
+body.wv-admin-theme table.dataTable tbody tr.row_selected > td {
+    background: var(--admin-theme-table-selected, var(--admin-theme-table-hover, var(--admin-theme-surface-2, #f8fbff))) !important;
+    color: var(--admin-theme-text, #10213a) !important;
+}
+
+body.wv-admin-theme .table > tbody > tr.selected > td *,
+body.wv-admin-theme .table > tbody > tr.active > td *,
+body.wv-admin-theme table.table > tbody > tr.selected > td *,
+body.wv-admin-theme table.table > tbody > tr.active > td *,
+body.wv-admin-theme .dataTable tbody tr.selected > td *,
+body.wv-admin-theme .dataTable tbody tr.active > td *,
+body.wv-admin-theme .dataTable tbody tr.row_selected > td *,
+body.wv-admin-theme table.dataTable tbody tr.selected > td *,
+body.wv-admin-theme table.dataTable tbody tr.active > td *,
+body.wv-admin-theme table.dataTable tbody tr.row_selected > td * {
+    color: inherit !important;
+}
+
+body.wv-admin-theme .table > tbody > tr.selected > td a,
+body.wv-admin-theme .table > tbody > tr.active > td a,
+body.wv-admin-theme table.table > tbody > tr.selected > td a,
+body.wv-admin-theme table.table > tbody > tr.active > td a,
+body.wv-admin-theme .dataTable tbody tr.selected > td a,
+body.wv-admin-theme .dataTable tbody tr.active > td a,
+body.wv-admin-theme .dataTable tbody tr.row_selected > td a,
+body.wv-admin-theme table.dataTable tbody tr.selected > td a,
+body.wv-admin-theme table.dataTable tbody tr.active > td a,
+body.wv-admin-theme table.dataTable tbody tr.row_selected > td a {
+    color: var(--admin-theme-link-hover, var(--admin-theme-primary, #2563eb)) !important;
+}
+
+body.wv-admin-theme .dataTable tbody td.sorting_1,
+body.wv-admin-theme .dataTable tbody td.sorting_2,
+body.wv-admin-theme .dataTable tbody td.sorting_3,
+body.wv-admin-theme table.dataTable tbody td.sorting_1,
+body.wv-admin-theme table.dataTable tbody td.sorting_2,
+body.wv-admin-theme table.dataTable tbody td.sorting_3 {
+    background: var(--admin-theme-surface, #ffffff) !important;
+    color: var(--admin-theme-text, #10213a) !important;
+}
+
+body.wv-admin-theme .dataTable tbody tr:hover td.sorting_1,
+body.wv-admin-theme .dataTable tbody tr:hover td.sorting_2,
+body.wv-admin-theme .dataTable tbody tr:hover td.sorting_3,
+body.wv-admin-theme table.dataTable tbody tr:hover td.sorting_1,
+body.wv-admin-theme table.dataTable tbody tr:hover td.sorting_2,
+body.wv-admin-theme table.dataTable tbody tr:hover td.sorting_3 {
+    background: var(--admin-theme-table-hover, var(--admin-theme-surface-2, #f8fbff)) !important;
+}
+
+body.wv-admin-theme .dataTable tbody tr.selected td.sorting_1,
+body.wv-admin-theme .dataTable tbody tr.selected td.sorting_2,
+body.wv-admin-theme .dataTable tbody tr.selected td.sorting_3,
+body.wv-admin-theme .dataTable tbody tr.active td.sorting_1,
+body.wv-admin-theme .dataTable tbody tr.active td.sorting_2,
+body.wv-admin-theme .dataTable tbody tr.active td.sorting_3,
+body.wv-admin-theme table.dataTable tbody tr.selected td.sorting_1,
+body.wv-admin-theme table.dataTable tbody tr.selected td.sorting_2,
+body.wv-admin-theme table.dataTable tbody tr.selected td.sorting_3,
+body.wv-admin-theme table.dataTable tbody tr.active td.sorting_1,
+body.wv-admin-theme table.dataTable tbody tr.active td.sorting_2,
+body.wv-admin-theme table.dataTable tbody tr.active td.sorting_3 {
+    background: var(--admin-theme-table-selected, var(--admin-theme-table-hover, var(--admin-theme-surface-2, #f8fbff))) !important;
+}
+
+body.wv-admin-theme .pagination > li > a,
+body.wv-admin-theme .pagination > li > span {
+    border: 1px solid var(--admin-theme-border, #dbe6f3) !important;
+    border-radius: 10px !important;
+    color: var(--admin-theme-text, #10213a) !important;
+    margin: 0 3px;
+}
+
+body.wv-admin-theme .pagination > .active > a,
+body.wv-admin-theme .pagination > .active > span {
+    background: var(--admin-theme-primary, #2563eb) !important;
+    border-color: var(--admin-theme-primary, #2563eb) !important;
+    color: #ffffff !important;
+}
+
+.wv-admin-theme-selector {
+    display: grid;
+    gap: 8px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 4px 0;
+}
+
+.wv-admin-theme-chip {
+    align-items: center;
+    background: var(--admin-theme-surface-2, #f8fbff);
+    border: 1px solid var(--admin-theme-border, #dbe6f3);
+    border-radius: 12px;
+    color: var(--admin-theme-text, #10213a);
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start;
+    min-height: 44px;
+    padding: 0 12px;
+    text-align: left;
+    width: 100%;
+}
+
+.wv-admin-theme-chip.active {
+    border-color: var(--admin-theme-primary, #2563eb);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.wv-admin-theme-dot {
+    border-radius: 50%;
+    display: inline-block;
+    height: 14px;
+    width: 14px;
+}
+
+.theme-dot-light { background: linear-gradient(135deg, #ffffff, #2563eb); border: 1px solid #dbe6f3; }
+.theme-dot-dark { background: linear-gradient(135deg, #121c2d, #60a5fa); }
+.theme-dot-gold { background: linear-gradient(135deg, #fff8e1, #b8860b); }
+.theme-dot-green { background: linear-gradient(135deg, #ecfdf5, #059669); }
+
+.wv-admin-theme-chip-label {
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.wv-admin-dashboard-shell .panel,
+.wv-admin-dashboard-shell .page-title {
+    margin-bottom: 18px;
+}
+
+body.wv-admin-theme .alert-success,
+body.wv-admin-theme .alert-info,
+body.wv-admin-theme .alert-warning,
+body.wv-admin-theme .alert-danger {
+    border-width: 1px !important;
+}

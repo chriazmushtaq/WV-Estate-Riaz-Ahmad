@@ -1,0 +1,13 @@
+<?php
+class DATABASE_CONFIG {
+	public $default = array(
+		'datasource' => 'Database/Mysql',
+		'persistent' => false,
+		'host' => 'localhost',
+		'login' => 'cpanel_user',
+		'password' => 'cpanel_password',
+		'database' => 'cpanel_database',
+		'prefix' => '',
+		'encoding' => 'utf8mb4',
+	);
+}

@@ -1,0 +1,27 @@
+.wv-whatsapp-btn {
+    background: #128c7e !important;
+    border-color: #0f7a6e !important;
+    color: #fff !important;
+    font-weight: 700;
+}
+
+.wv-whatsapp-btn:hover,
+.wv-whatsapp-btn:focus {
+    background: #0f7a6e !important;
+    border-color: #0d6b60 !important;
+    color: #fff !important;
+}
+
+.wv-whatsapp-status {
+    background: #102a43;
+    border-radius: 6px;
+    bottom: 18px;
+    box-shadow: 0 12px 34px rgba(15, 23, 42, .26);
+    color: #fff;
+    font: 13px Segoe UI, Arial, sans-serif;
+    max-width: 360px;
+    padding: 10px 12px;
+    position: fixed;
+    right: 18px;
+    z-index: 2147483647;
+}

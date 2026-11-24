@@ -1,0 +1,87 @@
+body.wv-admin-theme.theme-light {
+    --admin-theme-primary: #2563eb;
+    --admin-theme-primary-soft: #dbeafe;
+    --admin-theme-accent: #0f172a;
+    --admin-theme-accent-2: #1d4ed8;
+    --admin-theme-bg: #f3f7fc;
+    --admin-theme-surface: #ffffff;
+    --admin-theme-surface-2: #f8fbff;
+    --admin-theme-border: #dbe6f3;
+    --admin-theme-text: #10213a;
+    --admin-theme-text-soft: #5b6b83;
+    --admin-theme-sidebar: #07152a;
+    --admin-theme-sidebar-text: #ffffff;
+    --admin-theme-sidebar-muted: #94a3b8;
+    --admin-theme-sidebar-active: rgba(255, 255, 255, 0.12);
+    --admin-theme-sidebar-active-text: #ffffff;
+    --admin-theme-topbar: #ffffff;
+    --admin-theme-topbar-text: #10213a;
+    --admin-theme-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+}
+
+body.wv-admin-theme.theme-dark {
+    --admin-theme-primary: #60a5fa;
+    --admin-theme-primary-soft: #1e3a5f;
+    --admin-theme-accent: #0f172a;
+    --admin-theme-accent-2: #1d4ed8;
+    --admin-theme-bg: #0b1220;
+    --admin-theme-surface: #121c2d;
+    --admin-theme-surface-2: #172235;
+    --admin-theme-border: #26354b;
+    --admin-theme-text: #f8fbff;
+    --admin-theme-text-soft: #9eb0c9;
+    --admin-theme-sidebar: #09111d;
+    --admin-theme-sidebar-text: #e2ebf8;
+    --admin-theme-sidebar-muted: #91a4bf;
+    --admin-theme-sidebar-active: #172235;
+    --admin-theme-sidebar-active-text: #ffffff;
+    --admin-theme-topbar: #121c2d;
+    --admin-theme-topbar-text: #f8fbff;
+    --admin-theme-shadow: 0 20px 48px rgba(0, 0, 0, 0.34);
+    --admin-theme-link: #8ec5ff;
+    --admin-theme-link-hover: #d8ebff;
+    --admin-theme-table-hover: #1a2740;
+    --admin-theme-table-selected: #22314d;
+}
+
+body.wv-admin-theme.theme-gold {
+    --admin-theme-primary: #b8860b;
+    --admin-theme-primary-soft: #f6e7b2;
+    --admin-theme-accent: #4b3a09;
+    --admin-theme-accent-2: #c99816;
+    --admin-theme-bg: #faf7ef;
+    --admin-theme-surface: #ffffff;
+    --admin-theme-surface-2: #fffcf3;
+    --admin-theme-border: #ead9a6;
+    --admin-theme-text: #2f2a1f;
+    --admin-theme-text-soft: #73684b;
+    --admin-theme-sidebar: #07152a;
+    --admin-theme-sidebar-text: #ffffff;
+    --admin-theme-sidebar-muted: #cbd5e1;
+    --admin-theme-sidebar-active: rgba(212, 175, 55, 0.18);
+    --admin-theme-sidebar-active-text: #ffd700;
+    --admin-theme-topbar: #ffffff;
+    --admin-theme-topbar-text: #2f2a1f;
+    --admin-theme-shadow: 0 18px 40px rgba(122, 91, 6, 0.12);
+}
+
+body.wv-admin-theme.theme-green {
+    --admin-theme-primary: #059669;
+    --admin-theme-primary-soft: #d1fae5;
+    --admin-theme-accent: #064e3b;
+    --admin-theme-accent-2: #047857;
+    --admin-theme-bg: #f0fdf4;
+    --admin-theme-surface: #ffffff;
+    --admin-theme-surface-2: #f7fffb;
+    --admin-theme-border: #bbf7d0;
+    --admin-theme-text: #083d2d;
+    --admin-theme-text-soft: #4c796b;
+    --admin-theme-sidebar: #07152a;
+    --admin-theme-sidebar-text: #ffffff;
+    --admin-theme-sidebar-muted: #cbd5e1;
+    --admin-theme-sidebar-active: rgba(16, 185, 129, 0.18);
+    --admin-theme-sidebar-active-text: #a7f3d0;
+    --admin-theme-topbar: #ffffff;
+    --admin-theme-topbar-text: #083d2d;
+    --admin-theme-shadow: 0 18px 40px rgba(6, 95, 70, 0.10);
+}

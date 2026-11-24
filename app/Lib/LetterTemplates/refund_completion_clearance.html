@@ -1,0 +1,503 @@
+﻿<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>وائٹ ولاز - لا دعویٰ اقرار نامہ براہِ راست پرنٹنگ سسٹم</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for Urdu Noto Nastaliq & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- QRCode.js Library for secure dynamic QR codes -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <style>
+        @font-face {
+            font-family: 'Jameel Noori Nastaliq';
+            src: url('https://cdn.jsdelivr.net/gh/nafeesl/jameel-noori-nastaliq-webfont@master/Jameel%20Noori%20Nastaliq.woff2') format('woff2'),
+                 url('https://cdn.jsdelivr.net/gh/nafeesl/jameel-noori-nastaliq-webfont@master/Jameel%20Noori%20Nastaliq.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        .urdu-legal {
+            font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', 'Urdu Typesetting', serif;
+            text-align: justify;
+            text-justify: inter-word;
+            font-size: 11px;
+            line-height: 2.0; 
+            word-spacing: -2.5px; 
+            letter-spacing: -0.3px;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #090d16;
+        }
+
+        /* 4 Inches Empty Space at the top of Page 1 for physical Stamp Papers */
+        .stamp-top-gap {
+            height: 4.0in; 
+            position: relative;
+            background: transparent;
+        }
+
+        /* Classic Red Legal Border/Margins commonly used in Pakistani Court Documents */
+        .legal-frame {
+            border-right: 3px double #dc2626; 
+            border-left: 1px solid #fee2e2; 
+            padding-right: 1.8rem;
+            padding-left: 1.2rem;
+        }
+
+        /* Interactive screen canvas representation of standard 8.5 x 14 in Legal paper */
+        .legal-page-canvas {
+            width: 8.5in;
+            min-height: 14.0in;
+            height: auto;
+            background: #ffffff;
+            color: #000000;
+            box-sizing: border-box;
+            position: relative;
+            overflow: visible;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 0.36in 0.5in 0.32in 0.5in;
+        }
+
+        /* Inline editable fields subtle indicator (screen only) */
+        [contenteditable="true"] {
+            outline: none;
+            transition: all 0.2s ease;
+        }
+        [contenteditable="true"]:hover {
+            background-color: #f0fdf4;
+            box-shadow: 0 0 0 2px #bbf7d0;
+            border-radius: 2px;
+        }
+        [contenteditable="true"]:focus {
+            background-color: #f0fdf4;
+            box-shadow: 0 0 0 2px #22c55e;
+            border-radius: 2px;
+        }
+
+        /* QR code block size fixed to 2x2 inches */
+        .qr-container-fixed {
+            width: 2.0in;
+            height: 2.0in;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ffffff;
+            padding: 0.1in;
+            box-sizing: border-box;
+        }
+
+        .refund-clearance-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.04in;
+            direction: ltr;
+            font-family: Arial, Helvetica, sans-serif !important;
+            font-size: 5.2px;
+            line-height: 1;
+            letter-spacing: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            color: #94a3b8;
+        }
+        .refund-clearance-footer span {
+            display: inline-block;
+            white-space: nowrap;
+        }
+        .refund-clearance-footer .footer-title {
+            flex: 1 1 auto;
+            min-width: 0;
+            overflow: visible;
+            text-overflow: unset;
+            font-family: Arial, Helvetica, sans-serif !important;
+        }
+        .refund-clearance-footer .footer-ref {
+            flex: 0 0 auto;
+            direction: rtl;
+            text-align: right;
+            font-family: Arial, Helvetica, sans-serif !important;
+        }
+
+        @media print {
+            @page {
+                size: legal portrait;
+                margin: 0; 
+            }
+            body {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-container {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+                background-color: #ffffff !important;
+            }
+            .legal-page-canvas {
+                border: none !important;
+                box-shadow: none !important;
+                margin: 0 auto !important;
+                padding: 0.36in 0.5in 0.32in 0.5in !important;
+                width: 8.5in !important;
+                min-height: 14.0in !important;
+                height: auto !important;
+                box-sizing: border-box;
+                page-break-after: auto;
+                page-break-before: avoid;
+                overflow: visible;
+            }
+            .stamp-top-gap {
+                height: 3.65in !important; 
+            }
+            [contenteditable="true"]:hover, [contenteditable="true"]:focus {
+                background-color: transparent !important;
+                box-shadow: none !important;
+            }
+            .qr-container-fixed {
+                border: none !important;
+            }
+            .refund-clearance-footer {
+                display: flex !important;
+                flex-wrap: nowrap !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+                gap: 0.04in !important;
+                font-family: Arial, Helvetica, sans-serif !important;
+                font-size: 5.2px !important;
+                line-height: 1 !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                width: 100% !important;
+            }
+        }
+    </style>
+</head>
+<body class="text-slate-100 flex flex-col min-h-screen">
+
+    <!-- Minimalist Top Bar containing only print and active typography sliders -->
+    <header class="bg-slate-900 border-b border-slate-800 text-white py-3 px-6 shadow-md flex flex-col md:flex-row justify-between items-center gap-4 no-print z-10">
+        <div class="flex items-center space-x-4 space-x-reverse">
+            <div class="p-2 bg-emerald-950 rounded-lg border border-emerald-800">
+                <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                </svg>
+            </div>
+            <div>
+                <h1 class="text-sm font-bold tracking-wide">براہِ راست کینوس ایڈیٹر (DIRECT ON-CANVAS EDITOR)</h1>
+                <p class="text-[10px] text-slate-400">کینوس پر لکھے کسی بھی لفظ پر کلک کر کے اپنی مرضی سے اردو یا 123 نمبرز تبدیل کریں</p>
+            </div>
+        </div>
+
+        <!-- Inline Spacing Adjusters -->
+        <div class="flex flex-wrap items-center gap-4 text-xs">
+            <!-- Font Size -->
+            <div class="flex items-center space-x-2 space-x-reverse bg-slate-950 px-3 py-1.5 rounded border border-slate-800">
+                <span class="text-slate-400 text-[10px]">فونٹ سائز:</span>
+                <input type="range" min="9" max="15" value="11" id="range-font-size" oninput="changeFontSize(this.value)" class="w-16 accent-emerald-500 bg-slate-800 h-1 rounded">
+                <span id="font-size-val" class="font-bold text-emerald-400 font-mono text-[10px]">11px</span>
+            </div>
+
+            <!-- Line Height -->
+            <div class="flex items-center space-x-2 space-x-reverse bg-slate-950 px-3 py-1.5 rounded border border-slate-800">
+                <span class="text-slate-400 text-[10px]">لائن سپیس:</span>
+                <input type="range" min="1.6" max="2.4" step="0.1" value="2.0" id="range-line-height" oninput="changeLineHeight(this.value)" class="w-16 accent-emerald-500 bg-slate-800 h-1 rounded">
+                <span id="line-height-val" class="font-bold text-emerald-400 font-mono text-[10px]">2.0</span>
+            </div>
+
+            <!-- Word Spacing -->
+            <div class="flex items-center space-x-2 space-x-reverse bg-slate-950 px-3 py-1.5 rounded border border-slate-800">
+                <span class="text-slate-400 text-[10px]">لفظوں کا فاصلہ:</span>
+                <input type="range" min="-4.0" max="0.0" step="0.5" value="-2.5" id="range-word-spacing" oninput="changeWordSpacing(this.value)" class="w-16 accent-emerald-500 bg-slate-800 h-1 rounded">
+                <span id="word-spacing-val" class="font-bold text-emerald-400 font-mono text-[10px]">-2.5px</span>
+            </div>
+
+            <!-- Letter Spacing -->
+            <div class="flex items-center space-x-2 space-x-reverse bg-slate-950 px-3 py-1.5 rounded border border-slate-800">
+                <span class="text-slate-400 text-[10px]">حروف کا فاصلہ:</span>
+                <input type="range" min="-0.8" max="0.4" step="0.1" value="-0.3" id="range-letter-spacing" oninput="changeLetterSpacing(this.value)" class="w-16 accent-emerald-500 bg-slate-800 h-1 rounded">
+                <span id="letter-spacing-val" class="font-bold text-emerald-400 font-mono text-[10px]">-0.3px</span>
+            </div>
+
+            <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-5 py-2 rounded shadow transition flex items-center gap-1.5 text-xs">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                پرنٹ اشٹام (Legal Print)
+            </button>
+        </div>
+    </header>
+
+    <!-- Full-screen Canvas Workspace -->
+    <main class="flex-1 flex justify-center items-center py-6 px-4 overflow-y-auto bg-slate-950">
+        
+        <!-- Printable 8.5" x 14" Legal Sheet representation -->
+        <div id="ashtam-canvas-container" class="legal-page-canvas shadow-2xl p-10 rounded relative overflow-hidden flex flex-col justify-between">
+            
+            <div>
+                <!-- 4-Inch Blank Header Space (Completely clean, no visual borders/texts on screen or print) -->
+                <div id="physical-gap" class="stamp-top-gap"></div>
+
+                <!-- MAIN URDU LEGAL CONTENT FRAME -->
+                <div id="legal-content-area" class="legal-frame text-right text-slate-950">
+                    
+                    <!-- Main Legal Heading -->
+                    <div class="text-center mb-3">
+                        <h2 class="urdu-legal text-sm font-extrabold text-slate-900 border-b-2 border-double border-slate-900 pb-1 inline-block" contenteditable="true">
+                            اقرار نامہ حتمی تصفیہ، مکمل وصولیابی رقم و لا دعویٰ (خلاصی نامہ)
+                        </h2>
+                    </div>
+
+                    <!-- Urdu Deed Body Paragraphs (Editable Inline) -->
+                    <div id="urdu-paragraphs" class="urdu-legal text-[11px] text-justify space-y-2.5">
+                        
+                        <p>
+                            یہ قانونی اقرار نامہ دستبرداری و خلاصی نامہ آج مورخہ <strong dir="ltr" class="inline-block border-b border-dotted border-slate-950 px-1 font-sans text-[10px] text-slate-900" contenteditable="true">{{refund_completion_date}}</strong> کو بمقام لاہور، پاکستان میں فریقینِ ذیل کے مابین برضا و رغبتِ خود، بغیر کسی بیرونی دباؤ، جبر و اکراہ، اور ہوش و حواسِ خمسہ قائم رہنے کی حالت میں تحریر و تسلیم کیا گیا ہے:
+                        </p>
+
+                        <!-- Party Identification Block -->
+                        <div class="bg-slate-50 border border-slate-200 p-2 rounded my-1 space-y-1 text-[10px] leading-relaxed">
+                            <p>
+                                <strong>۱۔ فریقِ اول (انتظامیہ/ادارہ):</strong> <span contenteditable="true">وائٹ ولاز عوامی بلاک، خورد پور روڈ مارکہ، لاہور۔ بذریعہ مجاز افسر/انتظامیہ (جسے بعد میں 'کمپنی' یا 'فریقِ اول' پکارا جائے گا)۔</span>
+                            </p>
+                            <p>
+                                <strong>۲۔ فریقِ دوم (صارف/سابقہ الاٹی):</strong> مسمیٰ <strong class="border-b border-solid border-slate-950 px-1 font-bold text-slate-900" contenteditable="true">{{client_name}}</strong> ولد <strong class="border-b border-solid border-slate-950 px-1 font-bold text-slate-900" contenteditable="true">{{client_father_name}}</strong>، حامل شناختی کارڈ نمبر <strong dir="ltr" class="inline-block border-b border-solid border-slate-950 px-1 font-sans text-[10px] text-slate-900" contenteditable="true">{{client_cnic}}</strong>، مستقل رہائشی پتہ <strong class="border-b border-solid border-slate-950 px-1 text-slate-900" contenteditable="true">{{client_address}}</strong>، فون رابطہ نمبر <strong dir="ltr" class="inline-block border-b border-solid border-slate-950 px-1 font-sans text-[10px] text-slate-900" contenteditable="true">{{client_mobile}}</strong> (جسے بعد میں 'سابقہ الاٹی' یا 'فریقِ دوم' پکارا جائے گا)۔
+                            </p>
+                        </div>
+
+                        <p>
+                            <strong>۱۔ تمہید و فنڈز واپسی کا پسِ منظر (Historical Context):</strong><br>
+                            یہ کہ فریقِ دوم نے فریقِ اول کے ہاؤسنگ پروجیکٹ 'وائٹ ولاز' میں ایک عدد رہائشی یونٹ برائے فائل کوڈ 
+                            <strong dir="ltr" class="inline-block border-b border-slate-950 px-1 font-sans font-bold text-[10px] bg-yellow-50 text-slate-900" contenteditable="true">{{property_file}}</strong> 
+                            (ٹاؤن ہاؤس گراؤنڈ فلور) جو کہ انوائس نمبر <strong dir="ltr" class="inline-block border-b border-slate-950 px-1 font-sans text-[10px] text-slate-900" contenteditable="true">{{deal_invoice_no}}</strong> کے تحت رجسٹرڈ تھی، بک کروائی تھی۔ بعد ازاں فریقِ دوم نے اپنی ذاتی مالی مجبوریوں اور شدید طبی معذوری کی بنا پر اس فائل کو منسوخ کرنے کی باقاعدہ تحریری درخواست دائر کی تھی جس کی مفصل دستاویزی فائل کا نام دفتری ریکارڈ میں <strong class="border-b border-slate-950 px-1 text-blue-900 font-bold" contenteditable="true">"Refund Request - {{deal_invoice_no}}"</strong> مورخہ {{refund_request_date}} محفوظ ہے۔ مذکورہ منسوخی کی فائنل منظوری کے بعد فریقِ دوم کی جمع شدہ کل رقم <strong dir="ltr" class="inline-block font-sans font-bold text-slate-900" contenteditable="true">{{refund_total_paid}}</strong> میں سے محکمانہ پالیسی کے تحت طے شدہ کٹوتی <strong dir="ltr" class="inline-block font-sans font-bold text-slate-900" contenteditable="true">{{refund_deduction_percent}}</strong> (بمطابق رقم کٹوتی <strong dir="ltr" class="inline-block font-sans font-bold text-slate-900" contenteditable="true">{{refund_deduction_amount}}</strong>) لازمی منسوخی کٹوتی عمل میں لائی گئی تھی، جس کے بعد بقیہ واجب الادا خالص فنڈز کی مالیت کل رقم <strong dir="ltr" class="inline-block bg-slate-100 border border-slate-300 font-sans font-bold px-1 rounded-sm text-emerald-950" contenteditable="true">{{refund_net_refund}}</strong> ({{refund_net_refund_words_urdu}}) تسلیم کی گئی تھی۔
+                        </p>
+
+                        <p>
+                            <strong>۲۔ حتمی وصولیابی رقم و تصفیہ (Absolute Payment Clearance):</strong><br>
+                            منکہ فریقِ دوم (سابقہ الاٹی) حلفاً و اقراراً یہ تصدیق کرتا ہوں کہ فریقِ اول نے میری فائنل تصفیہ شدہ رقم کل رقم <strong dir="ltr" class="inline-block font-sans font-bold text-slate-900" contenteditable="true">{{refund_net_refund}}</strong> مقررہ {{refund_cycle_count}} {{refund_cycle_frequency}} سائیکلز کے شیڈول کے مطابق میرے نامزد کردہ بینک اکاؤنٹ (عنوانِ کھاتہ: <strong class="font-bold text-slate-900" contenteditable="true">{{refund_account_title}}</strong>، بینک: <strong class="text-slate-900" contenteditable="true">{{refund_bank_name}}</strong>، اکاؤنٹ نمبر/برانچ: <strong dir="ltr" class="inline-block font-sans text-[10px] text-slate-900" contenteditable="true">{{refund_account_no}} {{refund_bank_branch}}</strong>) میں کلیئرنس کے ساتھ مکمل طور پر منتقل (Paid) کر دی ہے۔ میں حلفیہ اقرار کرتا ہوں کہ اس رقم کا آخری روپیہ تک میں وصول پا چکا ہوں، اب کمپنی کی طرف میرا کوئی بھی بقایا جات یا ریفنڈ کلیم موجود نہیں رہا ہے۔
+                        </p>
+
+                        <p>
+                            <strong>۳۔ حقِ ملکیت کی منسوخی و لا دعویٰ (Release of Title):</strong><br>
+                            یہ کہ اب فریقِ دوم کا فریقِ اول کے مذکورہ رہائشی پروجیکٹ، فائل کوڈ، یا مذکورہ ٹاؤن ہاؤس یونٹ نمبر <strong dir="ltr" class="inline-block border-b border-slate-950 px-1 bg-yellow-50 font-sans font-bold text-[10px] text-slate-900" contenteditable="true">{{property_file}}</strong> پر کوئی مالکانہ حق، جزوی حق، منتقلی کا کلیم، یا کسی بھی نوعیت کا ڈیمانڈ باقی نہیں بچا ہے۔ یہ بکنگ باقاعدہ مستقل طور پر منسوخ تصور ہوگی اور کمپنی اس یونٹ کو کسی بھی دوسرے الاٹی کو دوبارہ فروخت کرنے کا قانونی طور پر کلی اختیار رکھتی ہے۔
+                        </p>
+
+                        <p>
+                            <strong>۴۔ قانونی کارروائی سے مکمل دستبرداری (Legal Immunity Guarantee):</strong><br>
+                            یہ کہ فریقِ دوم حلف اٹھاتا ہے کہ وہ اس حتمی ادائیگی کی وصولی کے بعد فریقِ اول یا اس کے مالکان کے خلاف پاکستان کے کسی بھی سول کورٹ، نیب، ایف آئی اے، لاہور ڈیولپمنٹ اتھارٹی، پولیس اسٹیشن، یا رئیل اسٹیٹ ریگولیٹری اتھارٹی میں کوئی دعویٰ یا ہتکِ عزت کی درخواست دائر کرنے کا حق نہیں رکھتا۔ اگر آئندہ فریقِ دوم کی طرف سے ایسا کوئی اقدام اٹھایا گیا، تو اسے متعلقہ فورمز پر باطل سمجھا جائے گا اور یہ اقرار نامہ عدالت میں کمپنی کا حتمی تصفیہ نامہ تسلیم ہوگا۔
+                        </p>
+
+                        <p class="pb-1" contenteditable="true">
+                            بنا بریں، یہ اقرار نامہ لا دعویٰ و حتمی تصفیہ نامہ تحریر کر دیا گیا ہے تاکہ بوقتِ ضرورت سند رہے اور کام آئے۔
+                        </p>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Bottom Signature Block with centered QR -->
+            <div class="signature-block border-t border-slate-300 pt-3 mt-1">
+                <!-- Primary Parties Signature -->
+                <div class="grid grid-cols-2 gap-8 text-center text-[10px] mb-2">
+                    <div class="space-y-1">
+                        <div class="h-10 border-b border-dashed border-slate-400 mx-auto w-3/4 flex items-end justify-center">
+                            <span class="text-[8px] text-slate-400 font-sans">[دستخط و مہرِ انتظامیہ]</span>
+                        </div>
+                        <p class="font-bold text-slate-950 text-[11px]" contenteditable="true">فریقِ اول (انتظامیہ وائٹ ولاز)</p>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="h-10 border-b border-dashed border-slate-400 mx-auto w-3/4 flex flex-col justify-end items-center">
+                            <span class="text-[8px] text-slate-400 font-sans mb-0.5">[انگوٹھے کا نشان و دستخط فریق دوم]</span>
+                        </div>
+                        <p id="label-client-sign-ur" class="font-bold text-slate-950 text-[11px]" contenteditable="true">{{client_name}}</p>
+                    </div>
+                </div>
+
+                <!-- Witness Block with centered 2x2 Inch QR Code -->
+                <div class="grid grid-cols-3 gap-2 items-center text-center text-[10px] pt-1.5 border-t border-slate-100">
+                    <!-- Witness 1 -->
+                    <div class="space-y-1">
+                        <div class="h-8 border-b border-dashed border-slate-400 mx-auto w-11/12"></div>
+                        <p class="font-bold text-slate-950 text-[10px]" contenteditable="true">گواہ نمبر ۱ (شہادت اول)</p>
+                        <p class="text-[8px] text-slate-500 font-sans">Witness 1 CNIC & Sign</p>
+                    </div>
+
+                    <!-- 2x2 Inches Dynamic Verification QR Code Center -->
+                    <div class="flex flex-col items-center justify-center">
+                        <div class="qr-container-fixed border border-slate-100 shadow-sm rounded">
+                            <div id="ashtam-qrcode">{{refund_completion_qr}}</div>
+                        </div>
+                        <p class="text-[7px] text-slate-400 font-sans mt-0.5">تصدیق بذریعہ کیو آر کوڈ</p>
+                    </div>
+
+                    <!-- Witness 2 -->
+                    <div class="space-y-1">
+                        <div class="h-8 border-b border-dashed border-slate-400 mx-auto w-11/12"></div>
+                        <p class="font-bold text-slate-950 text-[10px]" contenteditable="true">گواہ نمبر ۲ (شہادت دوم)</p>
+                        <p class="text-[8px] text-slate-500 font-sans">Witness 2 CNIC & Sign</p>
+                    </div>
+                </div>
+
+                <!-- Footer details of the page -->
+                <div class="refund-clearance-footer border-t border-slate-200 pt-1 mt-2">
+                    <span class="footer-title">WHITE VILLAS (AWAMI BLOCK) - DEED OF RELEASE & NO-CLAIMS</span>
+                    <span class="footer-ref" contenteditable="true">حوالہ نمبر: {{letter_ref_no}}</span>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        const typographyStorageKey = 'wv_refund_clearance_typography_v1';
+        const defaultTypographySettings = {
+            fontSize: '11',
+            lineHeight: '2.0',
+            wordSpacing: '-2.5',
+            letterSpacing: '-0.3'
+        };
+
+        // Set dynamic date and render default QR code
+        window.onload = function() {
+            setDates();
+            applySavedTypographySettings();
+            renderQRCode();
+            
+            // Re-render QR code dynamically whenever the user types or updates anything on the editable canvas
+            document.querySelectorAll('[contenteditable="true"]').forEach(element => {
+                element.addEventListener('input', () => {
+                    renderQRCode();
+                });
+            });
+        };
+
+        window.addEventListener('beforeprint', function() {
+            applySavedTypographySettings();
+        });
+
+        // Format dates dynamically inside the placeholder
+        function setDates() {
+            const today = new Date();
+            const day = today.getDate().toString().padStart(2, '0');
+            const month = (today.getMonth() + 1).toString().padStart(2, '0');
+            const year = today.getFullYear().toString();
+            
+            const formattedDate = `${day}-${month}-${year}`;
+            document.querySelectorAll(".date-today-placeholder").forEach(el => {
+                el.innerText = formattedDate;
+            });
+        }
+
+        function readTypographySettings() {
+            try {
+                const stored = window.localStorage ? JSON.parse(localStorage.getItem(typographyStorageKey) || '{}') : {};
+                return Object.assign({}, defaultTypographySettings, stored || {});
+            } catch (error) {
+                return Object.assign({}, defaultTypographySettings);
+            }
+        }
+
+        function saveTypographySettings(settings) {
+            if (!window.localStorage) { return; }
+            try {
+                localStorage.setItem(typographyStorageKey, JSON.stringify(settings));
+            } catch (error) {}
+        }
+
+        function applyTypographySettings(settings, shouldSave) {
+            const merged = Object.assign({}, defaultTypographySettings, settings || {});
+            const paragraphs = document.getElementById('urdu-paragraphs');
+            if (paragraphs) {
+                paragraphs.style.setProperty('font-size', merged.fontSize + 'px', 'important');
+                paragraphs.style.setProperty('line-height', merged.lineHeight, 'important');
+                paragraphs.style.setProperty('word-spacing', merged.wordSpacing + 'px', 'important');
+                paragraphs.style.setProperty('letter-spacing', merged.letterSpacing + 'px', 'important');
+            }
+            const fontInput = document.getElementById('range-font-size');
+            const lineInput = document.getElementById('range-line-height');
+            const spacingInput = document.getElementById('range-word-spacing');
+            const letterInput = document.getElementById('range-letter-spacing');
+            const fontLabel = document.getElementById('font-size-val');
+            const lineLabel = document.getElementById('line-height-val');
+            const spacingLabel = document.getElementById('word-spacing-val');
+            const letterLabel = document.getElementById('letter-spacing-val');
+            if (fontInput) { fontInput.value = merged.fontSize; }
+            if (lineInput) { lineInput.value = merged.lineHeight; }
+            if (spacingInput) { spacingInput.value = merged.wordSpacing; }
+            if (letterInput) { letterInput.value = merged.letterSpacing; }
+            if (fontLabel) { fontLabel.innerText = merged.fontSize + 'px'; }
+            if (lineLabel) { lineLabel.innerText = merged.lineHeight; }
+            if (spacingLabel) { spacingLabel.innerText = merged.wordSpacing + 'px'; }
+            if (letterLabel) { letterLabel.innerText = merged.letterSpacing + 'px'; }
+            if (shouldSave) {
+                saveTypographySettings(merged);
+            }
+        }
+
+        function applySavedTypographySettings() {
+            applyTypographySettings(readTypographySettings(), false);
+        }
+
+        // Live typography custom spacing adjusters
+        function changeFontSize(value) {
+            const settings = readTypographySettings();
+            settings.fontSize = String(value);
+            applyTypographySettings(settings, true);
+        }
+
+        function changeLineHeight(value) {
+            const settings = readTypographySettings();
+            settings.lineHeight = String(value);
+            applyTypographySettings(settings, true);
+        }
+
+        function changeWordSpacing(value) {
+            const settings = readTypographySettings();
+            settings.wordSpacing = String(value);
+            applyTypographySettings(settings, true);
+        }
+
+        function changeLetterSpacing(value) {
+            const settings = readTypographySettings();
+            settings.letterSpacing = String(value);
+            applyTypographySettings(settings, true);
+        }
+
+        // Render high-fidelity QR Code inside the 2x2 inches container
+        function renderQRCode() {
+            const container = document.getElementById('ashtam-qrcode');
+            if (!container) { return; }
+            if (container.innerHTML.replace(/\s+/g, "") !== "") { return; }
+            container.innerHTML = ""; // Clean older instance
+            
+            // Calculate pixel dimensions for standard 1.7-inch inner dimension to fit 2" box smoothly
+            const qrSizePixels = 120;
+            const textToEncode = {{refund_completion_qr_text_json}};
+
+            new QRCode(container, {
+                text: textToEncode,
+                width: qrSizePixels,
+                height: qrSizePixels,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,436 @@
+/* =========================================================================
+   White Villas - Senior Executive Admin Components Stylesheet
+   Refined cards, panels, tables, badges, heroes, and forms
+   ========================================================================= */
+
+/* --- Card & Panel System --- */
+body.wv-admin-theme .panel,
+body.wv-admin-theme .panel-default {
+    background: var(--admin-theme-surface, #ffffff) !important;
+    border: 1px solid var(--admin-theme-border, #e2e8f0) !important;
+    border-radius: 10px !important;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04) !important;
+    margin-bottom: 20px !important;
+    overflow: hidden !important;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease !important;
+}
+
+body.wv-admin-theme .panel:hover {
+    box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.08) !important;
+}
+
+body.wv-admin-theme .panel-heading {
+    align-items: center !important;
+    background: #ffffff !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    color: #0f172a !important;
+    display: flex !important;
+    font-size: 13.5px !important;
+    font-weight: 700 !important;
+    justify-content: space-between !important;
+    padding: 13px 18px !important;
+}
+
+body.wv-admin-theme .panel-heading .panel-title,
+body.wv-admin-theme .panel-heading h3,
+body.wv-admin-theme .panel-heading h4 {
+    color: #0f172a !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.2px !important;
+    margin: 0 !important;
+}
+
+body.wv-admin-theme .panel-body {
+    background: transparent !important;
+    box-sizing: border-box !important;
+    color: #334155 !important;
+    padding: 18px !important;
+}
+
+body.wv-admin-theme .panel-footer {
+    background: #f8fafc !important;
+    border-top: 1px solid #f1f5f9 !important;
+    padding: 12px 18px !important;
+}
+
+/* Page Titles */
+body.wv-admin-theme .page-title {
+    align-items: center !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 10px !important;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04) !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    margin-bottom: 18px !important;
+    padding: 14px 20px !important;
+}
+
+body.wv-admin-theme .page-title h1,
+body.wv-admin-theme .page-title h2,
+body.wv-admin-theme .page-title h3,
+body.wv-admin-theme .page-title .title {
+    color: #0f172a !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.2px !important;
+    margin: 0 !important;
+}
+
+/* --- Executive Hero & Section Banners (Replaces all rough gradients) --- */
+.wv-address-head,
+.wv-config-hero,
+.wv-plan-hero,
+.wv-contacts-hero,
+.wv-forgot-head,
+.wv-media-hero,
+.wv-media-edit-head,
+.wv-news-head,
+.wv-profile-hero,
+.wv-weblogo-head,
+.wv-web-head,
+.wv-lead-head {
+    align-items: center !important;
+    background: linear-gradient(135deg, #070d19 0%, #0f172a 50%, #1e3a8a 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 10px !important;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12) !important;
+    box-sizing: border-box !important;
+    color: #ffffff !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    margin-bottom: 18px !important;
+    overflow: hidden !important;
+    padding: 18px 22px !important;
+    position: relative !important;
+}
+
+.wv-address-head h3,
+.wv-config-hero h3,
+.wv-plan-hero h3,
+.wv-contacts-hero h3,
+.wv-media-hero h3,
+.wv-media-edit-head h3,
+.wv-news-head h3,
+.wv-profile-hero h3,
+.wv-weblogo-head h3,
+.wv-web-head h3 {
+    color: #ffffff !important;
+    font-size: 17px !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.2px !important;
+    margin: 0 !important;
+}
+
+/* Contacts & Profile Avatars */
+.wv-contact-avatar,
+.wv-profile-avatar-fallback {
+    align-items: center !important;
+    background: linear-gradient(135deg, #1e3a8a, #2563eb) !important;
+    border: 2px solid #ffffff !important;
+    border-radius: 50% !important;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15) !important;
+    color: #ffffff !important;
+    display: flex !important;
+    font-weight: 700 !important;
+    justify-content: center !important;
+}
+
+/* Contact actions & buttons */
+.wv-contacts-actions .btn-default {
+    background: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #334155 !important;
+}
+
+.wv-contacts-actions .btn-default:hover {
+    background: #e2e8f0 !important;
+    color: #0f172a !important;
+}
+
+.wv-contacts-filter .btn,
+.wv-contacts-action .btn {
+    background: #2563eb !important;
+    border-color: #2563eb !important;
+    border-radius: 7px !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+}
+
+.wv-contacts-action .dropdown-menu li a .fa {
+    color: #2563eb !important;
+}
+
+.wv-nearby-icon {
+    align-items: center !important;
+    background: #eff6ff !important;
+    border-radius: 50% !important;
+    color: #2563eb !important;
+    display: flex !important;
+    flex: 0 0 30px !important;
+    height: 30px !important;
+    justify-content: center !important;
+    width: 30px !important;
+}
+
+/* Status Badges */
+.wv-status,
+.label,
+.badge {
+    border-radius: 999px !important;
+    font-size: 10.5px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.2px !important;
+    line-height: 1.3 !important;
+    padding: 3px 8px !important;
+    text-transform: uppercase !important;
+}
+
+.wv-status-published,
+.label-success {
+    background: #10b981 !important;
+    color: #ffffff !important;
+}
+
+.wv-status-draft,
+.label-warning {
+    background: #f59e0b !important;
+    color: #ffffff !important;
+}
+
+.wv-status-unpublished,
+.label-danger {
+    background: #ef4444 !important;
+    color: #ffffff !important;
+}
+
+.wv-status-new {
+    background: #2563eb !important;
+    color: #ffffff !important;
+}
+
+/* --- Tables in Admin Views --- */
+body.wv-admin-theme .table,
+body.wv-admin-theme .table-responsive,
+body.wv-admin-theme .dataTables_wrapper {
+    background: var(--admin-theme-surface, #ffffff);
+}
+
+body.wv-admin-theme .table-responsive {
+    border: 1px solid var(--admin-theme-border, #e2e8f0);
+    border-radius: 10px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.03);
+    margin-bottom: 16px;
+    overflow-x: auto;
+}
+
+body.wv-admin-theme .table {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    margin-bottom: 0 !important;
+    width: 100% !important;
+}
+
+body.wv-admin-theme .table > thead > tr > th,
+body.wv-admin-theme table.table > thead > tr > th,
+.wv-news-table th {
+    background: #0f172a !important;
+    border: 0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #ffffff !important;
+    font-size: 11.5px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.4px !important;
+    padding: 11px 14px !important;
+    position: sticky;
+    text-transform: uppercase !important;
+    top: 0;
+    vertical-align: middle !important;
+    white-space: nowrap !important;
+    z-index: 2;
+}
+
+body.wv-admin-theme .table > thead > tr > th a,
+body.wv-admin-theme table.table > thead > tr > th a {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    text-decoration: none !important;
+}
+
+body.wv-admin-theme .table > tbody > tr > td,
+body.wv-admin-theme table.table > tbody > tr > td {
+    background: var(--admin-theme-surface, #ffffff) !important;
+    border-color: #f1f5f9 !important;
+    border-top: 1px solid #f1f5f9 !important;
+    color: #334155 !important;
+    font-size: 12.5px !important;
+    line-height: 1.4 !important;
+    padding: 10px 14px !important;
+    vertical-align: middle !important;
+}
+
+body.wv-admin-theme .table > tbody > tr > td a,
+body.wv-admin-theme table.table > tbody > tr > td a {
+    color: #2563eb !important;
+    font-weight: 600;
+    text-decoration: none !important;
+}
+
+body.wv-admin-theme .table > tbody > tr > td a:hover {
+    color: #1d4ed8 !important;
+    text-decoration: underline !important;
+}
+
+body.wv-admin-theme .table-hover > tbody > tr:hover > td,
+body.wv-admin-theme table.table-hover > tbody > tr:hover > td,
+body.wv-admin-theme .table > tbody > tr:hover > td {
+    background: #f8fafc !important;
+    color: #0f172a !important;
+}
+
+/* Pagination */
+body.wv-admin-theme .pagination {
+    margin: 12px 0 !important;
+}
+
+body.wv-admin-theme .pagination > li > a,
+body.wv-admin-theme .pagination > li > span {
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 7px !important;
+    color: #334155 !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    margin: 0 2px !important;
+    padding: 6px 12px !important;
+    transition: all 0.15s ease !important;
+}
+
+body.wv-admin-theme .pagination > li > a:hover {
+    background: #f1f5f9 !important;
+    border-color: #cbd5e1 !important;
+    color: #0f172a !important;
+}
+
+body.wv-admin-theme .pagination > .active > a,
+body.wv-admin-theme .pagination > .active > span {
+    background: #2563eb !important;
+    border-color: #2563eb !important;
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.25) !important;
+    color: #ffffff !important;
+}
+
+/* Theme Switcher Chips */
+.wv-admin-theme-selector {
+    display: grid;
+    gap: 8px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 4px 0;
+}
+
+.wv-admin-theme-chip {
+    align-items: center;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    color: #334155;
+    cursor: pointer;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-start;
+    min-height: 38px;
+    padding: 0 10px;
+    text-align: left;
+    transition: all 0.15s ease;
+    width: 100%;
+}
+
+.wv-admin-theme-chip:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #0f172a;
+}
+
+.wv-admin-theme-chip.active {
+    background: #eff6ff;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+    color: #1e3a8a;
+    font-weight: 700;
+}
+
+.wv-admin-theme-dot {
+    border-radius: 50%;
+    display: inline-block;
+    height: 12px;
+    width: 12px;
+}
+
+.theme-dot-light { background: linear-gradient(135deg, #ffffff, #2563eb); border: 1px solid #cbd5e1; }
+.theme-dot-dark { background: linear-gradient(135deg, #090e17, #3b82f6); }
+.theme-dot-gold { background: linear-gradient(135deg, #fffbeb, #b45309); }
+.theme-dot-green { background: linear-gradient(135deg, #ecfdf5, #059669); }
+
+.wv-admin-theme-chip-label {
+    font-size: 11.5px;
+    font-weight: 600;
+}
+
+/* Forms & Filter Strips in Admin Views */
+.dashboard-filter-panel {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 10px !important;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04) !important;
+    margin-bottom: 20px !important;
+}
+
+.dashboard-filter-row {
+    align-items: flex-end;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.dashboard-filter-item label {
+    color: #475569;
+    font-size: 11.5px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+
+.form-control,
+select.form-control,
+input.form-control {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 7px !important;
+    box-shadow: none !important;
+    color: #0f172a !important;
+    font-size: 12.5px !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    padding: 6px 12px !important;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+.form-control:focus,
+select.form-control:focus,
+input.form-control:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18) !important;
+    outline: none !important;
+}
+
+/* Dashboard Financial Cards */
+.db-fin-card {
+    border-radius: 10px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
+    transition: transform 0.18s ease, box-shadow 0.18s ease !important;
+}
+
+.db-fin-card:hover {
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.12) !important;
+    transform: translateY(-2px);
+}

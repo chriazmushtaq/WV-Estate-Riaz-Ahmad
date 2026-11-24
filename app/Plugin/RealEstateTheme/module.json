@@ -1,0 +1,30 @@
+{
+  "name": "Real Estate Pro Theme",
+  "slug": "RealEstateTheme",
+  "version": "1.0.0",
+  "description": "Luxury Frontend Theme inspired by Ramada & White Alpine Lodges with Hero Video, Top Header Toggle, Interactive Resort Showcases, and Complete Theme Options Manager.",
+  "author": "Engr Riaz Mushtaq - AL-Riaz Tech",
+  "author_url": "https://www.alriazdevelopers.com",
+  "icon": "fa fa-paint-brush",
+  "admin_menu": [
+    {
+      "page_name": "Theme Options",
+      "controller_name": "RealEstateThemes",
+      "action_name": "settings",
+      "icon": "fa fa-paint-brush",
+      "is_root": true
+    },
+    {
+      "page_name": "Theme Settings",
+      "controller_name": "RealEstateThemes",
+      "action_name": "settings",
+      "icon": "fa fa-cogs"
+    },
+    {
+      "page_name": "Theme Overview",
+      "controller_name": "RealEstateThemes",
+      "action_name": "index",
+      "icon": "fa fa-eye"
+    }
+  ]
+}

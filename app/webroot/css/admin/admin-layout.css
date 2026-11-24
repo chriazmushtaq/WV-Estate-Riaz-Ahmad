@@ -1,0 +1,1192 @@
+/* =========================================================================
+   White Villas - Senior Executive Admin Layout Stylesheet
+   Crafted for high-end enterprise real estate dashboard
+   ========================================================================= */
+
+:root {
+    --wv-admin-topbar-h: 58px;
+    --wv-admin-sidebar-w: 250px;
+    --wv-admin-sidebar-collapsed-w: 68px;
+    --wv-admin-bg: #f8fafc;
+    --wv-admin-surface: #ffffff;
+    --wv-admin-border: #e2e8f0;
+    --wv-admin-text: #0f172a;
+    --wv-admin-text-muted: #64748b;
+    --wv-admin-primary: #2563eb;
+    --wv-admin-primary-hover: #1d4ed8;
+    --wv-admin-primary-soft: #eff6ff;
+    --wv-admin-sidebar-bg: #090e17;
+    --wv-admin-sidebar-border: rgba(255, 255, 255, 0.07);
+    --wv-admin-topbar-bg: #0f172a;
+}
+
+/* Base Body & Container Resets */
+body.wv-admin-theme {
+    background-color: var(--admin-theme-bg, var(--wv-admin-bg)) !important;
+    color: var(--admin-theme-text, var(--wv-admin-text)) !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+.page-container {
+    display: block !important;
+    position: relative !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+/* =========================================================================
+   1. UPPER SIDE (TOPBAR / NAVBAR)
+   ========================================================================= */
+.wv-admin-topbar,
+.navbar.navbar-toggleable-md.wv-admin-topbar {
+    align-items: center !important;
+    background: linear-gradient(90deg, #070d19 0%, #0f172a 45%, #131d36 100%) !important;
+    border: 0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.28), 0 1px 3px 0 rgba(0, 0, 0, 0.12) !important;
+    color: #ffffff !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    height: var(--wv-admin-topbar-h) !important;
+    min-height: var(--wv-admin-topbar-h) !important;
+    max-height: var(--wv-admin-topbar-h) !important;
+    padding: 0 18px 0 14px !important;
+    position: sticky !important;
+    top: 0 !important;
+    width: 100% !important;
+    z-index: 1035 !important;
+    box-sizing: border-box !important;
+}
+
+/* Sidebar Toggle Buttons in Topbar */
+.wv-admin-topbar .navbar-toggler,
+.wv-admin-topbar .sidebar-toggle {
+    align-items: center !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.10) !important;
+    border-radius: 8px !important;
+    color: #cbd5e1 !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    flex: 0 0 36px !important;
+    height: 36px !important;
+    justify-content: center !important;
+    margin: 0 10px 0 0 !important;
+    padding: 0 !important;
+    transition: all 0.18s ease !important;
+    width: 36px !important;
+}
+
+.wv-admin-topbar .navbar-toggler:hover,
+.wv-admin-topbar .sidebar-toggle:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(255, 255, 255, 0.22) !important;
+    color: #ffffff !important;
+}
+
+.wv-admin-topbar .navbar-toggler i,
+.wv-admin-topbar .sidebar-toggle i {
+    color: #94a3b8 !important;
+    font-size: 14px !important;
+    transition: color 0.18s ease;
+}
+
+.wv-admin-topbar .navbar-toggler:hover i,
+.wv-admin-topbar .sidebar-toggle:hover i {
+    color: #ffffff !important;
+}
+
+.wv-admin-topbar .navbar-toggler-right {
+    display: none !important;
+}
+
+#toggle-sidebar {
+    display: inline-flex !important;
+    flex: 0 0 36px !important;
+    order: 1 !important;
+}
+
+#toggle-sidebar-desktop {
+    display: none !important;
+}
+
+/* Brand Logo in Topbar */
+.wv-admin-topbar .navbar-brand.logo {
+    align-items: center !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+    display: inline-flex !important;
+    flex: 0 0 auto !important;
+    gap: 10px !important;
+    height: 100% !important;
+    margin: 0 16px 0 2px !important;
+    min-width: 0 !important;
+    order: 2 !important;
+    padding: 0 !important;
+    text-decoration: none !important;
+}
+
+.wv-admin-topbar .navbar-brand.logo span {
+    color: #ffffff !important;
+    font-size: 15.5px !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.2px !important;
+    white-space: nowrap !important;
+}
+
+.wv-topbar-version-pill,
+.wv-admin-topbar .navbar-brand.logo .badge {
+    background: rgba(37, 99, 235, 0.20) !important;
+    border: 1px solid rgba(59, 130, 246, 0.35) !important;
+    border-radius: 999px !important;
+    color: #93c5fd !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.3px !important;
+    line-height: 1.3 !important;
+    padding: 2px 8px !important;
+    text-transform: uppercase !important;
+    vertical-align: middle !important;
+    white-space: nowrap !important;
+}
+
+/* Center Breadcrumb Container */
+.wv-admin-header-center {
+    align-items: center !important;
+    display: flex !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    order: 3 !important;
+    padding: 0 14px !important;
+}
+
+.wv-admin-breadcrumbs {
+    align-items: center !important;
+    color: #64748b !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    font-size: 12.5px !important;
+    font-weight: 500 !important;
+    gap: 6px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+}
+
+.wv-admin-breadcrumbs a {
+    color: #94a3b8 !important;
+    font-weight: 500 !important;
+    text-decoration: none !important;
+    transition: color 0.15s ease !important;
+}
+
+.wv-admin-breadcrumbs a:hover {
+    color: #ffffff !important;
+}
+
+.wv-admin-breadcrumbs span {
+    color: #f1f5f9 !important;
+    font-weight: 600 !important;
+}
+
+.wv-admin-breadcrumb-sep {
+    color: #475569 !important;
+    display: inline-flex !important;
+    font-size: 10px !important;
+    margin: 0 4px !important;
+}
+
+/* Navbar Collapse & Right-Side Actions */
+.wv-admin-topbar #navbarNav,
+body.wv-admin-theme .wv-admin-topbar #navbarNav {
+    align-items: center !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    display: flex !important;
+    flex: 0 0 auto !important;
+    justify-content: flex-end !important;
+    margin: 0 0 0 auto !important;
+    order: 4 !important;
+    padding: 0 !important;
+    position: static !important;
+    right: auto !important;
+    top: auto !important;
+    width: auto !important;
+    z-index: auto !important;
+}
+
+.wv-admin-topbar-actions,
+body.wv-admin-theme .wv-admin-topbar .navbar-nav.wv-admin-topbar-actions {
+    align-items: center !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.wv-admin-topbar-actions > .nav-item {
+    align-items: center !important;
+    display: inline-flex !important;
+    flex: 0 0 auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: relative !important;
+}
+
+/* Quick Page Search in Topbar */
+.wv-admin-search-item {
+    margin-right: 4px !important;
+}
+
+.wv-admin-quick-search {
+    align-items: center !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.10) !important;
+    border-radius: 999px !important;
+    box-shadow: none !important;
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    gap: 8px !important;
+    height: 35px !important;
+    min-height: 35px !important;
+    padding: 0 10px 0 12px !important;
+    transition: all 0.22s ease !important;
+    width: 200px !important;
+}
+
+.wv-admin-quick-search:focus-within {
+    background: rgba(255, 255, 255, 0.09) !important;
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25) !important;
+    width: 250px !important;
+}
+
+.wv-admin-quick-search i {
+    color: #94a3b8 !important;
+    font-size: 12px !important;
+    transition: color 0.18s ease;
+}
+
+.wv-admin-quick-search:focus-within i {
+    color: #60a5fa !important;
+}
+
+.wv-admin-quick-search input {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+    font-size: 12.5px !important;
+    height: 100% !important;
+    margin: 0 !important;
+    outline: none !important;
+    padding: 0 !important;
+    width: 100% !important;
+}
+
+.wv-admin-quick-search input::placeholder {
+    color: #64748b !important;
+    font-size: 12px !important;
+}
+
+.wv-admin-quick-search-btn {
+    align-items: center !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    color: #94a3b8 !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    flex: 0 0 22px !important;
+    height: 22px !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    transition: all 0.15s ease !important;
+    width: 22px !important;
+}
+
+.wv-admin-quick-search-btn:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    color: #ffffff !important;
+}
+
+/* Icon Buttons (Fullscreen, Clear Cache, Theme Switcher) */
+.wv-admin-icon-btn,
+.wv-admin-theme-dropdown > a.wv-admin-icon-btn {
+    align-items: center !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    color: #cbd5e1 !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    flex: 0 0 35px !important;
+    height: 35px !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    min-height: 35px !important;
+    min-width: 35px !important;
+    padding: 0 !important;
+    position: relative !important;
+    text-decoration: none !important;
+    transition: all 0.18s ease !important;
+    width: 35px !important;
+}
+
+.wv-admin-icon-btn:hover,
+.wv-admin-icon-btn:focus,
+.wv-admin-theme-dropdown > a.wv-admin-icon-btn:hover,
+.wv-admin-theme-dropdown > a.wv-admin-icon-btn:focus {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(255, 255, 255, 0.20) !important;
+    color: #ffffff !important;
+    transform: translateY(-1px);
+}
+
+.wv-admin-icon-btn i {
+    color: #94a3b8 !important;
+    font-size: 13.5px !important;
+    transition: color 0.18s ease;
+}
+
+.wv-admin-icon-btn:hover i {
+    color: #ffffff !important;
+}
+
+.wv-admin-icon-btn i.fa-trash-o {
+    color: #f87171 !important;
+}
+
+.wv-admin-icon-btn:hover i.fa-trash-o {
+    color: #ef4444 !important;
+}
+
+/* Notification Bell Button */
+.notif-bell-btn {
+    position: relative !important;
+}
+
+.notif-unread-badge {
+    align-items: center !important;
+    background: #ef4444 !important;
+    border: 2px solid #0f172a !important;
+    border-radius: 999px !important;
+    box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4) !important;
+    color: #ffffff !important;
+    display: inline-flex !important;
+    font-size: 9.5px !important;
+    font-weight: 800 !important;
+    height: 17px !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+    min-width: 17px !important;
+    padding: 0 4px !important;
+    position: absolute !important;
+    right: -4px !important;
+    top: -4px !important;
+    z-index: 2 !important;
+}
+
+/* User Profile Badge (Topbar Avatar) */
+#navbarDropdownMenuLink {
+    align-items: center !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    box-shadow: none !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    height: 36px !important;
+    justify-content: center !important;
+    margin: 0 0 0 2px !important;
+    min-height: 36px !important;
+    padding: 0 !important;
+    text-decoration: none !important;
+    width: 36px !important;
+}
+
+#navbarDropdownMenuLink:after {
+    display: none !important;
+}
+
+.wv-admin-profile-badge {
+    align-items: center !important;
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%) !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    border: 2px solid rgba(255, 255, 255, 0.35) !important;
+    border-radius: 50% !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+    box-sizing: border-box !important;
+    color: #ffffff !important;
+    display: inline-flex !important;
+    font-size: 13.5px !important;
+    font-weight: 800 !important;
+    height: 36px !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+    text-transform: uppercase !important;
+    transition: all 0.2s ease !important;
+    width: 36px !important;
+}
+
+.wv-admin-profile-badge.has-photo {
+    color: transparent !important;
+    font-size: 0 !important;
+}
+
+.wv-admin-profile-badge:hover {
+    border-color: #60a5fa !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3), 0 3px 10px rgba(0, 0, 0, 0.3) !important;
+    transform: scale(1.04);
+}
+
+/* Luxury Modern Dropdown Menus */
+.dropdown-menu.dropdown-menu-right {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.16), 0 4px 6px -2px rgba(15, 23, 42, 0.05) !important;
+    box-sizing: border-box !important;
+    left: auto !important;
+    margin-top: 8px !important;
+    min-width: 220px !important;
+    padding: 6px !important;
+    right: 0 !important;
+    z-index: 1060 !important;
+}
+
+.dropdown-menu .dropdown-item-text {
+    background: #f8fafc !important;
+    border: 1px solid #f1f5f9 !important;
+    border-radius: 7px !important;
+    color: #475569 !important;
+    font-size: 11.5px !important;
+    font-weight: 600 !important;
+    margin-bottom: 4px !important;
+    padding: 7px 10px !important;
+}
+
+.dropdown-menu .dropdown-item-text strong {
+    color: #0f172a !important;
+    font-weight: 700 !important;
+}
+
+.dropdown-menu .dropdown-item {
+    align-items: center !important;
+    border-radius: 7px !important;
+    color: #334155 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    font-size: 12.5px !important;
+    font-weight: 600 !important;
+    gap: 9px !important;
+    min-height: 36px !important;
+    padding: 7px 11px !important;
+    text-decoration: none !important;
+    transition: all 0.15s ease !important;
+}
+
+.dropdown-menu .dropdown-item:hover,
+.dropdown-menu .dropdown-item:focus {
+    background: #f1f5f9 !important;
+    color: #0f172a !important;
+    text-decoration: none !important;
+}
+
+.dropdown-menu .dropdown-item i {
+    color: #64748b !important;
+    font-size: 13px !important;
+    text-align: center !important;
+    transition: color 0.15s ease;
+    width: 18px !important;
+}
+
+.dropdown-menu .dropdown-item:hover i {
+    color: #2563eb !important;
+}
+
+.dropdown-menu .dropdown-item i.fa-trash-o {
+    color: #ef4444 !important;
+}
+
+.dropdown-menu .dropdown-item:hover i.fa-trash-o {
+    color: #dc2626 !important;
+}
+
+.dropdown-menu .dropdown-divider {
+    border-top: 1px solid #f1f5f9 !important;
+    margin: 6px 0 !important;
+}
+
+/* =========================================================================
+   2. SIDEBAR ("sidebare")
+   ========================================================================= */
+#sidebar-main.sidebar,
+body.wv-admin-theme #sidebar-main.sidebar {
+    background: var(--wv-admin-sidebar-bg) !important;
+    border: 0 !important;
+    border-right: 1px solid var(--wv-admin-sidebar-border) !important;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15) !important;
+    box-sizing: border-box !important;
+    color: #ffffff !important;
+    display: block !important;
+    flex: 0 0 var(--wv-admin-sidebar-w) !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    max-width: var(--wv-admin-sidebar-w) !important;
+    min-width: var(--wv-admin-sidebar-w) !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    position: sticky !important;
+    top: 0 !important;
+    transition: flex 0.22s ease, width 0.22s ease, max-width 0.22s ease, min-width 0.22s ease !important;
+    width: var(--wv-admin-sidebar-w) !important;
+    z-index: 1000 !important;
+}
+
+/* Custom Sleek Scrollbar for Sidebar */
+#sidebar-main.sidebar::-webkit-scrollbar,
+#sidebar-main .sidebar-content::-webkit-scrollbar {
+    width: 5px !important;
+}
+
+#sidebar-main.sidebar::-webkit-scrollbar-track,
+#sidebar-main .sidebar-content::-webkit-scrollbar-track {
+    background: transparent !important;
+}
+
+#sidebar-main.sidebar::-webkit-scrollbar-thumb,
+#sidebar-main .sidebar-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.10) !important;
+    border-radius: 999px !important;
+}
+
+#sidebar-main.sidebar::-webkit-scrollbar-thumb:hover,
+#sidebar-main .sidebar-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.20) !important;
+}
+
+#sidebar-main.sidebar,
+#sidebar-main .sidebar-content {
+    scrollbar-color: rgba(255, 255, 255, 0.12) transparent !important;
+    scrollbar-width: thin !important;
+}
+
+#sidebar-main .sidebar-content {
+    background: transparent !important;
+    box-sizing: border-box !important;
+    min-height: 100% !important;
+    width: 100% !important;
+}
+
+.wv-admin-sidebar-shell {
+    box-sizing: border-box !important;
+    padding: 12px 10px 24px !important;
+    position: relative !important;
+    width: 100% !important;
+}
+
+/* Sidebar Brand Card - Removed per user request (topbar already displays site brand) */
+.wv-admin-sidebar-brand {
+    display: none !important;
+}
+
+.wv-admin-sidebar-mobile-close {
+    align-items: center !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    border-radius: 7px !important;
+    color: #cbd5e1 !important;
+    cursor: pointer !important;
+    display: none !important;
+    flex: 0 0 30px !important;
+    font-size: 14px !important;
+    height: 30px !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    position: absolute !important;
+    right: 10px !important;
+    top: 10px !important;
+    transition: all 0.15s ease !important;
+    width: 30px !important;
+    z-index: 10 !important;
+}
+
+.wv-admin-sidebar-mobile-close:hover {
+    background: #ef4444 !important;
+    border-color: #ef4444 !important;
+    color: #ffffff !important;
+}
+
+/* Sidebar Search Box */
+.wv-admin-sidebar-search-wrap {
+    align-items: center !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.07) !important;
+    border-radius: 8px !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    gap: 8px !important;
+    height: 34px !important;
+    margin-bottom: 10px !important;
+    padding: 0 10px !important;
+    transition: all 0.18s ease !important;
+}
+
+.wv-admin-sidebar-search-wrap:focus-within {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+}
+
+.wv-admin-sidebar-search-icon {
+    color: #64748b !important;
+    font-size: 12px !important;
+}
+
+.wv-admin-sidebar-search {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    color: #f1f5f9 !important;
+    font-size: 12px !important;
+    height: 100% !important;
+    outline: none !important;
+    padding: 0 !important;
+    width: 100% !important;
+}
+
+.wv-admin-sidebar-search::placeholder {
+    color: #64748b !important;
+    font-size: 11.5px !important;
+}
+
+/* Sidebar Navigation Tree */
+#sidebar-main .navigation,
+body.wv-admin-theme #sidebar-main .navigation {
+    box-sizing: border-box !important;
+    display: block !important;
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+}
+
+#sidebar-main .navigation > li,
+body.wv-admin-theme #sidebar-main .navigation > li {
+    box-sizing: border-box !important;
+    display: block;
+    margin: 0 0 2px 0 !important;
+    padding: 0 !important;
+    position: relative !important;
+    width: 100% !important;
+}
+
+/* Sidebar Primary Menu Links */
+#sidebar-main .navigation > li > a,
+body.wv-admin-theme #sidebar-main .navigation > li > a {
+    align-items: center !important;
+    background: transparent !important;
+    border-radius: 7px !important;
+    box-sizing: border-box !important;
+    color: #94a3b8 !important;
+    display: flex !important;
+    font-size: 12.5px !important;
+    font-weight: 600 !important;
+    gap: 9px !important;
+    justify-content: flex-start !important;
+    line-height: 1.3 !important;
+    min-height: 38px !important;
+    padding: 6px 10px !important;
+    position: relative !important;
+    text-align: left !important;
+    text-decoration: none !important;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease !important;
+    white-space: normal !important;
+    width: 100% !important;
+}
+
+/* Sidebar Item Icons */
+#sidebar-main .navigation > li > a > i,
+body.wv-admin-theme #sidebar-main .navigation > li > a > i {
+    align-items: center !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    border-radius: 6px !important;
+    box-sizing: border-box !important;
+    color: #94a3b8 !important;
+    display: inline-flex !important;
+    flex: 0 0 28px !important;
+    float: none !important;
+    font-size: 13px !important;
+    height: 28px !important;
+    justify-content: center !important;
+    left: auto !important;
+    margin: 0 !important;
+    position: static !important;
+    top: auto !important;
+    transition: all 0.15s ease !important;
+    width: 28px !important;
+}
+
+/* Sidebar Item Label */
+#sidebar-main .navigation > li > a > span,
+body.wv-admin-theme #sidebar-main .navigation > li > a > span {
+    color: inherit !important;
+    display: inline-block !important;
+    flex: 1 1 auto !important;
+    font-size: 12.5px !important;
+    font-weight: inherit !important;
+    line-height: 1.25 !important;
+    margin: 0 !important;
+    min-width: 0 !important;
+    overflow-wrap: anywhere !important;
+    white-space: normal !important;
+}
+
+/* Hover State */
+#sidebar-main .navigation > li > a:hover,
+body.wv-admin-theme #sidebar-main .navigation > li > a:hover {
+    background: rgba(255, 255, 255, 0.05) !important;
+    color: #f8fafc !important;
+    text-decoration: none !important;
+    transform: none !important;
+}
+
+#sidebar-main .navigation > li > a:hover > i,
+body.wv-admin-theme #sidebar-main .navigation > li > a:hover > i {
+    background: rgba(37, 99, 235, 0.18) !important;
+    color: #60a5fa !important;
+}
+
+/* Active & Open States */
+#sidebar-main .navigation > li.active > a,
+#sidebar-main .navigation > li.open > a,
+body.wv-admin-theme #sidebar-main .navigation > li.active > a,
+body.wv-admin-theme #sidebar-main .navigation > li.open > a {
+    background: rgba(37, 99, 235, 0.12) !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    text-decoration: none !important;
+    transform: none !important;
+}
+
+#sidebar-main .navigation > li.active > a > i,
+#sidebar-main .navigation > li.open > a > i,
+body.wv-admin-theme #sidebar-main .navigation > li.active > a > i,
+body.wv-admin-theme #sidebar-main .navigation > li.open > a > i {
+    background: #2563eb !important;
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35) !important;
+    color: #ffffff !important;
+}
+
+/* Submenu Arrow Indicator (has-ul) */
+#sidebar-main .navigation > li > a.has-ul,
+body.wv-admin-theme #sidebar-main .navigation > li > a.has-ul {
+    padding-right: 28px !important;
+    position: relative !important;
+}
+
+#sidebar-main .navigation > li > a.has-ul:after,
+body.wv-admin-theme #sidebar-main .navigation > li > a.has-ul:after {
+    color: #64748b !important;
+    content: "\f105" !important;
+    display: block !important;
+    font-family: "FontAwesome" !important;
+    font-size: 11px !important;
+    font-weight: 900 !important;
+    position: absolute !important;
+    right: 11px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    transition: transform 0.2s ease, color 0.15s ease !important;
+}
+
+#sidebar-main .navigation > li.open > a.has-ul:after,
+body.wv-admin-theme #sidebar-main .navigation > li.open > a.has-ul:after {
+    color: #94a3b8 !important;
+    transform: translateY(-50%) rotate(90deg) !important;
+}
+
+/* Submenu Lists - Collapsed/unexpanded by default */
+#sidebar-main .navigation > li ul,
+body.wv-admin-theme #sidebar-main .navigation > li ul {
+    background: rgba(0, 0, 0, 0.22) !important;
+    border: 1px solid rgba(255, 255, 255, 0.04) !important;
+    border-left: 2px solid #2563eb !important;
+    border-radius: 7px !important;
+    box-shadow: none !important;
+    box-sizing: border-box !important;
+    display: none;
+    list-style: none !important;
+    margin: 3px 0 5px 12px !important;
+    padding: 3px 4px !important;
+}
+
+/* Strictly hide collapsed submenus */
+#sidebar-main .navigation ul.hidden-ul,
+#sidebar-main .navigation > li ul.hidden-ul,
+body.wv-admin-theme #sidebar-main .navigation ul.hidden-ul,
+body.wv-admin-theme #sidebar-main .navigation > li ul.hidden-ul {
+    display: none !important;
+}
+
+/* Open submenus */
+#sidebar-main .navigation > li.open > ul:not(.hidden-ul),
+#sidebar-main .navigation > li.active > ul:not(.hidden-ul),
+body.wv-admin-theme #sidebar-main .navigation > li.open > ul:not(.hidden-ul),
+body.wv-admin-theme #sidebar-main .navigation > li.active > ul:not(.hidden-ul) {
+    display: block;
+}
+
+#sidebar-main .navigation li ul li,
+body.wv-admin-theme #sidebar-main .navigation li ul li {
+    box-sizing: border-box !important;
+    display: block;
+    margin: 0 0 1px 0 !important;
+    padding: 0 !important;
+}
+
+/* Sidebar Menu Search Filter Classes */
+#sidebar-main .navigation li.menu-item-hidden,
+body.wv-admin-theme #sidebar-main .navigation li.menu-item-hidden {
+    display: none !important;
+}
+
+.wv-admin-sidebar-search-clear {
+    align-items: center !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    color: #94a3b8 !important;
+    cursor: pointer !important;
+    display: none;
+    flex: 0 0 20px !important;
+    font-size: 11px !important;
+    height: 20px !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+    margin-left: auto !important;
+    padding: 0 !important;
+    transition: all 0.15s ease !important;
+    width: 20px !important;
+}
+
+.wv-admin-sidebar-search-clear:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+}
+
+#sidebar-main .navigation li ul li:last-child,
+body.wv-admin-theme #sidebar-main .navigation li ul li:last-child {
+    margin-bottom: 0 !important;
+}
+
+#sidebar-main .navigation li ul li > a,
+body.wv-admin-theme #sidebar-main .navigation li ul li > a {
+    align-items: center !important;
+    background: transparent !important;
+    border-radius: 5px !important;
+    box-sizing: border-box !important;
+    color: #94a3b8 !important;
+    display: flex !important;
+    font-size: 11.5px !important;
+    font-weight: 500 !important;
+    gap: 7px !important;
+    min-height: 31px !important;
+    padding: 5px 8px !important;
+    text-decoration: none !important;
+    transition: background 0.15s ease, color 0.15s ease !important;
+    white-space: normal !important;
+}
+
+#sidebar-main .navigation li ul li > a:hover,
+body.wv-admin-theme #sidebar-main .navigation li ul li > a:hover {
+    background: rgba(255, 255, 255, 0.05) !important;
+    color: #ffffff !important;
+    text-decoration: none !important;
+}
+
+#sidebar-main .navigation li ul li.active > a,
+body.wv-admin-theme #sidebar-main .navigation li ul li.active > a {
+    background: rgba(37, 99, 235, 0.20) !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+}
+
+#sidebar-main .navigation li ul li > a > i,
+body.wv-admin-theme #sidebar-main .navigation li ul li > a > i {
+    color: #60a5fa !important;
+    font-size: 11px !important;
+    text-align: center !important;
+    width: 16px !important;
+}
+
+/* =========================================================================
+   3. COLLAPSED SIDEBAR MODE (Desktop Icons-only)
+   ========================================================================= */
+#sidebar-main.sidebar.sidebar-collapsed,
+body.wv-admin-theme #sidebar-main.sidebar.sidebar-collapsed {
+    flex: 0 0 var(--wv-admin-sidebar-collapsed-w) !important;
+    max-width: var(--wv-admin-sidebar-collapsed-w) !important;
+    min-width: var(--wv-admin-sidebar-collapsed-w) !important;
+    width: var(--wv-admin-sidebar-collapsed-w) !important;
+}
+
+#sidebar-main.sidebar.sidebar-collapsed .wv-admin-sidebar-shell {
+    padding: 10px 6px !important;
+}
+
+#sidebar-main.sidebar.sidebar-collapsed .wv-admin-sidebar-brand,
+#sidebar-main.sidebar.sidebar-collapsed .wv-admin-sidebar-search-wrap,
+#sidebar-main.sidebar.sidebar-collapsed .navigation > li > a > span,
+#sidebar-main.sidebar.sidebar-collapsed .navigation > li > a.has-ul:after,
+#sidebar-main.sidebar.sidebar-collapsed .navigation > li > ul {
+    display: none !important;
+}
+
+#sidebar-main.sidebar.sidebar-collapsed .navigation > li > a {
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 40px !important;
+    padding: 6px 0 !important;
+    transform: none !important;
+}
+
+#sidebar-main.sidebar.sidebar-collapsed .navigation > li > a > i {
+    flex: 0 0 32px !important;
+    height: 32px !important;
+    margin: 0 auto !important;
+    width: 32px !important;
+}
+
+/* =========================================================================
+   4. CONTENT WRAPPER & DESKTOP SPACING
+   ========================================================================= */
+@media (min-width: 992px) {
+    .page-content {
+        align-items: stretch !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        flex-direction: row !important;
+        margin: 0 !important;
+        min-height: calc(100vh - var(--wv-admin-topbar-h)) !important;
+        padding: 0 !important;
+        position: relative !important;
+        width: 100% !important;
+    }
+
+    .content-wrapper,
+    body.wv-admin-theme .content-wrapper {
+        background: transparent !important;
+        box-sizing: border-box !important;
+        display: block !important;
+        flex: 1 1 auto !important;
+        margin: 0 !important;
+        max-width: calc(100% - var(--wv-admin-sidebar-w)) !important;
+        min-width: 0 !important;
+        padding: 0 !important;
+        transition: max-width 0.22s ease, width 0.22s ease !important;
+        width: calc(100% - var(--wv-admin-sidebar-w)) !important;
+    }
+
+    #sidebar-main.sidebar.sidebar-collapsed + .content-wrapper,
+    body.wv-admin-theme #sidebar-main.sidebar.sidebar-collapsed + .content-wrapper {
+        max-width: calc(100% - var(--wv-admin-sidebar-collapsed-w)) !important;
+        width: calc(100% - var(--wv-admin-sidebar-collapsed-w)) !important;
+    }
+
+    .content.wv-admin-dashboard-shell,
+    body.wv-admin-theme .content {
+        box-sizing: border-box !important;
+        margin: 0 !important;
+        padding: 20px 24px 36px 24px !important;
+        width: 100% !important;
+    }
+}
+
+/* Mobile & Tablet Layout (<= 991px) */
+@media (max-width: 991px) {
+    .page-content {
+        display: block !important;
+        width: 100% !important;
+    }
+
+    .content-wrapper,
+    body.wv-admin-theme .content-wrapper {
+        display: block !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+
+    .content.wv-admin-dashboard-shell,
+    body.wv-admin-theme .content {
+        box-sizing: border-box !important;
+        padding: 14px 14px 28px 14px !important;
+        width: 100% !important;
+    }
+
+    .wv-admin-header-center {
+        display: none !important;
+    }
+
+    .wv-admin-topbar {
+        padding: 0 10px !important;
+    }
+
+    .wv-admin-search-item {
+        display: none !important;
+    }
+
+    /* Mobile Off-Canvas Sidebar */
+    #sidebar-main.sidebar,
+    body.wv-admin-theme #sidebar-main.sidebar {
+        background: #090e17 !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+        bottom: 0 !important;
+        box-shadow: 0 0 50px rgba(0, 0, 0, 0.6) !important;
+        display: block !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        left: 0 !important;
+        max-height: 100vh !important;
+        max-width: 86vw !important;
+        min-width: 0 !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        pointer-events: none !important;
+        position: fixed !important;
+        top: 0 !important;
+        transform: translateX(-105%) !important;
+        transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.28s ease !important;
+        visibility: hidden !important;
+        width: 280px !important;
+        z-index: 100050 !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+
+    body.admin-mobile-sidebar-open #sidebar-main.sidebar,
+    body.wv-admin-theme.admin-mobile-sidebar-open #sidebar-main.sidebar,
+    #sidebar-main.sidebar.is-mobile-open {
+        box-shadow: 10px 0 50px rgba(0, 0, 0, 0.7) !important;
+        pointer-events: auto !important;
+        transform: translateX(0) !important;
+        visibility: visible !important;
+    }
+
+    .wv-admin-sidebar-mobile-close {
+        display: inline-flex !important;
+    }
+}
+
+/* Mobile Admin Backdrop */
+.admin-sidebar-backdrop {
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    background: rgba(15, 23, 42, 0.68) !important;
+    bottom: 0;
+    display: none;
+    height: 100vh;
+    height: 100dvh;
+    left: 0;
+    opacity: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+    transition: opacity 0.25s ease;
+    width: 100vw;
+    z-index: 100040 !important;
+}
+
+body.admin-mobile-sidebar-open .admin-sidebar-backdrop {
+    display: block !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+body.admin-mobile-sidebar-open {
+    overflow: hidden !important;
+}
+
+/* =========================================================================
+   5. NOTIFICATION DROPDOWN POPUP
+   ========================================================================= */
+.wv-admin-notif-menu {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18) !important;
+    margin-top: 8px !important;
+    max-width: 380px !important;
+    min-width: 320px !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    width: 350px !important;
+    z-index: 100050 !important;
+}
+
+.wv-notif-menu-header {
+    align-items: center !important;
+    background: #f8fafc !important;
+    border-bottom: 1px solid #edf2f7 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    padding: 12px 16px !important;
+}
+
+.wv-notif-mark-all {
+    color: #2563eb !important;
+    cursor: pointer !important;
+    font-size: 11.5px !important;
+    font-weight: 700 !important;
+    text-decoration: none !important;
+}
+
+.wv-notif-mark-all:hover {
+    color: #1d4ed8 !important;
+    text-decoration: underline !important;
+}
+
+.wv-notif-menu-list {
+    max-height: 320px !important;
+    overflow-y: auto !important;
+}
+
+.wv-notif-menu-footer {
+    background: #f8fafc !important;
+    border-top: 1px solid #edf2f7 !important;
+    padding: 10px 16px !important;
+    text-align: center !important;
+}
+
+.wv-notif-view-all {
+    color: #2563eb !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    text-decoration: none !important;
+}
+
+.wv-notif-view-all:hover {
+    color: #1d4ed8 !important;
+    text-decoration: underline !important;
+}

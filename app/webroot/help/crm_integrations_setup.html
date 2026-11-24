@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CRM Integration Help - SMS, Email, Google Calendar, Facebook Lead Ads and WhatsApp Cloud API</title>
+    <style>
+        :root {
+            --bg: #f4f7fb;
+            --panel: #ffffff;
+            --text: #1f2937;
+            --muted: #5f6b7a;
+            --line: #d7e0ea;
+            --brand: #0b79d0;
+            --brand-dark: #095e9f;
+            --good: #1f9d55;
+            --warn: #c07b12;
+            --soft: #eef5fb;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: linear-gradient(180deg, #eaf3fb 0%, var(--bg) 180px, var(--bg) 100%);
+            color: var(--text);
+            line-height: 1.55;
+        }
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 28px 18px 50px;
+        }
+        .hero {
+            background: linear-gradient(135deg, #0b79d0 0%, #124a7c 100%);
+            color: #fff;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 14px 30px rgba(12, 35, 64, 0.18);
+        }
+        .hero h1 {
+            margin: 0 0 10px;
+            font-size: 32px;
+            line-height: 1.2;
+        }
+        .hero p {
+            margin: 8px 0 0;
+            max-width: 860px;
+            color: rgba(255, 255, 255, 0.92);
+        }
+        .hero .quick-links {
+            margin-top: 18px;
+        }
+        .hero .quick-links a {
+            display: inline-block;
+            margin: 0 10px 10px 0;
+            padding: 10px 14px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+            text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 280px minmax(0, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .side,
+        .main section {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            box-shadow: 0 8px 18px rgba(19, 37, 63, 0.06);
+        }
+        .side {
+            position: sticky;
+            top: 16px;
+            align-self: start;
+            padding: 16px;
+        }
+        .side h3,
+        .main h2,
+        .main h3 {
+            margin-top: 0;
+        }
+        .side a {
+            display: block;
+            padding: 8px 10px;
+            margin-bottom: 6px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text);
+            background: #fff;
+            border: 1px solid transparent;
+        }
+        .side a:hover {
+            border-color: var(--line);
+            background: var(--soft);
+        }
+        .main section {
+            padding: 22px;
+            margin-bottom: 18px;
+        }
+        .note,
+        .ok,
+        .warn {
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin: 12px 0;
+        }
+        .note {
+            background: #eef5fb;
+            border-left: 4px solid var(--brand);
+        }
+        .ok {
+            background: #edf9f1;
+            border-left: 4px solid var(--good);
+        }
+        .warn {
+            background: #fff7e8;
+            border-left: 4px solid var(--warn);
+        }
+        .checklist,
+        .steps,
+        .faq {
+            padding-left: 18px;
+            margin: 10px 0;
+        }
+        .checklist li,
+        .steps li,
+        .faq li {
+            margin-bottom: 8px;
+        }
+        code,
+        .code {
+            font-family: Consolas, Monaco, monospace;
+            background: #f4f6f9;
+            border: 1px solid #e1e8ef;
+            border-radius: 6px;
+            padding: 2px 6px;
+        }
+        .table-wrap {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+        th,
+        td {
+            text-align: left;
+            padding: 10px 12px;
+            border: 1px solid var(--line);
+            vertical-align: top;
+        }
+        th {
+            background: #f7fafc;
+        }
+        .footer {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        @media (max-width: 900px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            .side {
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="hero">
+            <h1>CRM Integration Help</h1>
+            <p>This guide explains how to connect SMS, Email, Google Calendar, Facebook Lead Ads, and WhatsApp Cloud API with your White Villas CRM, how routing works, and how lead assignment stays isolated by agency, user level, and user login.</p>
+            <div class="quick-links">
+                <a href="#overview">Overview</a>
+                <a href="#sms">SMS Setup</a>
+                <a href="#email">Email Setup</a>
+                <a href="#google-calendar">Google Calendar</a>
+                <a href="#facebook">Facebook Setup</a>
+                <a href="#whatsapp">WhatsApp Setup</a>
+                <a href="#routing">Routing Rules</a>
+                <a href="#security">Isolation and Access</a>
+                <a href="#troubleshooting">Troubleshooting</a>
+            </div>
+        </div>
+
+        <div class="grid">
+            <aside class="side">
+                <h3>Sections</h3>
+                <a href="#overview">1. Overview</a>
+                <a href="#settings-page">2. CRM Settings Page</a>
+                <a href="#sms">3. SMS Gateway Setup</a>
+                <a href="#email">4. Email Gateway Setup</a>
+                <a href="#google-calendar">4A. Google Calendar Setup</a>
+                <a href="#facebook">5. Facebook Lead Ads Setup</a>
+                <a href="#whatsapp">6. WhatsApp Cloud API Setup</a>
+                <a href="#routing">7. CRM Routing Rules</a>
+                <a href="#security">8. Isolation by Login / Agency / User</a>
+                <a href="#testing">9. Testing Checklist</a>
+                <a href="#troubleshooting">10. Troubleshooting</a>
+            </aside>
+
+            <main class="main">
+                <section id="overview">
+                    <h2>1. Overview</h2>
+                    <p>Your CRM integration module is designed to receive incoming leads and communications from external channels and save them into the same CRM workflow you already use. It does not change your lead business logic. It only adds new intake sources, sending gateways, and routing.</p>
+                    <div class="ok"><strong>Current flow:</strong> Facebook and WhatsApp can push leads into CRM, SMS and Email settings control how the current logged-in user sends messages, and Google Calendar can sync lead follow-ups plus calendar tasks using either a global Google account or a private user Google account.</div>
+                    <div class="note"><strong>Important:</strong> live webhook receivers need a public HTTPS URL for production. <span class="code">localhost</span> is fine for backend setup and local testing, but Meta cannot push production webhooks to localhost.</div>
+                </section>
+
+                <section id="settings-page">
+                    <h2>2. CRM Settings Page</h2>
+                    <p>The CRM Settings page now has five main areas:</p>
+                    <ul class="checklist">
+                        <li><strong>SMS</strong>: lets each allowed user choose <span class="code">Use Global SMS Settings</span> or <span class="code">Use My Own SMS Gateway</span>, save gateway fields, and send a live test SMS.</li>
+                        <li><strong>Email</strong>: lets each allowed user choose <span class="code">Use Global Email Settings</span> or <span class="code">Use My Own Email Gateway</span>, save mail fields, and send a live test email.</li>
+                        <li><strong>Google Calendar</strong>: lets super admin save a shared Google app/account, lets each allowed user switch between <span class="code">Use Global Google Calendar</span> or <span class="code">Use My Own Google Calendar</span>, connect Google, and sync follow-ups plus calendar tasks.</li>
+                        <li><strong>Facebook Lead Ads</strong>: stores app credentials, tokens, webhook settings, default assignment, lead source, and contact-link setting.</li>
+                        <li><strong>WhatsApp Cloud API</strong>: stores business account details, number IDs, tokens, webhook settings, default assignment, lead source, and contact-link setting.</li>
+                    </ul>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Field</th>
+                                    <th>Purpose</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Enabled</td>
+                                    <td>Turns that provider integration on or off.</td>
+                                </tr>
+                                <tr>
+                                    <td>Use Global / Use My Own</td>
+                                    <td>For SMS, Email, and Google Calendar, this decides whether the user keeps using the system-wide setup or saves a private setup only for that login.</td>
+                                </tr>
+                                <tr>
+                                    <td>Verify Token</td>
+                                    <td>Must match the token used in Meta webhook verification.</td>
+                                </tr>
+                                <tr>
+                                    <td>Access Token</td>
+                                    <td>Used by CRM to read or verify provider data.</td>
+                                </tr>
+                                <tr>
+                                    <td>Default Assignment</td>
+                                    <td>Used only when no specific routing rule matches.</td>
+                                </tr>
+                                <tr>
+                                    <td>Test Button</td>
+                                    <td>Lets you send one live SMS or Email, or test the saved Google Calendar connection before using it from leads and tasks.</td>
+                                </tr>
+                                <tr>
+                                    <td>Auto create/link contact</td>
+                                    <td>If checked, CRM will create or link a contact along with the imported lead.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section id="sms">
+                    <h2>3. SMS Gateway Setup</h2>
+                    <ol class="steps">
+                        <li>Open the CRM Settings page and choose <strong>SMS</strong>.</li>
+                        <li>Choose <span class="code">Use Global SMS Settings</span> if this login should keep using your existing system SMS gateway.</li>
+                        <li>Choose <span class="code">Use My Own SMS Gateway</span> if this login should send through its own private SMS provider settings.</li>
+                        <li>If you use your own gateway, fill the provider fields such as <span class="code">API Link</span>, <span class="code">Sender ID</span>, <span class="code">User Name</span>, <span class="code">Password / API Key</span>, and heading fields if your provider needs custom parameter names.</li>
+                        <li>Select the request method: <span class="code">Get</span> or <span class="code">Post</span>.</li>
+                        <li>Click <strong>Save SMS Settings</strong>.</li>
+                        <li>Use <strong>Test SMS Gateway</strong> with one mobile number before sending live messages from leads.</li>
+                    </ol>
+                    <div class="note"><strong>Lead messaging:</strong> after SMS setup, the normal <span class="code">Manage Leads &gt; Send SMS</span> and bulk SMS screens continue to use the same leads workflow, but they send according to the logged-in user mode: global SMS or that user's own SMS gateway.</div>
+                    <div class="ok"><strong>User-level behavior:</strong> Agency, Agent, Manager, Marketing, CRM, and custom user levels can keep global SMS settings or switch to a private SMS gateway if that user level has permission to open CRM Settings.</div>
+                </section>
+
+                <section id="email">
+                    <h2>4. Email Gateway Setup</h2>
+                    <ol class="steps">
+                        <li>Open the CRM Settings page and choose <strong>Email</strong>.</li>
+                        <li>Choose <span class="code">Use Global Email Settings</span> if this login should keep using your existing global Email configuration.</li>
+                        <li>Choose <span class="code">Use My Own Email Gateway</span> if this login should send through its own private mail account or SMTP gateway.</li>
+                        <li>If you use your own gateway, fill the required mail fields like <span class="code">Type</span>, <span class="code">Host</span>, <span class="code">Port</span>, <span class="code">Username</span>, <span class="code">Password</span>, and sender information.</li>
+                        <li>Click <strong>Save Email Settings</strong>.</li>
+                        <li>Use <strong>Test Email Gateway</strong> to send one live email before using bulk Email from leads.</li>
+                    </ol>
+                    <div class="note"><strong>Lead messaging:</strong> after Email setup, the normal <span class="code">Manage Leads &gt; Send Email</span> and bulk Email screens keep the same CRM flow, but send according to the logged-in user mode: global Email or that user's own Email gateway.</div>
+                </section>
+
+                <section id="google-calendar">
+                    <h2>4A. Google Calendar Setup</h2>
+                    <ol class="steps">
+                        <li>Open the CRM Settings page and choose <strong>Google Calendar</strong>.</li>
+                        <li>If you are super admin and want one shared calendar for everyone who chooses <span class="code">Use Global</span>, fill the global <span class="code">Client ID</span>, <span class="code">Client Secret</span>, and optional <span class="code">Calendar ID</span>, then save.</li>
+                        <li>If you want a private calendar for this login, choose <span class="code">Use My Own Google Calendar</span>, fill your own Google app credentials, and save.</li>
+                        <li>Copy the callback URL shown on the page into your Google OAuth app redirect URL list.</li>
+                        <li>Click <strong>Connect Global Account</strong> or <strong>Connect My Account</strong> after saving credentials.</li>
+                        <li>Turn on <span class="code">Enable Google Calendar Sync</span>, then choose whether to sync <span class="code">Lead Follow-up</span>, <span class="code">Calendar Tasks</span>, or both.</li>
+                        <li>Use <strong>Test Connection</strong> to verify the saved Google account, and use <strong>Sync My Upcoming Items</strong> once to push existing pending follow-ups and tasks.</li>
+                    </ol>
+                    <div class="note"><strong>Important:</strong> Google Calendar uses OAuth 2.0. Save credentials first, connect the account second, and only then enable live sync.</div>
+                    <div class="ok"><strong>Sync behavior:</strong> when enabled, user lead follow-up changes and Calendar module task saves push to Google Calendar automatically for that same user scope.</div>
+                </section>
+
+                <section id="facebook">
+                    <h2>5. Facebook Lead Ads Setup</h2>
+                    <ol class="steps">
+                        <li>Open the CRM Settings page and choose <strong>Facebook Lead Ads</strong>.</li>
+                        <li>Fill <span class="code">App ID</span>, <span class="code">App Secret</span>, and <span class="code">Page Access Token</span>.</li>
+                        <li>Set a <span class="code">Verify Token</span>. Use exactly the same token inside Meta webhook settings.</li>
+                        <li>Copy the CRM <span class="code">Webhook URL</span> shown on the page and register it in Meta webhook configuration.</li>
+                        <li>Select default <span class="code">Agency</span>, <span class="code">User Level</span>, and <span class="code">User</span>.</li>
+                        <li>Set optional default lead status and lead source label.</li>
+                        <li>Click <strong>Save Facebook Settings</strong>.</li>
+                    </ol>
+                    <div class="warn"><strong>Production note:</strong> Meta requires a public secure callback URL. Replace localhost with your live domain before final activation.</div>
+                </section>
+
+                <section id="whatsapp">
+                    <h2>6. WhatsApp Cloud API Setup</h2>
+                    <ol class="steps">
+                        <li>Open the CRM Settings page and choose <strong>WhatsApp Cloud API</strong>.</li>
+                        <li>Enter <span class="code">Business Account ID</span>, <span class="code">Phone Number ID</span>, <span class="code">Access Token</span>, and <span class="code">Verify Token</span>.</li>
+                        <li>Copy the CRM <span class="code">Webhook URL</span> shown on the page and register it for WhatsApp webhook events.</li>
+                        <li>Select default <span class="code">Agency</span>, <span class="code">User Level</span>, and <span class="code">User</span> for unmatched messages.</li>
+                        <li>Set default status and lead source if needed.</li>
+                        <li>Click <strong>Save WhatsApp Settings</strong>.</li>
+                    </ol>
+                    <div class="note"><strong>Current behavior:</strong> incoming WhatsApp messages can create a new lead or update an existing CRM lead path depending on your existing matching logic.</div>
+                </section>
+
+                <section id="routing">
+                    <h2>7. CRM Routing Rules</h2>
+                    <p>Use <strong>CRM Routing</strong> when one provider should send different sources to different teams or users.</p>
+                    <ul class="checklist">
+                        <li>Facebook route types: <span class="code">Form ID</span>, <span class="code">Page ID</span></li>
+                        <li>WhatsApp route type: <span class="code">Phone Number ID</span></li>
+                    </ul>
+                    <p>Routing priority is:</p>
+                    <ol class="steps">
+                        <li>Matched route rule</li>
+                        <li>Provider default assignment from CRM Settings</li>
+                    </ol>
+                    <div class="ok"><strong>Example:</strong> If Facebook Form A should go to Marketing and Facebook Form B should go to CRM team, create two routing rows with different external source IDs.</div>
+                </section>
+
+                <section id="security">
+                    <h2>8. Isolation by Login / Agency / User</h2>
+                    <p>Yes, the CRM integration assignment choices are isolated by the logged-in user scope.</p>
+                    <ul class="checklist">
+                        <li>Page access follows your normal <span class="code">page_rights</span> system.</li>
+                        <li>Super Admin keeps full access across all modules and assignments.</li>
+                        <li>If you assign rights to another user level, that level can access the page only if its page rights allow it.</li>
+                        <li>Agency and user dropdowns are loaded through your existing scoped helper logic, so non-global users should only see allowed agencies and users inside their own scope.</li>
+                        <li>SMS, Email, and Google Calendar choice is also per logged-in user. One user can keep global settings while another user on the same level can use a private gateway or Google account, depending on saved CRM settings and permission.</li>
+                    </ul>
+                    <div class="note"><strong>Meaning:</strong> the integration is not bypassing your login or role system. It is using the same user, role, and agency permission structure already active in backend.</div>
+                </section>
+
+                <section id="testing">
+                    <h2>9. Testing Checklist</h2>
+                    <ol class="steps">
+                        <li>Save SMS settings and send one test SMS if you plan to use SMS from leads.</li>
+                        <li>Save Email settings and send one test Email if you plan to use Email from leads.</li>
+                        <li>Save Google Calendar settings, connect the Google account, and use <span class="code">Sync My Upcoming Items</span> once if you plan to use calendar sync.</li>
+                        <li>Save Facebook or WhatsApp settings successfully.</li>
+                        <li>Create one test route rule if you need source-based routing.</li>
+                        <li>Send a test lead or message from the provider.</li>
+                        <li>Check <strong>CRM Sync Logs</strong> for saved event status.</li>
+                        <li>Open <strong>Manage Leads</strong> and confirm the record or send-action uses the expected assignment and gateway mode.</li>
+                        <li>Check whether contact linking is on or off depending on the checkbox setting.</li>
+                    </ol>
+                </section>
+
+                <section id="troubleshooting">
+                    <h2>10. Troubleshooting</h2>
+                    <ul class="faq">
+                        <li><strong>SMS not sending:</strong> confirm whether the user is set to <span class="code">Use Global</span> or <span class="code">Use My Own</span>, then re-check API link, sender ID, credentials, and Get/Post method.</li>
+                        <li><strong>Email not sending:</strong> re-check whether the user is using global or private gateway, then verify host, port, username, password, and sender email.</li>
+                        <li><strong>Webhook verification fails:</strong> re-check the exact verify token and public HTTPS URL.</li>
+                        <li><strong>No lead imported:</strong> confirm the provider is enabled and the access token is valid.</li>
+                        <li><strong>Wrong assignment:</strong> review CRM Routing rules first, then provider default assignment.</li>
+                        <li><strong>Lead saved but not linked as contact:</strong> check whether <span class="code">Auto create/link imported leads as customer contacts</span> is enabled.</li>
+                        <li><strong>Localhost works only in backend but not from Meta:</strong> this is expected until a public live domain is used.</li>
+                    </ul>
+                </section>
+            </main>
+        </div>
+
+        <div class="footer">White Villas CRM Integration Help for SMS, Email, Facebook Lead Ads and WhatsApp Cloud API</div>
+    </div>
+</body>
+</html>

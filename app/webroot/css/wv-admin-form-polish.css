@@ -1,0 +1,596 @@
+/* Global White Villas admin form polish. Presentation only. */
+body.wv-admin-theme .content,
+body.wv-admin-theme .modal,
+body.wv-admin-theme .popover{
+  color:#132033!important;
+}
+
+body.wv-admin-theme .page-title{
+  background:#fff!important;
+  border:1px solid #dbe5f0!important;
+  border-radius:12px!important;
+  box-shadow:0 10px 24px rgba(15,23,42,.06)!important;
+  margin:0 0 14px!important;
+  padding:14px 16px!important;
+}
+
+body.wv-admin-theme .page-title .title,
+body.wv-admin-theme .page-title h1,
+body.wv-admin-theme .page-title h2{
+  color:#07152a!important;
+  font-size:22px!important;
+  font-weight:900!important;
+  line-height:1.25!important;
+  margin:0!important;
+}
+
+body.wv-admin-theme .panel-heading,
+body.wv-admin-theme .box-header,
+body.wv-admin-theme .card-header,
+body.wv-admin-theme .modal-header{
+  background:linear-gradient(135deg,#07152a 0%,#15304f 78%,#ff0a46 160%)!important;
+  border:0!important;
+  color:#fff!important;
+}
+
+body.wv-admin-theme .panel-heading,
+body.wv-admin-theme .panel-heading *,
+body.wv-admin-theme .box-header,
+body.wv-admin-theme .box-header *,
+body.wv-admin-theme .card-header,
+body.wv-admin-theme .card-header *,
+body.wv-admin-theme .modal-header,
+body.wv-admin-theme .modal-header *{
+  color:#fff!important;
+  text-shadow:none!important;
+}
+
+body.wv-admin-theme .panel-heading .btn,
+body.wv-admin-theme .box-header .btn,
+body.wv-admin-theme .card-header .btn,
+body.wv-admin-theme .modal-header .btn{
+  color:#fff!important;
+}
+
+body.wv-admin-theme .page-title .btn,
+body.wv-admin-theme .panel-heading .btn,
+body.wv-admin-theme .box-header .btn,
+body.wv-admin-theme .card-header .btn,
+body.wv-admin-theme .modal-header .btn{
+  align-items:center!important;
+  border-radius:8px!important;
+  border-style:solid!important;
+  border-width:1px!important;
+  box-shadow:0 8px 18px rgba(2,8,23,.16)!important;
+  display:inline-flex!important;
+  font-weight:900!important;
+  gap:6px!important;
+  min-height:34px!important;
+  padding:8px 13px!important;
+  text-decoration:none!important;
+  text-shadow:none!important;
+  white-space:nowrap!important;
+}
+
+body.wv-admin-theme .page-title .btn *,
+body.wv-admin-theme .panel-heading .btn *,
+body.wv-admin-theme .box-header .btn *,
+body.wv-admin-theme .card-header .btn *,
+body.wv-admin-theme .modal-header .btn *{
+  color:inherit!important;
+  text-shadow:none!important;
+}
+
+body.wv-admin-theme .page-title .btn-default,
+body.wv-admin-theme .page-title .btn-secondary,
+body.wv-admin-theme .panel-heading .btn-default,
+body.wv-admin-theme .panel-heading .btn-secondary,
+body.wv-admin-theme .box-header .btn-default,
+body.wv-admin-theme .box-header .btn-secondary,
+body.wv-admin-theme .card-header .btn-default,
+body.wv-admin-theme .card-header .btn-secondary,
+body.wv-admin-theme .modal-header .btn-default,
+body.wv-admin-theme .modal-header .btn-secondary{
+  background:#fff!important;
+  border-color:#d7e3ef!important;
+  color:#07152a!important;
+}
+
+body.wv-admin-theme .page-title .btn-primary,
+body.wv-admin-theme .panel-heading .btn-primary,
+body.wv-admin-theme .box-header .btn-primary,
+body.wv-admin-theme .card-header .btn-primary,
+body.wv-admin-theme .modal-header .btn-primary{
+  background:#1d4ed8!important;
+  border-color:#1d4ed8!important;
+  color:#fff!important;
+}
+
+body.wv-admin-theme .page-title .btn-success,
+body.wv-admin-theme .panel-heading .btn-success,
+body.wv-admin-theme .box-header .btn-success,
+body.wv-admin-theme .card-header .btn-success,
+body.wv-admin-theme .modal-header .btn-success{
+  background:#047857!important;
+  border-color:#047857!important;
+  color:#fff!important;
+}
+
+body.wv-admin-theme .page-title .btn-info,
+body.wv-admin-theme .panel-heading .btn-info,
+body.wv-admin-theme .box-header .btn-info,
+body.wv-admin-theme .card-header .btn-info,
+body.wv-admin-theme .modal-header .btn-info{
+  background:#0e7490!important;
+  border-color:#0e7490!important;
+  color:#fff!important;
+}
+
+body.wv-admin-theme .page-title .btn-warning,
+body.wv-admin-theme .panel-heading .btn-warning,
+body.wv-admin-theme .box-header .btn-warning,
+body.wv-admin-theme .card-header .btn-warning,
+body.wv-admin-theme .modal-header .btn-warning{
+  background:#f59e0b!important;
+  border-color:#f59e0b!important;
+  color:#111827!important;
+}
+
+body.wv-admin-theme .page-title .btn-danger,
+body.wv-admin-theme .panel-heading .btn-danger,
+body.wv-admin-theme .box-header .btn-danger,
+body.wv-admin-theme .card-header .btn-danger,
+body.wv-admin-theme .modal-header .btn-danger{
+  background:#dc2626!important;
+  border-color:#dc2626!important;
+  color:#fff!important;
+}
+
+body.wv-admin-theme .page-title .btn:hover,
+body.wv-admin-theme .panel-heading .btn:hover,
+body.wv-admin-theme .box-header .btn:hover,
+body.wv-admin-theme .card-header .btn:hover,
+body.wv-admin-theme .modal-header .btn:hover{
+  filter:brightness(.96);
+  text-decoration:none!important;
+  transform:translateY(-1px);
+}
+
+body.wv-admin-theme .modal-content{
+  border:1px solid #dbe5f0!important;
+  border-radius:14px!important;
+  box-shadow:0 24px 70px rgba(2,8,23,.28)!important;
+  overflow:hidden;
+}
+
+body.wv-admin-theme .modal-body,
+body.wv-admin-theme .modal-footer{
+  background:#f6f9fd!important;
+  color:#132033!important;
+}
+
+body.wv-admin-theme .modal-header .close,
+body.wv-admin-theme .panel-heading .close{
+  color:#fff!important;
+  opacity:.9!important;
+  text-shadow:none!important;
+}
+
+body.wv-admin-theme .invpaid-toolbar-card .invpaid-filter-row .input-group.date .input-group-addon,
+body.wv-admin-theme .invpastdue-toolbar-card .invpastdue-filter-row .input-group.date .input-group-addon{
+  align-items:center!important;
+  background:#fff!important;
+  border-color:#cbd8e8!important;
+  border-left:0!important;
+  border-radius:0 6px 6px 0!important;
+  color:#07152a!important;
+  display:table-cell!important;
+  height:38px!important;
+  min-width:42px!important;
+  text-align:center!important;
+  text-shadow:none!important;
+  vertical-align:middle!important;
+}
+
+body.wv-admin-theme .invpaid-toolbar-card .invpaid-filter-row .input-group.date .input-group-addon .fa,
+body.wv-admin-theme .invpaid-toolbar-card .invpaid-filter-row .input-group.date .input-group-addon .fa:before,
+body.wv-admin-theme .invpastdue-toolbar-card .invpastdue-filter-row .input-group.date .input-group-addon .fa,
+body.wv-admin-theme .invpastdue-toolbar-card .invpastdue-filter-row .input-group.date .input-group-addon .fa:before{
+  color:#07152a!important;
+  font-size:14px!important;
+  opacity:1!important;
+  text-shadow:none!important;
+}
+
+body.wv-admin-theme .bootstrap-datetimepicker-widget,
+body.wv-admin-theme .bootstrap-datetimepicker-widget.dropdown-menu{
+  background:#07152a!important;
+  border:1px solid #1f3b5c!important;
+  border-radius:10px!important;
+  box-shadow:0 18px 38px rgba(2,8,23,.32)!important;
+  color:#fff!important;
+  overflow:hidden;
+}
+
+body.wv-admin-theme .bootstrap-datetimepicker-widget table,
+body.wv-admin-theme .bootstrap-datetimepicker-widget table td,
+body.wv-admin-theme .bootstrap-datetimepicker-widget table th,
+body.wv-admin-theme .bootstrap-datetimepicker-widget table td span,
+body.wv-admin-theme .bootstrap-datetimepicker-widget .timepicker-hour,
+body.wv-admin-theme .bootstrap-datetimepicker-widget .timepicker-minute,
+body.wv-admin-theme .bootstrap-datetimepicker-widget .timepicker-second,
+body.wv-admin-theme .bootstrap-datetimepicker-widget .picker-switch{
+  color:#fff!important;
+  text-shadow:none!important;
+}
+
+body.wv-admin-theme .bootstrap-datetimepicker-widget table th.dow{
+  color:#7cf9ff!important;
+  font-size:11px!important;
+  font-weight:900!important;
+  text-transform:uppercase!important;
+}
+
+body.wv-admin-theme .bootstrap-datetimepicker-widget table td.old,
+body.wv-admin-theme .bootstrap-datetimepicker-widget table td.new,
+body.wv-admin-theme .bootstrap-datetimepicker-widget table td span.old{
+  color:#7f93ad!important;
+}
+
+body.wv-admin-theme .bootstrap-datetimepicker-widget table td.day:hover,
+body.wv-admin-theme .bootstrap-datetimepicker-widget table td.hour:hover,
+body.wv-admin-theme .bootstrap-datetimepicker-widget table td.minute:hover,
+body.wv-admin-theme .bootstrap-datetimepicker-widget table td.second:hover,
+body.wv-admin-theme .bootstrap-datetimepicker-widget table td span:hover,
+body.wv-admin-theme .bootstrap-datetimepicker-widget thead tr:first-child th:hover{
+  background:#102746!important;
+  color:#fff!important;
+}
+
+body.wv-admin-theme .bootstrap-datetimepicker-widget table td.active,
+body.wv-admin-theme .bootstrap-datetimepicker-widget table td.active:hover,
+body.wv-admin-theme .bootstrap-datetimepicker-widget table td span.active{
+  background:#ff0a46!important;
+  color:#fff!important;
+  text-shadow:none!important;
+}
+
+body.wv-admin-theme .bootstrap-datetimepicker-widget table td.today:before{
+  border-bottom-color:#7cf9ff!important;
+}
+
+body.wv-admin-theme .bootstrap-datetimepicker-widget.bottom:after{
+  border-bottom-color:#07152a!important;
+}
+
+body.wv-admin-theme .bootstrap-datetimepicker-widget.bottom:before{
+  border-bottom-color:#1f3b5c!important;
+}
+
+body.wv-admin-theme .bootstrap-datetimepicker-widget.top:after{
+  border-top-color:#07152a!important;
+}
+
+body.wv-admin-theme .bootstrap-datetimepicker-widget.top:before{
+  border-top-color:#1f3b5c!important;
+}
+
+body.wv-admin-theme .content form.form-horizontal:not(.wv-no-auto-layout):not(.form-inline),
+body.wv-admin-theme .modal-body form.form-horizontal:not(.wv-no-auto-layout):not(.form-inline){
+  align-items:start;
+  display:grid!important;
+  gap:14px 16px!important;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+  margin:0!important;
+}
+
+body.wv-admin-theme .content form.form-horizontal:not(.wv-no-auto-layout):not(.form-inline) > .form-group,
+body.wv-admin-theme .modal-body form.form-horizontal:not(.wv-no-auto-layout):not(.form-inline) > .form-group{
+  background:#fff!important;
+  border:1px solid #dbe5f0!important;
+  border-radius:12px!important;
+  box-shadow:0 10px 22px rgba(15,23,42,.05)!important;
+  display:grid!important;
+  gap:7px!important;
+  grid-template-columns:1fr!important;
+  margin:0!important;
+  min-width:0!important;
+  padding:13px!important;
+}
+
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .form-group.wv-auto-grid{
+  display:grid!important;
+  gap:12px 14px!important;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr))!important;
+}
+
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .form-group.wv-auto-grid > .wv-auto-field{
+  min-width:0!important;
+}
+
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .form-group.wv-auto-grid > .wv-auto-field > label,
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .form-group.wv-auto-grid > .wv-auto-field > label.control-label,
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .form-group.wv-auto-grid > .wv-auto-field > label[class*="col-"]{
+  display:block!important;
+  float:none!important;
+  margin:0 0 7px!important;
+  max-width:none!important;
+  min-height:0!important;
+  padding:0!important;
+  text-align:left!important;
+  width:100%!important;
+}
+
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .form-group.wv-auto-grid > .wv-auto-field > div[class*="col-"],
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .form-group.wv-auto-grid > .wv-auto-field > span[class*="col-"]{
+  display:block!important;
+  float:none!important;
+  margin:0!important;
+  max-width:none!important;
+  padding-left:0!important;
+  padding-right:0!important;
+  width:100%!important;
+}
+
+body.wv-admin-theme .content form.form-horizontal:not(.wv-no-auto-layout) > .panel,
+body.wv-admin-theme .content form.form-horizontal:not(.wv-no-auto-layout) > .row,
+body.wv-admin-theme .content form.form-horizontal:not(.wv-no-auto-layout) > .alert,
+body.wv-admin-theme .content form.form-horizontal:not(.wv-no-auto-layout) > .table-responsive,
+body.wv-admin-theme .content form.form-horizontal:not(.wv-no-auto-layout) > fieldset,
+body.wv-admin-theme .content form.form-horizontal:not(.wv-no-auto-layout) > hr,
+body.wv-admin-theme .modal-body form.form-horizontal:not(.wv-no-auto-layout) > .panel,
+body.wv-admin-theme .modal-body form.form-horizontal:not(.wv-no-auto-layout) > .row,
+body.wv-admin-theme .modal-body form.form-horizontal:not(.wv-no-auto-layout) > .alert,
+body.wv-admin-theme .modal-body form.form-horizontal:not(.wv-no-auto-layout) > .table-responsive,
+body.wv-admin-theme .modal-body form.form-horizontal:not(.wv-no-auto-layout) > fieldset,
+body.wv-admin-theme .modal-body form.form-horizontal:not(.wv-no-auto-layout) > hr{
+  grid-column:1/-1!important;
+}
+
+body.wv-admin-theme .content form.form-horizontal:not(.wv-no-auto-layout) > .form-group.text-left,
+body.wv-admin-theme .content form.form-horizontal:not(.wv-no-auto-layout) > .form-group.text-right,
+body.wv-admin-theme .content form.form-horizontal:not(.wv-no-auto-layout) > .form-group.form-actions,
+body.wv-admin-theme .content form.form-horizontal:not(.wv-no-auto-layout) > .form-group.wv-form-actions,
+body.wv-admin-theme .content form.form-horizontal:not(.wv-no-auto-layout) > .form-group:has(button[type="submit"]),
+body.wv-admin-theme .content form.form-horizontal:not(.wv-no-auto-layout) > .form-group:has(input[type="submit"]),
+body.wv-admin-theme .modal-body form.form-horizontal:not(.wv-no-auto-layout) > .form-group.text-left,
+body.wv-admin-theme .modal-body form.form-horizontal:not(.wv-no-auto-layout) > .form-group.text-right,
+body.wv-admin-theme .modal-body form.form-horizontal:not(.wv-no-auto-layout) > .form-group.form-actions,
+body.wv-admin-theme .modal-body form.form-horizontal:not(.wv-no-auto-layout) > .form-group.wv-form-actions,
+body.wv-admin-theme .modal-body form.form-horizontal:not(.wv-no-auto-layout) > .form-group:has(button[type="submit"]),
+body.wv-admin-theme .modal-body form.form-horizontal:not(.wv-no-auto-layout) > .form-group:has(input[type="submit"]){
+  align-items:center!important;
+  background:#f8fbff!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:8px!important;
+  grid-column:1/-1!important;
+  justify-content:flex-end!important;
+}
+
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .form-group > label,
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .form-group > label.control-label,
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .form-group > label[class*="col-"]{
+  display:block!important;
+  float:none!important;
+  margin:0!important;
+  max-width:none!important;
+  min-height:0!important;
+  padding:0!important;
+  text-align:left!important;
+  width:100%!important;
+}
+
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .form-group > div[class*="col-"],
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .form-group > span[class*="col-"]{
+  display:block!important;
+  float:none!important;
+  margin:0!important;
+  max-width:none!important;
+  padding-left:0!important;
+  padding-right:0!important;
+  width:100%!important;
+}
+
+body.wv-admin-theme label,
+body.wv-admin-theme .control-label,
+body.wv-admin-theme legend{
+  color:#07152a!important;
+  font-size:11px!important;
+  font-weight:900!important;
+  letter-spacing:.02em!important;
+  line-height:1.35!important;
+  text-transform:uppercase!important;
+}
+
+body.wv-admin-theme .help-block,
+body.wv-admin-theme .help-inline,
+body.wv-admin-theme small,
+body.wv-admin-theme .text-muted{
+  color:#58677a!important;
+  font-size:11px!important;
+  font-weight:700!important;
+  line-height:1.45!important;
+}
+
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .form-control,
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) select,
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) textarea,
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) input[type="text"],
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) input[type="email"],
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) input[type="password"],
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) input[type="number"],
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) input[type="date"],
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) input[type="time"],
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) input[type="url"],
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) input[type="tel"],
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) input[type="file"]{
+  background:#fbfdff!important;
+  border:1px solid #cbd8e8!important;
+  border-radius:9px!important;
+  box-shadow:none!important;
+  color:#07152a!important;
+  font-size:13px!important;
+  font-weight:800!important;
+  height:40px!important;
+  max-width:100%!important;
+  min-width:0!important;
+  width:100%!important;
+}
+
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) textarea,
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) textarea.form-control{
+  height:auto!important;
+  min-height:112px!important;
+  resize:vertical;
+}
+
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) input[type="file"]{
+  align-items:center;
+  display:flex;
+  height:auto!important;
+  min-height:42px!important;
+  padding:9px!important;
+}
+
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .form-control:focus,
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) select:focus,
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) textarea:focus,
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) input:focus{
+  border-color:#ff0a46!important;
+  box-shadow:0 0 0 4px rgba(255,10,70,.11)!important;
+  outline:0!important;
+}
+
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) input[type="checkbox"],
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) input[type="radio"],
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) input[type="checkbox"].form-control,
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) input[type="radio"].form-control{
+  box-shadow:none!important;
+  display:inline-block!important;
+  height:18px!important;
+  margin:0 7px 0 0!important;
+  min-height:18px!important;
+  vertical-align:middle!important;
+  width:18px!important;
+}
+
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .checkbox,
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .radio,
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .checkbox-inline,
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .radio-inline{
+  align-items:center!important;
+  color:#07152a!important;
+  display:inline-flex!important;
+  font-size:12px!important;
+  font-weight:800!important;
+  gap:5px!important;
+  margin:4px 14px 4px 0!important;
+  min-height:28px!important;
+  padding-left:0!important;
+  text-transform:none!important;
+}
+
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .checkbox input,
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .radio input,
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .checkbox-inline input,
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .radio-inline input{
+  position:static!important;
+}
+
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .input-group{
+  align-items:stretch!important;
+  display:flex!important;
+  width:100%!important;
+}
+
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .input-group .form-control{
+  flex:1 1 auto!important;
+  width:1%!important;
+}
+
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .input-group-addon,
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .input-group-btn .btn{
+  align-items:center!important;
+  background:#fff!important;
+  border:1px solid #cbd8e8!important;
+  color:#07152a!important;
+  display:inline-flex!important;
+  font-weight:900!important;
+  height:40px!important;
+  justify-content:center!important;
+  min-width:40px!important;
+}
+
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .select2-container,
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .select2-container .select2-choice,
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .select2-container-multi .select2-choices,
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .btn-group,
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .multiselect-native-select,
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .multiselect{
+  max-width:100%!important;
+  width:100%!important;
+}
+
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .select2-container .select2-choice,
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .select2-container-multi .select2-choices,
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .multiselect{
+  min-height:40px!important;
+}
+
+body.wv-admin-theme form.form-horizontal:not(.wv-no-auto-layout) .btn,
+body.wv-admin-theme .form-actions .btn,
+body.wv-admin-theme .modal-footer .btn{
+  align-items:center!important;
+  display:inline-flex!important;
+  justify-content:center!important;
+  min-width:86px;
+  white-space:nowrap!important;
+}
+
+body.wv-admin-theme .validationEngineContainer .formError,
+body.wv-admin-theme .formError{
+  z-index:20000!important;
+}
+
+body.wv-admin-theme .tab-content form.form-horizontal:not(.wv-no-auto-layout),
+body.wv-admin-theme .panel-body form.form-horizontal:not(.wv-no-auto-layout),
+body.wv-admin-theme .modal-body form.form-horizontal:not(.wv-no-auto-layout){
+  width:100%!important;
+}
+
+body.wv-admin-theme .content .panel-body:after,
+body.wv-admin-theme .modal-body:after{
+  clear:both;
+  content:"";
+  display:table;
+}
+
+@media (max-width:1199px){
+  body.wv-admin-theme .content form.form-horizontal:not(.wv-no-auto-layout):not(.form-inline),
+  body.wv-admin-theme .modal-body form.form-horizontal:not(.wv-no-auto-layout):not(.form-inline){
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  }
+}
+
+@media (max-width:767px){
+  body.wv-admin-theme .content{
+    padding:10px!important;
+  }
+  body.wv-admin-theme .content form.form-horizontal:not(.wv-no-auto-layout):not(.form-inline),
+  body.wv-admin-theme .modal-body form.form-horizontal:not(.wv-no-auto-layout):not(.form-inline){
+    grid-template-columns:1fr!important;
+  }
+  body.wv-admin-theme .content form.form-horizontal:not(.wv-no-auto-layout) > .form-group,
+  body.wv-admin-theme .modal-body form.form-horizontal:not(.wv-no-auto-layout) > .form-group{
+    padding:11px!important;
+  }
+  body.wv-admin-theme .page-title .title,
+  body.wv-admin-theme .page-title h1{
+    font-size:18px!important;
+  }
+  body.wv-admin-theme .modal-dialog{
+    margin:8px!important;
+    width:auto!important;
+  }
+}

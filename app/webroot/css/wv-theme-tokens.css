@@ -1,0 +1,23 @@
+:root{
+  --wv-navy:#07152a;
+  --wv-navy-2:#102746;
+  --wv-red:#ff0a46;
+  --wv-red-dark:#c70032;
+  --wv-cyan:#7cf9ff;
+  --wv-green:#047857;
+  --wv-gold:#ffb000;
+  --wv-bg:#f4f7fb;
+  --wv-surface:#ffffff;
+  --wv-surface-soft:#f8fbff;
+  --wv-border:#dfe8f3;
+  --wv-border-strong:#cfdbe9;
+  --wv-text:#07152a;
+  --wv-muted:#64748b;
+  --wv-shadow-sm:0 8px 18px rgba(15,23,42,.07);
+  --wv-shadow-md:0 16px 34px rgba(15,23,42,.11);
+  --wv-shadow-lg:0 24px 54px rgba(15,23,42,.16);
+  --wv-radius-sm:6px;
+  --wv-radius:10px;
+  --wv-radius-lg:14px;
+  --wv-font:"Raleway","Segoe UI",Arial,sans-serif;
+}

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utility Bill - Letter Size Seamless</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap');
+        
+        * {
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            padding: 0; 
+            margin: 0;
+        }
+
+        .urdu-font {
+            font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif;
+        }
+
+        .charges-table td:nth-child(2) {
+            font-weight: 800;
+        }
+
+        /* STRICT LETTER DIMENSIONS WITH 5MM HORIZONTAL MARGINS */
+        .page {
+            width: 205.9mm;
+            height: 275mm; 
+            min-width: 205.9mm;
+            min-height: 275mm;
+            max-width: 205.9mm;
+            max-height: 275mm;
+            background-color: white;
+            border: 3px solid #1e3a8a;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            margin: 2mm auto; 
+            padding: 0;
+        }
+
+        @media print {
+            @page {
+                size: Letter;
+                margin: 0; 
+            }
+            html, body {
+                height: 100%;
+                overflow: hidden;
+                background-color: white;
+            }
+            .page {
+                margin-top: 2mm !important;
+                margin-bottom: 2mm !important;
+                margin-left: 5mm !important;
+                margin-right: 5mm !important;
+                border: 3px solid #1e3a8a !important;
+                box-shadow: none !important;
+                width: 205.9mm !important;
+                height: 275mm !important;
+                page-break-after: avoid !important;
+                page-break-inside: avoid !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            /* Explicit colors for print */
+            .late-fee-highlight { background-color: #dc2626 !important; color: white !important; }
+            .section-header-blue { background-color: #1e3a8a !important; color: white !important; }
+        }
+    
+        .page table, .page th, .page td { border-color:#111827 !important; }
+        .page .divide-gray-200 > :not([hidden]) ~ :not([hidden]) { border-color:#111827 !important; }
+
+        .subm-history-table {
+            border-collapse: collapse !important;
+            border-spacing: 0 !important;
+            table-layout: fixed !important;
+            width: 100% !important;
+            height: auto !important; 
+        }
+        .subm-history-table th, .subm-history-table td {
+            border: 1px solid #111827 !important;
+            vertical-align: middle;
+            text-align: center !important;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding: 2px 4px !important;
+        }
+
+        .meter-img-container img {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            display: block;
+        }
+
+        .thick-section-border {
+            border: 2px solid #1e3a8a !important;
+        }
+
+    
+/* subm-template-print-consistency */
+@media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+</style>
+</head>
+<body>
+
+    <!-- Page Container -->
+    <div class="page">
+        
+        <!-- Header Section -->
+        <div class="bg-white py-1 px-4 flex items-center relative">
+            <div class="w-1/4">
+                <img src="{{society_logo}}" alt="Logo" class="h-14 w-auto max-w-[150px] object-contain">
+            </div>
+            
+            <div class="w-2/4 text-center">
+                <h1 class="text-[28px] font-black uppercase tracking-widest text-blue-900 leading-none">{{society_name}}</h1>
+                <p class="text-[10px] font-medium text-black mt-0.5 leading-tight">{{society_address}}</p>
+                <p class="text-[10px] font-bold text-green-800 tracking-wide">Mobile: {{society_mobile}}</p>
+            </div>
+            
+            <div class="w-1/4 flex justify-end items-center">
+                <span class="bg-blue-600 text-white px-3 py-1 rounded-sm text-[9px] uppercase tracking-widest font-black shadow-lg">Utility Invoice</span>
+            </div>
+        </div>
+
+        <!-- Summary Grid -->
+        <div class="grid grid-cols-6 thick-section-border text-center text-[9px] divide-x-2 divide-blue-300 bg-white">
+            <div class="flex flex-col">
+                <div class="py-1 bg-blue-50 font-bold text-blue-700 uppercase border-b border-blue-200">Bill No</div>
+                <div class="py-1 font-mono font-black text-slate-900 text-[10px] leading-tight">{{bill_no}}</div>
+            </div>
+            <div class="flex flex-col">
+                <div class="py-1 bg-blue-50 font-bold text-blue-700 uppercase border-b border-blue-200">Consumer ID</div>
+                <div class="py-1 font-mono font-black text-slate-900 text-[10px] leading-tight">{{consumer_id}}</div>
+            </div>
+            <div class="flex flex-col">
+                <div class="py-1 bg-blue-50 font-bold text-blue-700 uppercase border-b border-blue-200">Property</div>
+                <div class="py-1 font-mono font-black text-slate-900 text-[10px] leading-tight">{{property_id}}</div>
+            </div>
+            <div class="flex flex-col">
+                <div class="py-1 bg-blue-50 font-bold text-blue-700 uppercase border-b border-blue-200">Billing Month</div>
+                <div class="py-1 font-mono font-black text-slate-900 text-[10px] leading-tight">{{billing_month}}</div>
+            </div>
+            <div class="flex flex-col">
+                <div class="py-1 bg-blue-50 font-bold text-blue-700 uppercase border-b border-blue-200">Issue Date</div>
+                <div class="py-1 font-mono font-black text-slate-900 text-[10px] leading-tight">{{issue_date}}</div>
+            </div>
+            <div class="flex flex-col bg-blue-50/50">
+                <div class="py-1 bg-blue-100 font-bold text-blue-900 uppercase border-b border-blue-200">Due Date</div>
+                <div class="py-1 text-red-600 font-black font-mono text-[10px] leading-tight">{{due_date}}</div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="flex flex-grow overflow-hidden">
+            
+            <!-- Left Column -->
+            <div class="flex-[7] flex flex-col border-r-2 border-blue-300">
+                <!-- Consumer Information -->
+                <section class="thick-section-border border-b-0">
+                    <h3 class="bg-blue-900 px-3 py-1 text-[9px] font-bold text-white uppercase tracking-wide flex justify-between items-center text-center">
+                        Consumer Information
+                        <span class="text-blue-300">RESIDENTIAL</span>
+                    </h3>
+                    <div class="p-1.5 bg-blue-50/10">
+                        <p class="text-[8px] font-semibold text-blue-600 uppercase">Resident / Owner</p>
+                        <p class="text-[10px] font-black text-slate-900 uppercase leading-none">{{client_name}}</p>
+                        <p class="text-[9px] font-black text-slate-700 uppercase tracking-wide mt-0.5">{{property_id}}</p>
+                        <p class="text-[9.5px] text-slate-700 leading-tight">{{client_address}}</p>
+                    </div>
+                </section>
+
+                <!-- Meter Reading Details -->
+                <section class="thick-section-border border-b-0">
+                    <h3 class="bg-blue-100 px-3 py-1 text-[9px] font-black text-blue-800 border-b border-blue-900 uppercase tracking-wide">Meter Reading Details</h3>
+                    <div class="overflow-hidden">
+                        <table class="w-full text-[10px]">
+                            <thead class="bg-blue-50 text-blue-700 border-b border-blue-300 uppercase font-bold text-[9px]">
+                                <tr>
+                                    <th class="py-0.5 px-2 text-center border-r border-blue-300">Previous</th>
+                                    <th class="py-0.5 px-2 text-center border-r border-blue-300">Current</th>
+                                    <th class="py-0.5 px-2 text-center border-r border-blue-300">Units</th>
+                                    <th class="py-0.5 px-2 text-center">Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-slate-900 font-medium text-center divide-y divide-blue-100 font-bold">
+                                <tr>
+                                    <td class="py-1 border-r-2 border-blue-300">{{prev_reading}}</td>
+                                    <td class="py-1 border-r-2 border-blue-300 font-black">{{curr_reading}}</td>
+                                    <td class="py-1 border-r-2 border-blue-300 font-black bg-blue-50/30">{{units_consumed}}</td>
+                                    <td class="py-1 font-black">{{unit_price}}</td>
+                                </tr>
+                                <tr class="bg-blue-50/20">
+                                    <td colspan="4" class="py-0.5 font-bold text-blue-800 text-[10px]">
+                                        <span class="uppercase text-[8px] tracking-wide text-blue-600 mr-2 font-black">Calc:</span>
+                                        {{energy_calculation}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Meter Image & Notes -->
+                <div class="flex thick-section-border border-b-0">
+                    <div class="flex-[3] border-r-2 border-blue-900">
+                        <h3 class="bg-blue-100 px-3 py-1 text-[9px] font-black text-blue-800 border-b border-blue-900 uppercase tracking-wide text-center">Ref. Meter Image</h3>
+                        <div class="p-1 bg-white flex justify-center h-48">
+                            <div class="w-full bg-blue-50 flex items-center justify-center relative overflow-hidden h-full meter-img-container">
+                                {{meter_image}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex-[2]">
+                        <h3 class="bg-red-600 px-3 py-1 text-[13px] font-bold text-white text-center urdu-font border-b border-red-400 uppercase leading-none">نوٹس</h3>
+                        <div class="bg-red-50/10 flex flex-col items-center justify-center text-center p-1.5 h-48 overflow-hidden text-[11px] urdu-font leading-tight">
+                             {{preview_caution}}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment History & Late Fee Warning Section -->
+                <section class="flex-grow flex flex-col overflow-hidden bg-white thick-section-border">
+                    <h3 class="bg-blue-900 px-3 py-1 text-[9px] font-bold text-white uppercase tracking-wide text-center">Payment History (Last 12 Months)</h3>
+                    <div class="flex-grow overflow-auto bg-white">
+                        <table class="subm-history-table text-[10px]">
+                            <thead class="bg-blue-50 text-blue-700 uppercase font-bold text-[9px]">
+                                <tr>
+                                    <th>Month</th>
+                                    <th>Units</th>
+                                    <th>Bill AMT</th>
+                                    <th>Paid AMT</th>
+                                    <th>Adj.</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-slate-800 font-medium leading-none">
+                                {{history_rows}}
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- MOVED HERE: Late Fee Warning under History Table -->
+                    <div class="bg-red-600 late-fee-highlight text-white py-1.5 px-3 border-t border-red-800 urdu-font">
+                        <p class="font-black text-[12px] leading-none text-center">لیٹ پیمنٹ کی صورت میں جرمانہ عائد کیا جائے گا۔</p>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Column -->
+            <div class="flex-[5] flex flex-col">
+                <div class="thick-section-border overflow-hidden border-b-0">
+                    <h3 class="bg-blue-900 px-3 py-1 text-[9px] font-bold text-white uppercase tracking-wide text-center">Current Charges</h3>
+                    <div class="bg-white">
+                        <table class="w-full text-[10px] border-collapse charges-table">
+                            <thead class="bg-blue-50 border-b-2 border-blue-300">
+                                <tr>
+                                    <th class="p-1 px-3 text-left text-blue-700 font-bold uppercase border-r border-blue-300 text-[9px]">Description</th>
+                                    <th class="p-1 px-3 text-right text-blue-700 font-bold uppercase text-[9px]">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-blue-200">
+                                {{utility_rows}}
+                                {{maintenance_rows}}
+                                {{other_rows}}  
+                                
+                                <tr class="bg-blue-50/50 text-slate-800 border-t-2 border-blue-900">
+                                    <td class="p-1 px-3 border-r border-blue-300 font-bold uppercase text-[9px]">Adjustments</td>
+                                    <td class="p-1 px-3 text-right text-[10px] font-bold">
+                                        {{adjustment_note}} <span class="text-blue-700">+{{adjustment_debit}}</span>/<span class="text-red-600">-{{adjustment_credit}}</span>
+                                    </td>
+                                </tr>
+
+                                <tr class="bg-blue-50 text-slate-900 font-bold border-t-2 border-blue-900">
+                                    <td class="p-1 px-3 border-r border-blue-300 font-bold uppercase text-[9px]">Arrears / Previous</td>
+                                    <td class="p-1 px-3 text-right text-[10px] font-black">{{arrears}}</td>
+                                </tr>
+                                
+                                <tr class="bg-blue-900 section-header-blue text-white font-black border-t-2 border-blue-500">
+                                    <td class="p-1.5 px-3 text-[11px] border-r border-blue-700 uppercase tracking-wide font-black">Payable Within Due</td>
+                                    <td class="p-1.5 px-3 text-right text-[10px] leading-none">{{total_amount}}</td>
+                                </tr>
+                                <tr class="bg-white text-red-600 font-bold border-t border-blue-200">
+                                    <td class="p-1 px-3 text-[9px] border-r border-blue-300 text-right uppercase font-bold">Late Fee</td>
+                                    <td class="p-1 px-3 text-right text-[10px] font-black">{{late_fee}}</td>
+                                </tr>
+                                <tr class="bg-red-600 late-fee-highlight text-white font-bold border-t border-blue-200">
+                                    <td class="p-1 px-3 text-[9px] border-r border-blue-300 text-right uppercase font-black">Payable After Due</td>
+                                    <td class="p-1 px-3 text-right text-[10px] font-black leading-none">{{payable_after_due}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Unified Payment & Instructions Container -->
+                <div class="thick-section-border flex flex-col flex-grow bg-white">
+                    <div class="border-b border-blue-900 p-1.5 px-3 bg-white text-[9px] text-slate-600 leading-tight">
+                        {{bank_details}}
+                    </div>
+                    
+                    <div class="bg-blue-900 section-header-blue py-1 px-3 border-b border-blue-900 flex-shrink-0">
+                        <p class="urdu-font text-[12px] font-bold text-white text-center">آن لائن بل کی ادائیگی و ہدایات</p>
+                    </div>
+
+                    <!-- Single Integrated Section Container -->
+                    <div class="p-2 urdu-font text-blue-900 flex-grow overflow-hidden flex flex-col justify-between" dir="rtl">
+                        
+                        <!-- 1. Payment Rules & Proof Requirements -->
+                        <ul class="text-[9px] font-black leading-tight space-y-1 text-right mb-2">
+                            <li>● ادائیگی صرف بل پر درج بینک اکاؤنٹ یا کیو آر کوڈ کے ذریعے کریں۔</li>
+                            <li>● ادائیگی کے بعد اسکرین شاٹ یا بینک رسید لازمی ارسال کریں۔ ریفرنس نمبر واضح طور پر درج کریں۔</li>
+                            <li>● ادائیگی کی تصدیق عموماً 24 گھنٹوں کے اندر مکمل کر دی جاتی ہے۔</li>
+                            <li>● اگر 24 گھنٹوں میں بل اپڈیٹ نہ ہو تو براہِ کرم وائٹ ولاز انتظامیہ سے رابطہ کریں۔</li>
+                        </ul>
+
+                        <!-- 2. Portal Upload Instructions & QR -->
+                        <div class="p-1.5 bg-blue-50/50 rounded-lg border-2 border-blue-600 flex flex-row-reverse items-center gap-2 mb-2">
+                            <div class="flex-shrink-0 bg-white p-0.5 border border-slate-200 shadow-sm rounded-md w-12 h-12 flex items-center justify-center">
+                                <img src="https://whitevillas.com.pk/wp-content/uploads/2026/02/qr-code.png" alt="Online Bill QR" class="w-full h-full object-contain">
+                            </div>
+                            <div class="text-right flex-grow">
+                                <p class="urdu-font text-[9.5px] font-black leading-none text-blue-900 mb-1">اپنی ادائیگی کی رسید پورٹل پر اپ لوڈ کریں:</p>
+                                <p dir="ltr" class="text-[9px] text-blue-600 underline font-black leading-none mb-1">https://whitevillas.com.pk/billing</p>
+                                <p class="urdu-font text-[8.5px] font-black text-slate-800 leading-none italic">آئی ڈی سے بل چیک کریں، پھر 'Pay Bill' منتخب کر کے تفصیلات پُر کریں۔</p>
+                            </div>
+                        </div>
+
+                        <!-- 3. Safety Advice (Late Fee Warning moved out to history table) -->
+                        <div class="space-y-1 border-t border-blue-200 pt-1.5">
+                            <p class="font-black text-[9px] leading-tight text-right">گھر سے باہر جاتے وقت دروازے اور کھڑکیاں اچھی طرح بند کریں، اور حفاظتی اقدامات ضرور اختیار کریں۔ قیمتی اشیاء جیسے زیورات و نقدی کو محفوظ لاکر یا محفوظ مقام پر رکھیں۔</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Separator -->
+        <div class="w-full py-0.5 relative">
+            <div class="absolute top-1/2 left-0 w-full border-t-[2px] border-dashed border-blue-400"></div>
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-3 text-blue-500 text-[9px] font-bold flex items-center gap-2 uppercase tracking-widest">
+                <span class="text-base rotate-180">✂</span> TEAR OFF HERE <span class="text-base">✂</span>
+            </div>
+        </div>
+
+        <!-- Duplicate Slip -->
+        <div class="thick-section-border bg-blue-50/20 p-1 shadow-inner">
+            <div class="flex justify-between items-start border-b border-blue-900 pb-0.5 mb-0.5 px-4">
+                <div class="flex items-center gap-2">
+                    <div class="h-3 w-1 bg-yellow-600"></div>
+                    <div>
+                        <h2 class="text-[9px] font-black text-blue-900 uppercase tracking-wide leading-none">Bank Copy / Office Copy</h2>
+                        <p class="text-[6.5px] text-blue-600 font-bold uppercase tracking-wider leading-none">{{society_name}}</p>
+                    </div>
+                </div>
+                <div class="text-right leading-none">
+                    <p class="text-[7.5px] font-black text-blue-900 uppercase leading-none">{{billing_month}}</p>
+                    <p class="text-[6.5px] text-blue-600 font-bold leading-none">Billing Month</p>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-1 px-4">
+                <div class="grid grid-cols-4 gap-2 text-[10px]">
+                    <div>
+                        <p class="text-blue-500 uppercase font-bold text-[6px]">Bill No</p>
+                        <p class="font-black text-slate-900 border-b border-blue-200">{{bill_no}}</p>
+                    </div>
+                    <div class="col-span-2">
+                        <p class="text-blue-500 uppercase font-bold text-[6px]">Consumer Name</p>
+                        <p class="font-black text-slate-900 border-b border-blue-200 truncate uppercase">{{client_name}}</p>
+                    </div>
+                    <div>
+                        <p class="text-blue-500 uppercase font-bold text-[6px]">Property</p>
+                        <p class="font-black text-slate-900 border-b border-blue-200 uppercase">{{property_id}}</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-4 gap-2 text-[10px]">
+                    <div>
+                         <p class="text-blue-500 uppercase font-bold text-[6px]">Payable (Within)</p>
+                         <p class="font-black text-slate-900 border-b border-blue-100">{{total_amount}}</p>
+                    </div>
+                    <div>
+                        <p class="text-blue-500 uppercase font-bold text-[6px]">Due Date</p>
+                        <p class="font-black text-red-600 border-b border-red-100 uppercase">{{due_date}}</p>
+                    </div>
+                    <div>
+                         <p class="text-blue-500 uppercase font-bold text-[6px]">Late Fee</p>
+                         <p class="font-black text-slate-900 border-b border-blue-100">{{late_fee}}</p>
+                    </div>
+                    <div class="bg-red-600 late-fee-highlight text-white p-0.5 rounded-sm">
+                        <p class="text-white uppercase font-bold text-[6px]">Payable (After)</p>
+                         <p class="font-black text-white border-b border-red-400">{{payable_after_due}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Complaint & Contact Details -->
+        <div class="bg-blue-900 section-header-blue text-white p-1 border-t-2 border-blue-600 flex justify-between items-center text-[9px] mt-auto">
+            <div class="font-black uppercase tracking-wider flex items-center gap-2 px-6">
+                <span class="text-blue-400">●</span> COMPLAINTS: <span class="font-mono bg-white text-blue-900 px-2 py-0.5 rounded font-black">{{society_mobile}}</span>
+            </div>
+            <div class="flex gap-4 items-center px-6">
+                <div class="font-bold text-blue-200 border-l border-blue-700 pl-3 uppercase text-[8px]">
+                    HELPLINE: 24/7 SUPPORT
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

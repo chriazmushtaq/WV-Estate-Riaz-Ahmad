@@ -1,0 +1,44 @@
+# User specific & automatically generated files #
+#################################################
+/app/Config/database.php
+/app/tmp/*
+!/app/tmp/empty
+/lib/Cake/Console/Templates/skel/tmp/
+/plugins
+/vendors
+/build
+/dist
+/tags
+
+# Large archives, backups, and SQL database dumps (GitHub limits files to 100MB)
+*.zip
+*.tar.gz
+*.sql
+*.apk
+antigravity_brain_backup/
+flutter_app/
+subm-billing-manager/
+
+# Development history, scratch & temporary debug scripts
+CHAT_HISTORY.md
+chat_history_export.jsonl
+CHAT_HISTORY_SUMMARY.md
+FLUTTER_CHROME_TESTING.md
+tmp_*.php
+scratch_*.php
+test_*.php
+test_*.ps1
+quick_test.php
+sim_installer.php
+
+# OS generated files & logs
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+error_log
+*.log

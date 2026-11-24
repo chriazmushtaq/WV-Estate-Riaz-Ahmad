@@ -1,0 +1,111 @@
+/**
+ * White Villas - Urdu Typography & WYSIWYG Print Stylesheet
+ * Fonts:
+ *   - Jameel Noori Nastaleeq (Body, Paragraphs, Tables, Notes, Clauses)
+ *   - Jameel Noori Nastaleeq Kasheeda (Headings, Titles, Watermarks, Calligraphy)
+ */
+
+@font-face {
+    font-family: 'Jameel Noori Nastaleeq';
+    src: url('../fonts/JameelNooriNastaleeq.ttf') format('truetype'),
+         url('/whitevillas/fonts/JameelNooriNastaleeq.ttf') format('truetype'),
+         url('/fonts/JameelNooriNastaleeq.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Jameel Noori Nastaleeq Kasheeda';
+    src: url('../fonts/JameelNooriNastaleeqKasheeda.ttf') format('truetype'),
+         url('/whitevillas/fonts/JameelNooriNastaleeqKasheeda.ttf') format('truetype'),
+         url('/fonts/JameelNooriNastaleeqKasheeda.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Global Urdu Typography (Screen & Print) */
+[lang="ur"],
+[dir="rtl"],
+.urdu-text,
+.ashtam-page,
+.letter-ur,
+.urdu-body,
+.urdu-legal {
+    font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', 'Nafees Nastaleeq', serif !important;
+    text-align: right;
+    direction: rtl;
+    unicode-bidi: embed;
+    line-height: 1.45;
+    letter-spacing: 0;
+    word-spacing: 0;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Urdu Headings & Titles - Jameel Noori Nastaleeq Kasheeda */
+[lang="ur"] h1, [lang="ur"] h2, [lang="ur"] h3, [lang="ur"] h4, [lang="ur"] h5, [lang="ur"] h6,
+[dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] h4, [dir="rtl"] h5, [dir="rtl"] h6,
+.ashtam-page h1, .ashtam-page h2, .ashtam-page h3, .ashtam-page h4,
+.urdu-heading,
+.ashtam-heading,
+.document-title,
+.document-subtitle,
+.section-title,
+.sign-title,
+.bismillah {
+    font-family: 'Jameel Noori Nastaleeq Kasheeda', 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif !important;
+    font-weight: normal;
+    line-height: 1.25;
+}
+
+/* Urdu Paragraphs & Clauses */
+[lang="ur"] p, [lang="ur"] li, [lang="ur"] td, [lang="ur"] th,
+[dir="rtl"] p, [dir="rtl"] li, [dir="rtl"] td, [dir="rtl"] th,
+.ashtam-page p, .ashtam-page li, .ashtam-page td, .ashtam-page th,
+.urdu-body p {
+    font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', 'Nafees Nastaleeq', serif !important;
+    line-height: 1.45;
+}
+
+/* WYSIWYG Print Exact Match Rules */
+@media print {
+    *,
+    *:before,
+    *:after {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+    
+    html, body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    [lang="ur"], [dir="rtl"], .urdu-text, .ashtam-page, .letter-ur, .urdu-body, .urdu-legal {
+        font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', 'Nafees Nastaleeq', serif !important;
+        line-height: 1.85 !important;
+        letter-spacing: 0 !important;
+        word-spacing: 0 !important;
+    }
+    
+    [lang="ur"] h1, [lang="ur"] h2, [lang="ur"] h3, [lang="ur"] h4, [lang="ur"] h5, [lang="ur"] h6,
+    [dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] h4, [dir="rtl"] h5, [dir="rtl"] h6,
+    .ashtam-page h1, .ashtam-page h2, .ashtam-page h3, .ashtam-page h4,
+    .urdu-heading, .ashtam-heading, .document-title, .document-subtitle, .section-title, .sign-title, .bismillah {
+        font-family: 'Jameel Noori Nastaleeq Kasheeda', 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif !important;
+        font-weight: normal !important;
+        line-height: 1.5 !important;
+    }
+    
+    [lang="ur"] p, [lang="ur"] li, [lang="ur"] td, [lang="ur"] th, [lang="ur"] span,
+    [dir="rtl"] p, [dir="rtl"] li, [dir="rtl"] td, [dir="rtl"] th, [dir="rtl"] span,
+    .ashtam-page p, .ashtam-page li, .ashtam-page td, .ashtam-page th,
+    .urdu-body p, .clause, .note-box, .amount-box {
+        font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', 'Nafees Nastaleeq', serif !important;
+        line-height: 1.85 !important;
+    }
+}

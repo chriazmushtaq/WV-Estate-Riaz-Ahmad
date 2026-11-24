@@ -1,0 +1,91 @@
+/* =========================================================================
+   White Villas - Theme Variables (Light, Dark, Gold, Green)
+   ========================================================================= */
+
+body.wv-admin-theme.theme-light {
+    --admin-theme-primary: #2563eb;
+    --admin-theme-primary-soft: #eff6ff;
+    --admin-theme-accent: #0f172a;
+    --admin-theme-accent-2: #1e3a8a;
+    --admin-theme-bg: #f8fafc;
+    --admin-theme-surface: #ffffff;
+    --admin-theme-surface-2: #f1f5f9;
+    --admin-theme-border: #e2e8f0;
+    --admin-theme-text: #0f172a;
+    --admin-theme-text-soft: #64748b;
+    --admin-theme-sidebar: #090e17;
+    --admin-theme-sidebar-text: #ffffff;
+    --admin-theme-sidebar-muted: #94a3b8;
+    --admin-theme-sidebar-active: rgba(37, 99, 235, 0.12);
+    --admin-theme-sidebar-active-text: #ffffff;
+    --admin-theme-topbar: #0f172a;
+    --admin-theme-topbar-text: #ffffff;
+    --admin-theme-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.08);
+}
+
+body.wv-admin-theme.theme-dark {
+    --admin-theme-primary: #3b82f6;
+    --admin-theme-primary-soft: #1e293b;
+    --admin-theme-accent: #0f172a;
+    --admin-theme-accent-2: #1e3a8a;
+    --admin-theme-bg: #0b1120;
+    --admin-theme-surface: #111d35;
+    --admin-theme-surface-2: #172544;
+    --admin-theme-border: #1e2e4f;
+    --admin-theme-text: #f8fafc;
+    --admin-theme-text-soft: #94a3b8;
+    --admin-theme-sidebar: #070d19;
+    --admin-theme-sidebar-text: #f8fafc;
+    --admin-theme-sidebar-muted: #94a3b8;
+    --admin-theme-sidebar-active: rgba(59, 130, 246, 0.18);
+    --admin-theme-sidebar-active-text: #ffffff;
+    --admin-theme-topbar: #070d19;
+    --admin-theme-topbar-text: #ffffff;
+    --admin-theme-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+    --admin-theme-link: #60a5fa;
+    --admin-theme-link-hover: #93c5fd;
+    --admin-theme-table-hover: #172544;
+    --admin-theme-table-selected: #1e2e4f;
+}
+
+body.wv-admin-theme.theme-gold {
+    --admin-theme-primary: #b45309;
+    --admin-theme-primary-soft: #fef3c7;
+    --admin-theme-accent: #0f172a;
+    --admin-theme-accent-2: #78350f;
+    --admin-theme-bg: #fffdf5;
+    --admin-theme-surface: #ffffff;
+    --admin-theme-surface-2: #fefce8;
+    --admin-theme-border: #fde68a;
+    --admin-theme-text: #1c1917;
+    --admin-theme-text-soft: #78716c;
+    --admin-theme-sidebar: #090e17;
+    --admin-theme-sidebar-text: #ffffff;
+    --admin-theme-sidebar-muted: #94a3b8;
+    --admin-theme-sidebar-active: rgba(180, 83, 9, 0.14);
+    --admin-theme-sidebar-active-text: #fef3c7;
+    --admin-theme-topbar: #0f172a;
+    --admin-theme-topbar-text: #ffffff;
+    --admin-theme-shadow: 0 4px 16px -2px rgba(180, 83, 9, 0.10);
+}
+
+body.wv-admin-theme.theme-green {
+    --admin-theme-primary: #059669;
+    --admin-theme-primary-soft: #ecfdf5;
+    --admin-theme-accent: #0f172a;
+    --admin-theme-accent-2: #064e3b;
+    --admin-theme-bg: #f8fdf9;
+    --admin-theme-surface: #ffffff;
+    --admin-theme-surface-2: #f0fdf4;
+    --admin-theme-border: #a7f3d0;
+    --admin-theme-text: #064e3b;
+    --admin-theme-text-soft: #374151;
+    --admin-theme-sidebar: #090e17;
+    --admin-theme-sidebar-text: #ffffff;
+    --admin-theme-sidebar-muted: #94a3b8;
+    --admin-theme-sidebar-active: rgba(5, 150, 105, 0.14);
+    --admin-theme-sidebar-active-text: #a7f3d0;
+    --admin-theme-topbar: #0f172a;
+    --admin-theme-topbar-text: #ffffff;
+    --admin-theme-shadow: 0 4px 16px -2px rgba(5, 150, 105, 0.10);
+}

@@ -1,0 +1,74 @@
+<style>
+.rental-receipt{background:#fff;box-sizing:border-box;color:#111;font-family:Arial,Helvetica,sans-serif;margin:0 auto;max-width:190mm;min-height:265mm;padding:8mm;width:100%}
+.rental-receipt *{box-sizing:border-box}
+.rental-receipt-header{align-items:center;border-bottom:2px solid #111;display:grid;gap:14px;grid-template-columns:115px minmax(0,1fr) 115px;padding-bottom:12px}
+.rental-receipt-logo{text-align:left}.rental-receipt-logo img{height:100px;max-width:110px;object-fit:contain;width:110px}
+.rental-receipt-heading{text-align:center}.rental-receipt-heading h1{font-size:25px;letter-spacing:0;margin:0 0 5px}.rental-receipt-heading p{font-size:12px;line-height:1.45;margin:1px 0}
+.rental-receipt-qr{text-align:right}.rental-receipt-qr img{border:1px solid #333;height:105px;padding:3px;width:105px}
+.rental-receipt-title{border-bottom:1px solid #111;font-size:16px;font-weight:900;margin:12px 0 8px;padding:5px;text-align:center}
+.rental-receipt-meta{border-collapse:collapse;margin-bottom:8px;width:100%}.rental-receipt-meta td{font-size:14px;padding:5px 4px;vertical-align:top}.rental-receipt-meta td:last-child{text-align:right}
+.rental-receipt-grid{border-collapse:collapse;table-layout:fixed;width:100%}.rental-receipt-grid td{border:1px solid #777;font-size:14px;line-height:1.4;padding:8px;vertical-align:top}.rental-receipt-grid strong{display:block;font-size:11px;margin-bottom:3px;text-transform:uppercase}
+.rental-receipt-amount{background:#f2f5f8;border:2px solid #111!important;font-size:19px!important;font-weight:900;text-align:center}
+.rental-receipt-words{font-size:14px!important;font-weight:700}
+.rental-receipt-summary{border-collapse:collapse;margin-top:12px;table-layout:fixed;width:100%}.rental-receipt-summary td{border:1px solid #9aa7b5;padding:8px;text-align:center}.rental-receipt-summary strong{display:block;font-size:10px;text-transform:uppercase}.rental-receipt-summary span{display:block;font-size:14px;font-weight:900;margin-top:3px}
+.rental-receipt-note{border-top:1px solid #aeb8c4;font-size:11px;line-height:1.5;margin-top:14px;padding-top:8px;text-align:center}
+.rental-receipt-signatures{border-collapse:collapse;margin-top:65px;width:100%}.rental-receipt-signatures td{border-top:1px solid #111;font-size:12px;font-weight:800;padding-top:7px;text-align:center;width:33.333%}
+@media print{.rental-receipt{margin:0;max-width:none;min-height:0;padding:0;width:100%}}
+</style>
+<div class="rental-receipt">
+    <div class="rental-receipt-header">
+        <div class="rental-receipt-logo">{{agency_logo}}</div>
+        <div class="rental-receipt-heading">
+            <h1>{{agency_name}}</h1>
+            <p>{{agency_address}}</p>
+            <p>{{agency_contact}}</p>
+        </div>
+        <div class="rental-receipt-qr">{{receipt_qr}}</div>
+    </div>
+
+    <div class="rental-receipt-title">RENTAL PAYMENT RECEIPT</div>
+    <table class="rental-receipt-meta">
+        <tr>
+            <td><strong>Receipt Number:</strong> {{receipt_no}}</td>
+            <td><strong>Payment Date:</strong> {{receipt_date}}</td>
+        </tr>
+        <tr>
+            <td><strong>Rental Agreement:</strong> {{agreement_no}}</td>
+            <td><strong>Rent Month:</strong> {{rent_month_label}}</td>
+        </tr>
+    </table>
+
+    <table class="rental-receipt-grid">
+        <tr>
+            <td><strong>Received From</strong>{{tenant_name}}</td>
+            <td><strong>Client</strong>{{client_name}}</td>
+        </tr>
+        <tr>
+            <td><strong>Property</strong>{{property_name}}</td>
+            <td><strong>Membership Number</strong>{{deal_invoice_no}}</td>
+        </tr>
+        <tr>
+            <td><strong>Payment Through</strong>{{payment_mode}}</td>
+            <td><strong>Reference / Remarks</strong>{{payment_reference}}</td>
+        </tr>
+        <tr><td colspan="2"><strong>Allocated Rent Months</strong>{{allocated_months}}</td></tr>
+        <tr><td colspan="2" class="rental-receipt-amount">Amount Received: {{rent_amount}}</td></tr>
+        <tr><td colspan="2" class="rental-receipt-words"><strong>Amount in Words</strong>{{rent_amount_words}}</td></tr>
+        <tr>
+            <td><strong>Rental Expense</strong>{{expense_amount}}</td>
+            <td><strong>Net Rental Income</strong>{{net_amount}}</td>
+        </tr>
+    </table>
+
+    <table class="rental-receipt-summary">
+        <tr>
+            <td><strong>Total Rent Received</strong><span>{{total_rent_paid}}</span></td>
+            <td><strong>Outstanding Rent</strong><span>{{outstanding_rent}}</span></td>
+            <td><strong>Overdue Rent</strong><span>{{overdue_rent}}</span></td>
+            <td><strong>Advance Credit</strong><span>{{advance_credit}}</span></td>
+        </tr>
+    </table>
+
+    <div class="rental-receipt-note">This is a system-generated rental payment receipt. Please retain it for your records.</div>
+    <table class="rental-receipt-signatures"><tr><td>Received By</td><td>Tenant Signature</td><td>Authorized Signature</td></tr></table>
+</div>

@@ -1,0 +1,90 @@
+{
+  "name": "Society Utility & Maintenance Billing System",
+  "slug": "BillingManager",
+  "version": "20.1.0",
+  "description": "Complete society utility billing manager with meter-wise billing (Electricity/Water/Gas/Maintenance), single & bulk automated bill generator, modern bill print templates, consumer ledger, frontend check-bill portal, mobile meter reader PWA, SMS/WhatsApp reminders, bank reconciliation, and audit log with rollback.",
+  "author": "Engr Riaz Mushtaq - AL-Riaz Tech",
+  "author_url": "https://www.alriazdevelopers.com",
+  "icon": "fa fa-bolt",
+  "admin_menu": [
+    {
+      "page_name": "Billing Dashboard",
+      "controller_name": "BillingDashboards",
+      "action_name": "index",
+      "icon": "fa fa-bolt",
+      "is_root": true
+    },
+    {
+      "page_name": "Bills & Payments",
+      "controller_name": "BillingBills",
+      "action_name": "index",
+      "icon": "fa fa-file-text-o"
+    },
+    {
+      "page_name": "Meter Readings",
+      "controller_name": "BillingReadings",
+      "action_name": "index",
+      "icon": "fa fa-tachometer"
+    },
+    {
+      "page_name": "Utility Meters",
+      "controller_name": "BillingMeters",
+      "action_name": "index",
+      "icon": "fa fa-plug"
+    },
+    {
+      "page_name": "Property Units",
+      "controller_name": "BillingProperties",
+      "action_name": "index",
+      "icon": "fa fa-building-o"
+    },
+    {
+      "page_name": "Billing Consumers",
+      "controller_name": "BillingClients",
+      "action_name": "index",
+      "icon": "fa fa-users"
+    },
+    {
+      "page_name": "Maintenance Charges",
+      "controller_name": "BillingExtraCharges",
+      "action_name": "index",
+      "icon": "fa fa-list-alt"
+    },
+    {
+      "page_name": "Print Templates",
+      "controller_name": "BillingTemplates",
+      "action_name": "index",
+      "icon": "fa fa-print"
+    },
+    {
+      "page_name": "Bank Reconciliation",
+      "controller_name": "BillingBankReconciliations",
+      "action_name": "index",
+      "icon": "fa fa-university"
+    },
+    {
+      "page_name": "SMS & WhatsApp",
+      "controller_name": "BillingReminders",
+      "action_name": "index",
+      "icon": "fa fa-comments"
+    },
+    {
+      "page_name": "Audit Log",
+      "controller_name": "BillingAuditLogs",
+      "action_name": "index",
+      "icon": "fa fa-history"
+    },
+    {
+      "page_name": "Billing Settings",
+      "controller_name": "BillingSettings",
+      "action_name": "index",
+      "icon": "fa fa-cogs"
+    },
+    {
+      "page_name": "Backup & Migration",
+      "controller_name": "BillingMigrations",
+      "action_name": "index",
+      "icon": "fa fa-cloud-upload"
+    }
+  ]
+}

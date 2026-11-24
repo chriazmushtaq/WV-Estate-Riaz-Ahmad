@@ -1,0 +1,268 @@
+<?php
+ $this->Js->JqueryEngine->jQueryObject = 'jQuery';
+// Paginator options
+$this->Paginator->options(array(
+  'update' => '#resultDiv',
+  'evalScripts' => true,
+));
+$currency = isset($currency) ? $currency : '';
+$propertyLimitUrl = '/admin/Properties/index';
+if(isset($this->params['named']) && is_array($this->params['named']))
+{
+    foreach($this->params['named'] as $propertyLimitKey=>$propertyLimitValue)
+    {
+        if(in_array($propertyLimitKey,array('limit','page'),true))
+        {
+            continue;
+        }
+        $propertyLimitUrl .= '/'.rawurlencode($propertyLimitKey).':'.rawurlencode($propertyLimitValue);
+    }
+    unset($propertyLimitKey,$propertyLimitValue);
+}
+?>
+<style>
+.properties-status-toggle {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+.property-flag-btn {
+    min-width: 66px;
+    border: 0;
+    border-radius: 16px;
+    padding: 5px 10px;
+    color: #ffffff !important;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.2;
+    box-shadow: 0 5px 12px rgba(15, 23, 42, 0.12);
+}
+.property-flag-yes,
+.property-flag-yes:hover,
+.property-flag-yes:focus {
+    background: #15803d !important;
+    border-color: #15803d !important;
+}
+.property-flag-no,
+.property-flag-no:hover,
+.property-flag-no:focus {
+    background: #dc2626 !important;
+    border-color: #dc2626 !important;
+}
+.property-action-button,
+.property-action-button:hover,
+.property-action-button:focus {
+    background: #082f49 !important;
+    border-color: #082f49 !important;
+    color: #ffffff !important;
+    font-weight: 700;
+}
+.property-action-header {
+    background: #082f49 !important;
+    color: #ffffff !important;
+}
+.property-action-cell > .btn,
+.property-action-cell .dropdown-toggle {
+    background: #082f49 !important;
+    border-color: #082f49 !important;
+    color: #ffffff !important;
+    font-weight: 700;
+}
+.property-edit-link {
+    font-weight: 700;
+}
+.property-price-cell {
+    color: #0f3b63;
+    font-weight: 700;
+    white-space: nowrap;
+}
+.property-quality-wrap {
+    min-width: 120px;
+}
+.property-quality-bar {
+    background: #e2e8f0;
+    border-radius: 999px;
+    height: 9px;
+    overflow: hidden;
+}
+.property-quality-bar span {
+    background: #16a34a;
+    display: block;
+    height: 100%;
+}
+.property-quality-text {
+    color: #07152a;
+    font-size: 11px;
+    font-weight: 900;
+    margin-top: 4px;
+}
+.property-bulk-box {
+    align-items: center;
+    background: #f8fafc;
+    border: 1px solid #dbe5ef;
+    border-radius: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 12px;
+    padding: 10px;
+}
+.property-bulk-box select {
+    max-width: 230px;
+}
+</style>
+<div id="resultDiv">
+<div class="page-title"> <div class="title-env"> <h1 class="title"><?php echo __('Properties');?></h1></div></div>
+<div class="panel"><?php echo $this->Session->flash();?>
+    <div class="panel-heading">
+        <div class="btn-group">
+            <?php $url=$this->Html->url(array('controller'=>'Properties')); echo $this->Html->link('<span class="fa fa-plus"></span>&nbsp;'.__('Add New Property'),array('controller'=>'Properties','action'=>'add'),array('escape'=>false,'class'=>'btn btn-success'));?>
+            <?php echo $this->Html->link('<span class="fa fa-edit"></span>&nbsp;'.__('Edit'),'javascript:void(0);',array('name'=>'editallfrm','id'=>'editallfrm','onclick'=>"check_perform_editfull('$url');",'escape'=>false,'class'=>'btn btn-warning'));?>
+            <?php echo $this->Html->link('<span class="fa fa-trash"></span>&nbsp;'.__('Delete'),'javascript:void(0);',array('name'=>'deleteallfrm','id'=>'deleteallfrm','onclick'=>'check_perform_delete();','escape'=>false,'class'=>'btn btn-danger'));?>
+            <?php echo $this->Html->link('<span class="fa fa-dashboard"></span>&nbsp;'.__('Enhancement Overview'),array('controller'=>'Propertyenhancements','action'=>'index'),array('escape'=>false,'class'=>'btn btn-info'));?>
+            <?php echo $this->Html->link('<span class="fa fa-map-marker"></span>&nbsp;'.__('Missing Map'),array('controller'=>'Propertyenhancements','action'=>'missinglocations'),array('escape'=>false,'class'=>'btn btn-primary'));?>
+		</div>
+    </div>
+    <?php echo $this->Form->create(array('name'=>'searchfrm','id'=>'searchfrmactive','action' => 'index'));?>
+    <div class="row" style="padding: 12px 15px;">
+        <div class="col-sm-12 mrg">
+            <div class="col-sm-6"><label><strong><?php echo __('General Search');?></strong></label>
+                <?php echo $this->Form->input('general',array('label' => false,'class'=>'form-control','placeholder'=> __('Search Title, Address, Office ID (e.g. WV-LD698DE)'),'div'=>false));?>
+            </div>
+            <div class="col-sm-6"><label><strong><?php echo __('Location');?></strong></label>
+                <?php echo $this->Form->input('location',array('label' => false,'class'=>'form-control','placeholder'=> __('Colony, Block, Sector, City or State'),'div'=>false));?>
+            </div> 
+            <div class="col-sm-3"><label><strong><?php echo __('Kind of property');?></strong></label>
+                <?php echo $this->Form->select('type',$type,array('label' => false,'class'=>'form-control','empty'=>__('All Property Types'),'div'=>false));?>
+            </div> 
+            <div class="col-sm-3"><label><strong><?php echo __('Contract');?></strong></label>
+                <?php echo $this->Form->select('contract',$contract,array('label' => false,'class'=>'form-control','empty'=>__('All Contracts'),'div'=>false));?>
+            </div> 
+            <div class="col-sm-3"><label><strong><?php echo __('Minimum price');?></strong></label>
+                <?php echo $this->Form->input('start_price',array('label' => false,'class'=>'form-control','placeholder'=> __('Min Price (e.g. 500000)'),'div'=>false));?>
+            </div> 
+            <div class="col-sm-3"><label><strong><?php echo __('Maximum price');?></strong></label>
+                <?php echo $this->Form->input('end_price',array('label' => false,'class'=>'form-control','placeholder'=> __('Max Price (e.g. 15000000)'),'div'=>false));?>
+            </div> 
+            <div class="col-sm-2"><label><strong><?php echo __('Bedroom');?></strong></label>
+                <?php echo $this->Form->input('bedroom',array('label' => false,'class'=>'form-control','placeholder'=> __('Bedrooms (e.g. 2, 3)'),'div'=>false));?>
+            </div> 
+            <div class="col-sm-2"><label><strong><?php echo __('Bathroom');?></strong></label>
+                <?php echo $this->Form->input('bathroom',array('label' => false,'class'=>'form-control','placeholder'=> __('Bathrooms (e.g. 2, 3)'),'div'=>false));?>
+            </div> 
+            <div class="col-sm-2"><label><strong><?php echo __('Area');?></strong></label>
+                <?php echo $this->Form->input('Area',array('label' => false,'class'=>'form-control','placeholder'=> __('Area (e.g. 3, 5, 10)'),'div'=>false));?>
+            </div> 
+            <div class="col-sm-2"><label><strong><?php echo __('Published');?></strong></label>
+                <?php $sex=array('Yes'=>'Yes','No'=>'No');
+                echo $this->Form->select('publish',$sex,array('label' => false,'class'=>'form-control','empty'=>__('All Status'),'div'=>false));?>
+            </div> 
+            <div class="col-sm-2"><label><strong><?php echo __('Status');?></strong></label>
+                <?php $status=array(__('Available')=>__('Available'),__('Sold')=>__('Sold'));
+                echo $this->Form->select('skeyword',$status,array('label' => false,'class'=>'form-control','empty'=>__('All Status'),'div'=>false));?>
+            </div> 
+            <div class="col-sm-2" style="margin-top: 24px;">
+                <?php echo $this->Form->input('searchfrm',array('type'=>'hidden','value'=>'active'));?>
+                <?php echo $this->Form->button('<span class="fa fa-search"></span>&nbsp;'.__('Search'),array('class'=>'btn btn-info','escape'=>false));?>
+            </div>              
+        </div>
+    </div>
+    <?php echo $this->Form->end();?>
+<?php echo $this->element('pagination',array('IsSearch'=>'No','UseNamedLimit'=>true,'UseQueryLimit'=>true,'NamedLimitBaseUrl'=>$propertyLimitUrl));
+        $page_params = $this->Paginator->params();
+        $limit = $page_params['limit'];
+        $page = $page_params['page'];
+        $serial_no = 1*$limit*($page-1)+1;?>
+        <?php echo $this->Form->create(array('name'=>'deleteallfrm','action' => 'deleteall'));?>
+<?php echo $this->Session->flash();?>
+<div class="panel-body">
+            <div class="property-bulk-box">
+                <?php echo $this->Form->select('Property.bulk_action',array(
+                    'publish_yes'=>__('Publish Selected'),
+                    'publish_no'=>__('Unpublish Selected'),
+                    'featured_yes'=>__('Feature Selected'),
+                    'featured_no'=>__('Unfeature Selected'),
+                    'status_available'=>__('Mark Available'),
+                    'status_sold'=>__('Mark Sold')
+                ),array('empty'=>__('Bulk Action'),'class'=>'form-control','div'=>false,'label'=>false));?>
+                <?php $bulkUrl=$this->Html->url(array('controller'=>'Properties','action'=>'bulkupdate'));?>
+                <button type="button" class="btn btn-primary" onclick="document.deleteallfrm.action='<?php echo h($bulkUrl);?>'; document.deleteallfrm.submit();"><span class="fa fa-check"></span> <?php echo __('Apply');?></button>
+            </div>
+			</div>
+               <div class="table-responsive">
+                    <table class="table table-striped table-bordered">
+                        <tr>
+                            <th class="pbutton"><?php echo $this->Form->checkbox('checkbox', array('value'=>'deleteall','name'=>'selectAll','label'=>false,'id'=>'selectAll','hiddenField'=>false));?></th>
+                            <th><?php echo $this->Paginator->sort('id', __('#'), array('direction' => 'desc'));?></th>
+			    <th><?php echo $this->Paginator->sort('uniq_id', __('Office ID'), array('direction' => 'asc'));?></th>
+			    <th><?php echo $this->Paginator->sort('name', __('Name'), array('direction' => 'asc'));?></th>
+			    <th><?php echo $this->Paginator->sort('price', __('Price'), array('direction' => 'asc'));?></th>
+			    <th><?php echo $this->Paginator->sort('type', __('Type'), array('direction' => 'asc'));?></th>
+			    <th><?php echo $this->Paginator->sort('Contract.name', __('Contract'), array('direction' => 'asc'));?></th>
+                            <th><?php echo $this->Paginator->sort('status', __('Status'), array('direction' => 'asc'));?></th>
+                            <th><?php echo __('Featured/Published');?></th>
+                            <th><?php echo __('Quality');?></th>
+			    <th class="pbutton property-action-header"><?php echo __('Action');?></th>
+                        </tr>
+                        <?php foreach ($Property as $post):
+                        $id=$post['Property']['id'];
+                        $editUrl=$url.'/edit/'.$id;
+                        $propertySlug=trim(preg_replace('/[^A-Za-z0-9]+/','-',(string)$post['Property']['name']),'-');
+                        if($propertySlug==='')$propertySlug='property-'.$id;
+                        $frontPropertyUrl=$this->Html->url('/Properties/'.$propertySlug);?>
+                        <tr>
+                            <td class="pbutton"><?php if($userType!="AGT" || $post['Property']['user_id']==$luserId){ echo $this->Form->checkbox(false,array('value' => $post['Property']['id'],'name'=>'data[Property][id][]','id'=>"DeleteCheckbox$id",'class'=>'chkselect')); } else echo "&nbsp;";?></td>
+                            <td><?php echo $serial_no++; ?></td>
+			    <td><?php echo $post['Property']['uniq_id'];?></td>
+			    <td><?php echo $post['Property']['name'];?></td>
+			    <td class="property-price-cell"><?php echo h($currency.number_format((float)$post['Property']['price'], 0));?></td>
+			    <td><?php echo $post['Type']['name'];?></td>
+			    <td><?php echo $post['Contract']['name'];?></td>
+			    <td><span class="label label-<?php if($post['Property']['status']=="Available")echo"success";else echo"danger";?>"><?php echo __($post['Property']['status']);?></span></td>
+			    <td><div class="properties-status-toggle"><?php if($userType!="AGT" || $post['Property']['user_id']==$luserId){ if($post['Property']['featured']=="Yes"){ echo $this->Html->link('<span class="fa fa-check"></span>&nbsp;'.__('Yes'),array('controller'=>'Properties','action'=>'featured',$id,'Yes'),array('escape'=>false,'class'=>'btn property-flag-btn property-flag-yes'));}
+			    else{echo $this->Html->link('<span class="fa fa-times-circle"></span>&nbsp;'.__('No'),array('controller'=>'Properties','action'=>'featured',$id,'No'),array('escape'=>false,'class'=>'btn property-flag-btn property-flag-no'));}?>
+			    <?php if($post['Property']['published']=="Yes"){ echo $this->Html->link('<span class="fa fa-check"></span>&nbsp;'.__('Yes'),array('controller'=>'Properties','action'=>'published',$id,'Yes'),array('escape'=>false,'class'=>'btn property-flag-btn property-flag-yes'));}
+			    else{echo $this->Html->link('<span class="fa fa-times-circle"></span>&nbsp;'.__('No'),array('controller'=>'Properties','action'=>'published',$id,'No'),array('escape'=>false,'class'=>'btn property-flag-btn property-flag-no'));}?>
+			    <?php }?></div></td>
+                            <td>
+                                <?php $quality=isset($propertyQualityScores[$id]) ? $propertyQualityScores[$id] : array('score'=>0,'missing'=>array());?>
+                                <div class="property-quality-wrap">
+                                    <div class="property-quality-bar"><span style="width:<?php echo (int)$quality['score'];?>%"></span></div>
+                                    <div class="property-quality-text"><?php echo (int)$quality['score'];?>%</div>
+                                    <?php echo $this->Html->link(__('Checklist'),array('controller'=>'Propertyenhancements','action'=>'quality',$id),array('class'=>'btn btn-xs btn-default'));?>
+                                </div>
+                            </td>
+			    <td class="pbutton property-action-cell"><?php if($userType=="AGT" && $post['Property']['user_id']!=$luserId){?>
+			    <?php echo $this->Html->link('<span class="fa fa-arrows-alt"></span>&nbsp;&nbsp;&nbsp;&nbsp;'.__('View'),'javascript:void(0);',array('class'=>'btn','onclick'=>"show_modal('$url/View/$id');",'escape'=>false));}
+			    else {?>
+			    <div class="btn-group">
+			    <button type="button" class="btn btn-primary dropdown-toggle property-action-button" data-toggle="dropdown" aria-expanded="false">
+			    <?php echo __('Action');?> <span class="caret"></span>
+			    </button>
+			    <ul class="dropdown-menu" role="menu">
+			      <li><?php echo $this->Html->link('<span class="fa fa-image"></span>&nbsp;'.__('Photos'),array('controller'=>'properties_photos','action'=>"index/$id"),array('escape'=>false));?></li>
+			      <li><?php echo $this->Html->link('<span class="fa fa-file"></span>&nbsp;'.__('Documents'),array('controller'=>'properties_documents','action'=>"index/$id"),array('escape'=>false));?></li>
+			      <li><?php echo $this->Html->link('<span class="fa fa-building-o fa-fw"></span>&nbsp;'.__('Floor Plans'),array('controller'=>'properties_floorplans','action'=>"index/$id"),array('escape'=>false));?></li>
+			      <li><?php echo $this->Html->link('<span class="fa fa-magic"></span>&nbsp;'.__('Enhancements'),array('controller'=>'Propertyenhancements','action'=>'quality',$id),array('escape'=>false));?></li>
+			      <li><?php echo $this->Html->link('<span class="fa fa-tags"></span>&nbsp;'.__('Media Details'),array('controller'=>'Propertyenhancements','action'=>'media',$id),array('escape'=>false));?></li>
+			      <li><?php echo $this->Html->link('<span class="fa fa-search"></span>&nbsp;'.__('SEO'),array('controller'=>'Propertyenhancements','action'=>'seo',$id),array('escape'=>false));?></li>
+			      <li><?php echo $this->Html->link('<span class="fa fa-line-chart"></span>&nbsp;'.__('Lead Clicks'),array('controller'=>'Propertyenhancements','action'=>'leads',$id),array('escape'=>false));?></li>
+			      <li><?php echo $this->Html->link('<span class="fa fa-history"></span>&nbsp;'.__('History'),array('controller'=>'Properties','action'=>'history',$id),array('escape'=>false));?></li>
+			      <li><?php echo $this->Html->link('<span class="fa fa-copy"></span>&nbsp;'.__('Duplicate'),array('controller'=>'Properties','action'=>'duplicate',$id),array('escape'=>false,'onclick'=>"return confirm('".__('Duplicate this property as unpublished?')."');"));?></li>
+			      <li><?php echo $this->Html->link('<span class="fa fa-external-link"></span>&nbsp;'.__('Visit'),$frontPropertyUrl,array('escape'=>false,'target'=>'_blank'));?></li>
+			      <li class="divider"></li>
+			      <li><?php echo $this->Html->link('<span class="fa fa-arrows-alt"></span>&nbsp;'.__('View'),'javascript:void(0);',array('onclick'=>"show_modal('$url/View/$id');",'escape'=>false));?></li>
+			      <li><a class="property-edit-link" href="<?php echo h($editUrl);?>" onclick="window.location.href=this.href; return false;"><span class="fa fa-edit"></span>&nbsp;<?php echo __('Edit');?></a></li>
+			      <li> <?php echo $this->Html->Link('<span class="fa fa-trash"></span>&nbsp;'.__('Delete'),'javascript:void(0);',array('onclick'=>"check_perform_sdelete('$id');",'escape'=>false));?></li>
+			    </ul>
+			  </div><?php }?></td>
+                        </tr>
+                        <?php endforeach; ?>
+                        <?php unset($post); ?>
+                        </table>
+            </div>
+</div>
+<?php echo $this->Form->end();?>
+<?php echo $this->element('pagination',array('UseNamedLimit'=>true,'UseQueryLimit'=>true,'NamedLimitBaseUrl'=>$propertyLimitUrl));?>
+</div>

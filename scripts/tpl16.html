@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{document_type}} - {{bill_no}}</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .urdu-font {
+            font-family: 'Noto Nastaliq Urdu', serif;
+        }
+
+        /* Print Settings for Half A4 (Landscape fit) */
+        @media print {
+            @page {
+                size: 210mm 148.5mm;
+                margin: 0;
+            }
+            body {
+                background-color: white;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .page-container {
+                box-shadow: none !important;
+                border: 3px solid #1e3a8a !important;
+                margin: 0 !important;
+                width: 210mm !important;
+                height: 148.5mm !important;
+                min-height: 148.5mm !important;
+                max-height: 148.5mm !important;
+            }
+        }
+
+        /* Screen Preview Settings for Half A4 */
+        .page-container {
+            width: 210mm;
+            height: 148.5mm;
+            background: white;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            margin: 10px auto;
+        }
+    
+        /* subm-template-print-consistency */
+        @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+    </style>
+</head>
+<body class="bg-slate-200 min-h-screen flex flex-col items-center">
+
+    <!-- Preview Caution notification -->
+    <div class="no-print w-full max-w-[215.9mm] mt-4">
+        {{preview_caution}}
+    </div>
+
+    <!-- Print Button (Visible only on screen) -->
+    <div class="no-print my-4">
+        <button onclick="window.print()" class="bg-blue-900 text-white px-6 py-2 rounded-lg font-bold flex items-center gap-2 hover:bg-blue-800 transition-all shadow-xl">
+            <svg xmlns="http://www.w3.org/2003/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            Print {{template_type}}
+        </button>
+    </div>
+
+    <!-- Receipt Document Container -->
+    <div class="page-container flex flex-col border-[3px] border-blue-900 relative box-border text-slate-900 overflow-hidden">
+        
+        <!-- Header Section - Tightened Padding -->
+        <div class="bg-white py-1.5 px-4 flex items-center border-b-[3px] border-blue-900 relative">
+            <div class="w-1/4">
+                <img src="{{society_logo}}" alt="Logo" class="h-8 w-auto object-contain rounded-md">
+            </div>
+            <div class="w-2/4 text-center">
+                <h1 class="text-[18px] font-black uppercase tracking-tight text-blue-900 leading-none">{{society_name}}</h1>
+                <p class="text-[8px] font-medium text-slate-500 mt-0.5 leading-tight">{{society_address}}</p>
+                <div class="text-[9px] font-bold text-green-600 mt-0.5 uppercase tracking-wide">
+                    Mobile: {{society_mobile}}
+                </div>
+            </div>
+            <div class="w-1/4 flex justify-end">
+                <span class="bg-[#1a8a5a] text-white px-2 py-1 rounded-sm text-[8px] uppercase tracking-widest font-black shadow-md">{{document_type}}</span>
+            </div>
+        </div>
+
+        <!-- Quick Info Bar -->
+        <div class="grid grid-cols-6 border-b-2 border-blue-200 text-center text-[8px] divide-x-2 divide-blue-200 bg-white">
+            <div class="flex flex-col"><div class="py-0.5 bg-blue-50 font-bold text-blue-800 uppercase border-b border-blue-100">Receipt No</div><div class="py-1 font-bold">{{bill_no}}</div></div>
+            <div class="flex flex-col"><div class="py-0.5 bg-blue-50 font-bold text-blue-800 uppercase border-b border-blue-100">Date</div><div class="py-1 font-bold">{{issue_date}}</div></div>
+            <div class="flex flex-col"><div class="py-0.5 bg-blue-50 font-bold text-blue-800 uppercase border-b border-blue-100">Consumer ID</div><div class="py-1 font-bold">{{consumer_id}}</div></div>
+            <div class="flex flex-col"><div class="py-0.5 bg-blue-50 font-bold text-blue-800 uppercase border-b border-blue-100">Property</div><div class="py-1 font-bold">{{property_id}}</div></div>
+            <div class="flex flex-col"><div class="py-0.5 bg-blue-50 font-bold text-blue-800 uppercase border-b border-blue-100">Bill Month</div><div class="py-1 font-bold uppercase">{{billing_month}}</div></div>
+            <div class="flex flex-col"><div class="py-0.5 bg-blue-50 font-bold text-blue-800 uppercase border-b border-blue-100">Status</div><div class="py-1 font-black text-green-700 italic uppercase">{{payment_status}}</div></div>
+        </div>
+
+        <!-- Main Body Content -->
+        <div class="flex flex-grow overflow-hidden relative">
+            
+            <!-- PAID Stamp Overlay -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.25] pointer-events-none z-50 mix-blend-multiply flex items-center justify-center">
+                <svg width="180" height="180" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <path id="arc-top" d="M 38,150 A 112,112 0 0,1 262,150" fill="none" />
+                        <path id="arc-bot" d="M 38,150 A 112,112 0 0,0 262,150" fill="none" />
+                    </defs>
+                    <circle cx="150" cy="150" r="142" fill="none" stroke="#15803d" stroke-width="5"/>
+                    <circle cx="150" cy="150" r="134" fill="none" stroke="#15803d" stroke-width="2"/>
+                    <circle cx="150" cy="150" r="90" fill="none" stroke="#15803d" stroke-width="2"/>
+                    <text fill="#15803d" font-size="32" font-weight="900" font-family="Arial Black, Impact, sans-serif" letter-spacing="3" dominant-baseline="central">
+                        <textPath href="#arc-top" startOffset="50%" text-anchor="middle">THANK YOU</textPath>
+                    </text>
+                    <text fill="#15803d" font-size="32" font-weight="900" font-family="Arial Black, Impact, sans-serif" letter-spacing="3" dominant-baseline="central">
+                        <textPath href="#arc-bot" startOffset="50%" text-anchor="middle">THANK YOU</textPath>
+                    </text>
+                    <text x="22" y="161" fill="#15803d" font-size="28" text-anchor="middle">★</text>
+                    <text x="278" y="161" fill="#15803d" font-size="28" text-anchor="middle">★</text>
+                    <text x="150" y="115" fill="#15803d" font-size="18" font-weight="bold" font-family="Arial, sans-serif" text-anchor="middle" letter-spacing="4">PAID</text>
+                    <text x="150" y="196" fill="#15803d" font-size="18" font-weight="bold" font-family="Arial, sans-serif" text-anchor="middle" letter-spacing="4">PAID</text>
+                    <g transform="rotate(-15 150 150)">
+                        <rect x="5" y="105" width="290" height="90" rx="10" fill="#15803d" />
+                        <rect x="12" y="112" width="276" height="76" rx="6" fill="none" stroke="#ffffff" stroke-width="2" stroke-dasharray="4 3"/>
+                        <text x="150" y="176" fill="#ffffff" font-size="74" font-weight="900" font-family="Arial Black, Impact, sans-serif" text-anchor="middle" letter-spacing="4">PAID</text>
+                        <text x="45" y="166" fill="#ffffff" font-size="30" text-anchor="middle">★</text>
+                        <text x="255" y="166" fill="#ffffff" font-size="30" text-anchor="middle">★</text>
+                    </g>
+                </svg>
+            </div>
+
+            <!-- Left Panel (7/12) -->
+            <div class="flex-[7] flex flex-col border-r-2 border-blue-900 z-10">
+                <!-- Payer Info Section - Compact -->
+                <section class="p-2 px-4 bg-slate-50/10">
+                    <h3 class="text-[8px] font-bold text-blue-800 uppercase tracking-wider mb-0.5">Payer Information</h3>
+                    <p class="text-[12px] font-black uppercase text-slate-900">{{client_name}}</p>
+                    <p class="text-[8px] font-bold text-blue-700 mb-0.5">REGISTERED RESIDENT / OWNER</p>
+                    <p class="text-[9px] text-slate-600 font-medium max-w-sm leading-tight">{{client_address}}</p>
+                </section>
+
+                <!-- Detailed Transaction Summary -->
+                <section class="border-t-2 border-b-2 border-blue-200">
+                    <div class="bg-blue-50/50 px-3 py-0.5 text-[8px] font-black uppercase text-slate-800">Summary of Totals</div>
+                    <table class="w-full text-[9px] text-center border-collapse">
+                        <thead class="bg-white text-slate-500 uppercase font-bold text-[7px] border-b">
+                            <tr>
+                                <th class="py-1 px-1 border-r">Previous Arrears</th>
+                                <th class="py-1 px-1 border-r">Current Charges</th>
+                                <th class="py-1 px-1 border-r">Late Fee ({{late_fee_percent}}%)</th>
+                                <th class="py-1 px-1">Total Payable</th>
+                            </tr>
+                        </thead>
+                        <tbody class="font-black text-slate-900">
+                            <tr>
+                                <td class="py-1.5 border-r border-slate-100">{{arrears}}</td>
+                                <td class="py-1.5 border-r border-slate-100">{{total_amount}}</td>
+                                <td class="py-1.5 border-r border-slate-100 text-red-500">{{late_fee}}</td>
+                                <td class="py-1.5 bg-blue-50/30 text-blue-900 text-[10px] font-black">{{payable_after_due}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- Itemized Billing Section (Maintenance & Other Charges) - Compacted -->
+                <section class="bg-white flex flex-col">
+                    <div class="bg-slate-50 px-3 py-0.5 text-[8px] font-bold uppercase text-slate-600 border-b">Itemized Billing Details</div>
+                    <div class="overflow-hidden">
+                        <table class="w-full text-[8px] text-left border-collapse">
+                            <thead class="text-slate-400 uppercase font-bold border-b text-[7px]">
+                                <tr>
+                                    <th class="py-0.5 px-3">Description</th>
+                                    <th class="py-0.5 px-3 text-right">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                {{maintenance_rows}}                   
+                                {{other_rows}}
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Adjustment note section -->
+                    <div class="p-1 border-t border-slate-50">
+                        <p class="text-[7px] text-slate-400 italic font-medium leading-tight">{{adjustment_note}}</p>
+                    </div>
+                </section>
+
+                <!-- History Summary - Compacted to avoid Letter height overflow -->
+                <section class="bg-white border-t-2 border-blue-200">
+                    <div class="bg-blue-900 text-white text-[8px] font-bold uppercase text-center py-0.5 tracking-widest">Previous 6 Months Payment Summary</div>
+                    <table class="w-full text-[7px] text-center border-collapse">
+                        <thead class="bg-slate-50 font-bold uppercase border-b border-slate-200">
+                            <tr>
+                                <th class="py-0.5 border-r">Billing Month</th>
+                                <th class="py-0.5 border-r">Bill Amount</th>
+                                <th class="py-0.5 border-r">Amount Paid</th>
+                                <th class="py-0.5">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-slate-600 divide-y divide-slate-50">
+                            {{history_rows}}
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- Filler to push empty space to the bottom -->
+                <div class="flex-grow bg-white"></div>
+            </div>
+
+            <!-- Right Column (5/12) -->
+            <div class="flex-[5] flex flex-col bg-slate-50/10 z-10">
+                <!-- Final Settlement Title -->
+                <div class="bg-blue-900 text-white py-1 text-center text-[8px] font-black uppercase tracking-widest">Final Settlement</div>
+                
+                <!-- Breakdown -->
+                <table class="w-full text-[10px] border-collapse bg-white">
+                    <tbody class="divide-y divide-slate-100 font-bold text-slate-500">
+                        <tr>
+                            <td class="p-1.5 px-4 text-[10px]">Total Bill</td>
+                            <td class="p-1.5 px-4 text-right text-slate-900 text-[11px]">{{total_amount}}</td>
+                        </tr>
+                        <tr>
+                            <td class="p-1.5 px-4 text-[10px]">Surcharge</td>
+                            <td class="p-1.5 px-4 text-right text-red-500 text-[11px]">{{late_fee}}</td>
+                        </tr>
+                        <!-- Total Amount Paid Box - Optimized padding -->
+                        <tr class="bg-blue-900 text-white border-t-2 border-blue-950">
+                            <td class="p-2 px-4 font-black uppercase text-[9px] leading-tight">Total Amount<br>Paid</td>
+                            <td class="p-2 px-4 text-right text-[18px] font-black tracking-tighter">{{paid_amount}}</td>
+                        </tr>
+                        <!-- Adjustments row -->
+                        <tr class="bg-slate-50">
+                            <td class="p-1.5 px-4 text-[8px] font-bold text-slate-500">
+                                Adj: ({{adjustment_credit}} / {{adjustment_debit}})
+                            </td>
+                            <td class="p-1.5 px-4 text-right font-black text-slate-500 text-[9px] italic">
+                                Bal: {{pending_amount}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Confirmation Stamp - Scaled down -->
+                <div class="flex-grow flex flex-col items-center justify-center p-2 text-center bg-white border-y border-slate-100">
+                    <div class="w-10 h-10 bg-green-50 rounded-full flex items-center justify-center text-[#1a8a5a] mb-1 border-2 border-green-100 shadow-sm">
+                        <svg xmlns="http://www.w3.org/2003/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </div>
+                    <p class="text-[11px] font-black text-[#1a8a5a] uppercase tracking-[0.2em] leading-none mb-0.5">Confirmed</p>
+                    <p class="text-[7px] text-slate-400 font-bold uppercase tracking-widest">Office Copy Ref: {{payment_ref}}</p>
+                </div>
+
+                <!-- Urdu Payment and Society Message - Compacted padding -->
+                <div class="p-2 px-4 text-center urdu-font bg-blue-50/30 border-b border-slate-200">
+                    <p class="text-[10px] font-bold text-blue-900 leading-snug">آپ کی ادائیگی کامیابی کے ساتھ موصول ہوگئی ہے۔ شکریہ!</p>
+                    <p class="text-[8px] font-bold text-green-700 mt-1 leading-snug">سوسائٹی کو صاف ستھرا اور خوبصورت رکھنے میں ہمارا ساتھ دیں۔</p>
+                </div>
+
+                <!-- Authorized Signature - Compacted -->
+                <div class="bg-white p-3 mt-auto text-center">
+                    <div class="border-t border-slate-300 w-24 mx-auto mb-1"></div>
+                    <p class="text-[7px] font-black uppercase tracking-[0.2em] text-slate-400">Authorized Signature</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer - Optimized -->
+        <div class="bg-blue-900 text-white p-1.5 border-t-2 border-blue-400 flex justify-between items-center text-[8px] mt-auto">
+            <div class="px-4 font-black uppercase tracking-widest">Support: {{society_mobile}}</div>
+            <div class="px-4 flex gap-4 items-center">
+                <span class="font-bold text-blue-200">{{society_email}}</span>
+                <span class="font-black text-blue-300 border-l border-blue-700 pl-4 uppercase tracking-tighter italic opacity-80">
+                    Verified Digital Record
+                </span>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
