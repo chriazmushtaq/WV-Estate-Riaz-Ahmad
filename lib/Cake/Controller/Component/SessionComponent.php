@@ -137,6 +137,11 @@ class SessionComponent extends Component {
  */
 	public function setFlash($message, $element = 'default', $params = array(), $key = 'flash') {
 		$messages = (array)CakeSession::read('Message.' . $key);
+		foreach ($messages as $existing) {
+			if (isset($existing['message']) && $existing['message'] === $message) {
+				return;
+			}
+		}
 		$messages[] = array(
 			'message' => $message,
 			'element' => $element,

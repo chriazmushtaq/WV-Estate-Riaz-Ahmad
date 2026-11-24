@@ -136,7 +136,14 @@ class SessionHelper extends AppHelper {
 			CakeSession::delete('Message.' . $key);
 
 			$out = '';
+			$seen = array();
 			foreach ($flash as $flashArray) {
+				$sig = isset($flashArray['message']) ? (string)$flashArray['message'] : '';
+				if ($sig !== '' && isset($seen[$sig])) {
+					continue;
+				}
+				$seen[$sig] = true;
+
 				if (!empty($attrs)) {
 					$flashArray = array_merge($flashArray, $attrs);
 				}

@@ -1,6 +1,14 @@
 <?php
+static $__renderedFlashMessages = array();
+
 $flashAlert = isset($alert) ? strtolower(trim((string)$alert)) : 'info';
 $flashMessage = isset($message) ? (string)$message : __('Something went wrong');
+
+$flashFingerprint = md5($flashAlert . ':' . trim(strip_tags((string)$flashMessage)));
+if (isset($__renderedFlashMessages[$flashFingerprint])) {
+    return;
+}
+$__renderedFlashMessages[$flashFingerprint] = true;
 
 $plainMessage = strtolower(trim(strip_tags($flashMessage)));
 $isDeleteNotice = (strpos($plainMessage, 'delete') !== false || strpos($plainMessage, 'removed') !== false);
