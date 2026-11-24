@@ -15,21 +15,48 @@
     
     <style>
         @font-face {
-            font-family: 'Jameel Noori Nastaliq';
-            src: url('https://cdn.jsdelivr.net/gh/nafeesl/jameel-noori-nastaliq-webfont@master/Jameel%20Noori%20Nastaliq.woff2') format('woff2'),
-                 url('https://cdn.jsdelivr.net/gh/nafeesl/jameel-noori-nastaliq-webfont@master/Jameel%20Noori%20Nastaliq.woff') format('woff');
+            font-family: 'Jameel Noori Nastaleeq';
+            src: url('/fonts/JameelNooriNastaleeq.ttf') format('truetype'),
+                 url('/whitevillas/fonts/JameelNooriNastaleeq.ttf') format('truetype'),
+                 url('../fonts/JameelNooriNastaleeq.ttf') format('truetype');
             font-weight: normal;
             font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Jameel Noori Nastaleeq Kasheeda';
+            src: url('/fonts/JameelNooriNastaleeqKasheeda.ttf') format('truetype'),
+                 url('/whitevillas/fonts/JameelNooriNastaleeqKasheeda.ttf') format('truetype'),
+                 url('../fonts/JameelNooriNastaleeqKasheeda.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
         }
 
         .urdu-legal {
-            font-family: 'Jameel Noori Nastaliq', 'Noto Nastaliq Urdu', 'Urdu Typesetting', serif;
+            font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', sans-serif !important;
             text-align: justify;
             text-justify: inter-word;
-            font-size: 11px;
-            line-height: 2.0; 
-            word-spacing: -2.5px; 
-            letter-spacing: -0.3px;
+            font-size: 16px;
+            line-height: 1.65;
+            word-spacing: 0;
+            letter-spacing: 0;
+        }
+
+        .en-inline {
+            display: inline-block !important;
+            direction: ltr !important;
+            unicode-bidi: embed !important;
+            font-family: Arial, Helvetica, sans-serif !important;
+            font-size: 13.5px !important;
+            line-height: 1 !important;
+            border-bottom: 1px solid #000000 !important;
+            padding: 0 4px 1px 4px !important;
+            margin: 0 2px !important;
+            text-align: center !important;
+            vertical-align: baseline !important;
+            font-weight: bold !important;
+            color: #000000 !important;
         }
         
         body {

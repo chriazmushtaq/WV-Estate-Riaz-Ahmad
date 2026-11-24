@@ -1272,6 +1272,7 @@ $siteFaviconFile = !empty($siteFavicon) ? $siteFavicon : '';
             $cAct = strtolower(isset($this->params['action']) ? $this->params['action'] : '');
             $cUrl = isset($this->params->url) ? strtolower($this->params->url) : '';
             $isNavHome = $isThemeHomePage;
+            $isNavCheckBill = ($cCtrl === 'bills' || strpos($cUrl, 'check_online') !== false || strpos($cUrl, 'online-bill') !== false || strpos($cUrl, 'check-online') !== false);
             $isNavProperties = ($cCtrl === 'properties');
             $isNavPaymentPlans = ($cCtrl === 'paymentplans');
             $isNavAgencies = ($cCtrl === 'agencies');
@@ -1282,6 +1283,11 @@ $siteFaviconFile = !empty($siteFavicon) ? $siteFavicon : '';
             <ul class="nav flex-column wv-offcanvas-menu">
                 <li class="nav-item">
                     <a class="nav-link <?php echo $isNavHome ? 'active' : ''; ?>" href="<?php echo $this->Html->url('/'); ?>"><i class="fa fa-home"></i> Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?php echo $isNavCheckBill ? 'active' : ''; ?>" href="<?php echo $this->Html->url('/bills/check_online'); ?>" style="<?php echo $isNavCheckBill ? 'color:#d11242;font-weight:800;' : ''; ?>">
+                        <i class="fa fa-file-text-o text-danger"></i> Check Bill / آن لائن بل
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link <?php echo $isNavProperties ? 'active' : ''; ?>" href="<?php echo $this->Html->url('/Properties'); ?>"><i class="fa fa-building-o"></i> Properties for Sale</a>
@@ -1306,6 +1312,9 @@ $siteFaviconFile = !empty($siteFavicon) ? $siteFavicon : '';
             <hr class="my-4" style="border-color: #f1f5f9;">
 
             <div class="d-grid gap-2">
+                <a href="<?php echo $this->Html->url('/bills/check_online'); ?>" class="wv-offcanvas-client-btn mb-1" style="background: linear-gradient(135deg, #064e3b 0%, #047857 100%); border-color: #047857; color: #ffffff;">
+                    <i class="fa fa-file-text-o"></i> CHECK BILL / بل چیک کریں
+                </a>
                 <a href="<?php echo $this->Html->url('/clients/login'); ?>" class="wv-offcanvas-client-btn">
                     <i class="fa fa-sign-in"></i> CLIENT PORTAL LOGIN
                 </a>
@@ -1381,6 +1390,7 @@ $siteFaviconFile = !empty($siteFavicon) ? $siteFavicon : '';
                     <h4 class="wv-footer-title"><?php echo h($footerCol2Title); ?></h4>
                     <ul class="list-unstyled d-flex flex-column gap-2">
                         <li><a href="<?php echo $this->Html->url('/'); ?>">Home</a></li>
+                        <li><a href="<?php echo $this->Html->url('/bills/check_online'); ?>" style="color:#10b981;font-weight:600;"><i class="fa fa-file-text-o"></i> Check Bill</a></li>
                         <li><a href="<?php echo $this->Html->url('/Properties'); ?>">Search Properties</a></li>
                         <li><a href="<?php echo $this->Html->url('/paymentplans'); ?>">Payment Plans</a></li>
                         <li><a href="<?php echo $this->Html->url('/Agencies'); ?>">Agencies</a></li>

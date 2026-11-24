@@ -120,7 +120,10 @@ class TinymceHelper extends AppHelper {
                 'toolbar1' => 'insertfile, undo, redo, |, styleselect, fontselect, |, fontsizeselect, |, bold, italic, |, alignleft, aligncenter, alignright, alignjustify, |, bullist, numlist, outdent, indent',
                 'toolbar2' => 'link, image, media, youtube, emoticons, |, colorpicker, forecolor, backcolor, |, preview, print, code',
                 'image_advtab' => true,
-                'file_browser_callback' => 'elFinderBrowser'
+                'file_browser_callback' => 'elFinderBrowser',
+                'content_css' => $this->Html->url('/css/print_letter.css'),
+                'font_formats' => 'Jameel Noori Nastaleeq=Jameel Noori Nastaleeq,Noto Nastaliq Urdu,sans-serif;Arial=arial,helvetica,sans-serif;Courier New=courier new,courier,monospace;Georgia=georgia,palatino;Tahoma=tahoma,arial,helvetica,sans-serif;Times New Roman=times new roman,times;Verdana=verdana,geneva;',
+                'fontsize_formats' => '11px 12px 13px 14px 15px 16px 17px 18px 20px 22px 24px 28px 32px 36px'
                 
             ); 
         } 
@@ -184,7 +187,10 @@ class TinymceHelper extends AppHelper {
                 'toolbar1' => 'insertfile, undo, redo, |, styleselect, fontselect, |, fontsizeselect, |, bold, italic, |, alignleft, aligncenter, alignright, alignjustify, |, bullist, numlist, outdent, indent',
                 'toolbar2' => 'link, image, media, youtube, emoticons, |, colorpicker, forecolor, backcolor, |, preview, print, code',
                 'image_advtab' => true,
-                'file_browser_callback' => 'elFinderBrowser'
+                'file_browser_callback' => 'elFinderBrowser',
+                'content_css' => $this->Html->url('/css/print_letter.css'),
+                'font_formats' => 'Jameel Noori Nastaleeq=Jameel Noori Nastaleeq,Noto Nastaliq Urdu,sans-serif;Arial=arial,helvetica,sans-serif;Courier New=courier new,courier,monospace;Georgia=georgia,palatino;Tahoma=tahoma,arial,helvetica,sans-serif;Times New Roman=times new roman,times;Verdana=verdana,geneva;',
+                'fontsize_formats' => '11px 12px 13px 14px 15px 16px 17px 18px 20px 22px 24px 28px 32px 36px'
                 
             ); 
         } 

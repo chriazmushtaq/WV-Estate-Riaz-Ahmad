@@ -187,8 +187,9 @@ class DealtransfersController extends AdminAppController
         if($this->request->is(array('post', 'put')))
         {
             $row = isset($this->request->data['Dealtransfersetting']) ? (array)$this->request->data['Dealtransfersetting'] : array();
+            $targetProjectId = !empty($row['project_id']) ? (int)$row['project_id'] : $projectId;
             $save = array(
-                'project_id' => $projectId,
+                'project_id' => $targetProjectId,
                 'module_enabled' => !empty($row['module_enabled']) ? 1 : 0,
                 'transfer_enabled' => !empty($row['transfer_enabled']) ? 1 : 0,
                 'merge_enabled' => !empty($row['merge_enabled']) ? 1 : 0,
@@ -204,12 +205,12 @@ class DealtransfersController extends AdminAppController
                 'default_fee_percent' => max(0, (float)(isset($row['default_fee_percent']) ? $row['default_fee_percent'] : 0)),
                 'notes' => isset($row['notes']) ? $row['notes'] : ''
             );
-            if(!empty($settings['id'])) { $save['id'] = (int)$settings['id']; }
+            if(!empty($settings['id']) && (int)$settings['project_id'] === $targetProjectId) { $save['id'] = (int)$settings['id']; }
             $this->Dealtransfersetting->create();
             if($this->Dealtransfersetting->save(array('Dealtransfersetting' => $save), array('validate' => false)))
             {
                 $this->Session->setFlash(__('Deal transfer settings saved successfully.'), 'flash', array('alert' => 'success'));
-                return $this->redirect(array('action' => 'settings', '?' => array('project_id' => $projectId)));
+                return $this->redirect(array('action' => 'settings', '?' => array('project_id' => $targetProjectId)));
             }
             $this->Session->setFlash(__('Unable to save deal transfer settings.'), 'flash', array('alert' => 'danger'));
         }
@@ -217,10 +218,10 @@ class DealtransfersController extends AdminAppController
         {
             $this->request->data = array('Dealtransfersetting' => $settings);
         }
-        $agencyOptions = $this->_agencyOptions(false);
+        $agencyOptions = $this->_agencyOptions(true);
         $feeLedgerOptions = $this->_feeVoucherLedgerOptions($projectId);
         $feeTypes = $this->_feeTypes;
-        $canUseAgencyFilters = $this->_isSuperAdminSession((array)$this->adminValue);
+        $canUseAgencyFilters = true;
         $this->set(compact('projectId', 'agencyOptions', 'feeLedgerOptions', 'feeTypes', 'canUseAgencyFilters'));
     }
 
@@ -997,13 +998,14 @@ class DealtransfersController extends AdminAppController
 
     protected function _selectedSettingsProjectId()
     {
-        if($this->_isSuperAdminSession((array)$this->adminValue))
+        $projectId = isset($this->request->query['project_id']) ? (int)$this->request->query['project_id'] : 0;
+        if($projectId > 0) { return $projectId; }
+        $agencyList = $this->_agencyOptions(true);
+        if(!empty($agencyList))
         {
-            $projectId = isset($this->request->query['project_id']) ? (int)$this->request->query['project_id'] : 0;
-            if($projectId > 0) { return $projectId; }
-            foreach($this->_agencyOptions(false) as $id => $name) { return (int)$id; }
+            foreach($agencyList as $id => $name) { return (int)$id; }
         }
-        return (int)$this->agencyId;
+        return !empty($this->agencyId) ? (int)$this->agencyId : 1;
     }
 
     protected function _mergeDealRows($sourceDealId, $targetDealId, $targetPropertyId)

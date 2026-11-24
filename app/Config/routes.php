@@ -44,6 +44,17 @@ Router::connect('/facebook_integrations/webhook', array('plugin' => 'admin', 'co
 Router::connect('/cron/facebook_leads', array('plugin' => 'admin', 'controller' => 'facebook_integrations', 'action' => 'cron_autofetch'));
 Router::connect('/cron/facebook_autofetch', array('plugin' => 'admin', 'controller' => 'facebook_integrations', 'action' => 'cron_autofetch'));
 
+Router::connect('/bills', array('controller' => 'bills', 'action' => 'check_online'));
+Router::connect('/Bills', array('controller' => 'bills', 'action' => 'check_online'));
+Router::connect('/bills/check_online', array('controller' => 'bills', 'action' => 'check_online'));
+Router::connect('/Bills/check_online', array('controller' => 'bills', 'action' => 'check_online'));
+Router::connect('/bills/checkOnline', array('controller' => 'bills', 'action' => 'check_online'));
+Router::connect('/Bills/checkOnline', array('controller' => 'bills', 'action' => 'check_online'));
+Router::connect('/bills/:action/*', array('controller' => 'bills'));
+Router::connect('/Bills/:action/*', array('controller' => 'bills'));
+Router::connect('/online-bill', array('controller' => 'bills', 'action' => 'check_online'));
+Router::connect('/check-online', array('controller' => 'bills', 'action' => 'check_online'));
+
 Router::connect('/UtilityBills', array('controller' => 'utility_bills', 'action' => 'index'));
 Router::connect('/UtilityBills/:action/*', array('controller' => 'utility_bills'));
 Router::connect('/utilitybills', array('controller' => 'utility_bills', 'action' => 'index'));

@@ -827,21 +827,21 @@ HTML;
             font-style: normal;
             font-display: swap;
         }
-        @page { size: A4; margin: 7mm; }
-        * { box-sizing: border-box; }
-        html, body { margin: 0; padding: 0; background: #eef2f6; color: #000; }
+        @page { size: Legal portrait; margin: 12mm 14mm; }
+        * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+        html, body { margin: 0; padding: 0; background: #ffffff; color: #000000; }
         body {
-            font-family: "Jameel Noori Nastaleeq", "Noto Nastaliq Urdu", "Nafees Nastaleeq", serif;
-            font-size: 13px;
-            line-height: 1.75;
+            font-family: "Jameel Noori Nastaleeq", "Noto Nastaliq Urdu", sans-serif;
+            font-size: 16px;
+            line-height: 1.65;
             direction: rtl;
         }
         .ashtam-page {
-            width: 196mm;
-            min-height: 283mm;
+            width: 100%;
+            max-width: 100%;
             margin: 0 auto;
             background: #fff;
-            border: 1px solid #111;
+            border: 1px solid #000;
             padding: 8mm 9mm;
             position: relative;
             overflow: hidden;
@@ -852,7 +852,7 @@ HTML;
             top: 49%;
             left: 50%;
             transform: translate(-50%,-50%) rotate(-35deg);
-            font-size: 54px;
+            font-size: 58px;
             font-weight: 900;
             font-family: "Jameel Noori Nastaleeq Kasheeda", serif;
             color: rgba(0,0,0,.035);
@@ -860,39 +860,39 @@ HTML;
             pointer-events: none;
         }
         .ashtam-page > * { position: relative; z-index: 2; }
-        .letterhead { display: grid; grid-template-columns: 82px minmax(0,1fr) 150px; gap: 12px; align-items: center; border-bottom: 2px solid #111; padding-bottom: 7px; margin-bottom: 7px; direction: ltr; }
+        .letterhead { display: grid; grid-template-columns: 82px minmax(0,1fr) 150px; gap: 12px; align-items: center; border-bottom: 2px solid #000; padding-bottom: 7px; margin-bottom: 7px; direction: ltr; }
         .logo-box { width: 78px; height: 70px; display: flex; align-items: center; justify-content: center; direction: ltr; }
         .agency-copy { text-align: center; direction: rtl; }
-        .agency-copy h1 { margin: 0; font-family: Arial, Helvetica, sans-serif; font-size: 22px; line-height: 1.15; text-transform: uppercase; font-weight: 900; letter-spacing: 0; color: #000; }
-        .agency-copy p { margin: 2px 0 0; font-family: "Jameel Noori Nastaleeq", serif; font-size: 12px; line-height: 1.35; color: #000; }
-        .meta-box { font-family: Arial, Helvetica, sans-serif; font-size: 10px; line-height: 1.6; text-align: left; direction: ltr; color: #000; }
-        .bismillah { text-align: center; font-family: "Jameel Noori Nastaleeq Kasheeda", serif; font-size: 20px; font-weight: 900; line-height: 1.4; margin: 4px 0 1px; }
-        .doc-title { text-align: center; border: 2px solid #111; padding: 5px 8px; margin: 4px 0 8px; background: #f7f7f7; }
-        .doc-title h2 { margin: 0; font-family: "Jameel Noori Nastaleeq Kasheeda", serif; font-size: 21px; line-height: 1.35; font-weight: 900; }
-        .doc-title p { margin: 0; font-family: "Jameel Noori Nastaleeq Kasheeda", serif; font-size: 13px; font-weight: 700; }
-        .section-title { font-family: "Jameel Noori Nastaleeq Kasheeda", serif; font-size: 15px; font-weight: 900; border-bottom: 1px solid #111; margin: 7px 0 4px; padding-bottom: 2px; }
-        p { margin: 0 0 5px; text-align: justify; }
-        .info-grid { width: 100%; border-collapse: collapse; margin: 5px 0 7px; font-size: 12.5px; line-height: 1.55; }
-        .info-grid th, .info-grid td { border: 1px solid #111; padding: 4px 6px; vertical-align: top; }
-        .info-grid th { width: 21%; background: #f6f6f6; font-weight: 900; white-space: nowrap; font-family: "Jameel Noori Nastaleeq Kasheeda", serif; }
-        .terms { counter-reset: term; margin-top: 4px; }
-        .term { display: grid; grid-template-columns: 24px minmax(0,1fr); gap: 5px; margin: 0 0 4px; break-inside: avoid; }
+        .agency-copy h1 { margin: 0; font-family: Arial, Helvetica, sans-serif; font-size: 20px; line-height: 1.2; text-transform: uppercase; font-weight: 900; letter-spacing: 0; color: #000; }
+        .agency-copy p { margin: 2px 0 0; font-family: "Jameel Noori Nastaleeq", serif; font-size: 14px; line-height: 1.4; color: #000; }
+        .meta-box { font-family: Arial, Helvetica, sans-serif; font-size: 11px; line-height: 1.5; text-align: left; direction: ltr; color: #000; }
+        .bismillah { text-align: center; font-family: "Jameel Noori Nastaleeq Kasheeda", serif; font-size: 20px; font-weight: 900; line-height: 1.65; margin: 4px 0 2px; }
+        .doc-title { text-align: center; border: 2px solid #000; padding: 6px 8px; margin: 6px 0 10px; background: #ffffff; }
+        .doc-title h2 { margin: 0; font-family: "Jameel Noori Nastaleeq Kasheeda", serif; font-size: 20px; line-height: 1.65; font-weight: 900; }
+        .doc-title p { margin: 0; font-family: "Jameel Noori Nastaleeq Kasheeda", serif; font-size: 15px; font-weight: 700; line-height: 1.5; }
+        .section-title { font-family: "Jameel Noori Nastaleeq Kasheeda", serif; font-size: 16px; font-weight: 900; border-bottom: 1px solid #000; margin: 8px 0 5px; padding-bottom: 2px; line-height: 1.65; }
+        p { margin: 0 0 6px; text-align: justify; text-justify: inter-word; font-size: 16px; line-height: 1.65; }
+        .info-grid { width: 100%; border-collapse: collapse; margin: 6px 0 8px; font-size: 16px; line-height: 1.65; }
+        .info-grid th, .info-grid td { border: 1px solid #000; padding: 5px 8px; vertical-align: top; }
+        .info-grid th { width: 22%; background: #ffffff; font-weight: 900; white-space: nowrap; font-family: "Jameel Noori Nastaleeq Kasheeda", serif; }
+        .terms { counter-reset: term; margin-top: 6px; }
+        .term { display: grid; grid-template-columns: 24px minmax(0,1fr); gap: 6px; margin: 0 0 6px; break-inside: avoid; font-size: 16px; line-height: 1.65; text-align: justify; text-justify: inter-word; }
         .term:before { counter-increment: term; content: counter(term) "۔"; font-weight: 900; text-align: center; }
         .term strong { font-weight: 900; }
-        .charge-table { width: 100%; border-collapse: collapse; margin: 5px 0 7px; font-size: 11.5px; line-height: 1.45; }
-        .charge-table th, .charge-table td { border: 1px solid #111; padding: 4px 6px; text-align: center; vertical-align: top; }
-        .charge-table th { background: #f4f4f4; font-weight: 900; font-family: "Jameel Noori Nastaleeq Kasheeda", serif; }
+        .charge-table { width: 100%; border-collapse: collapse; margin: 6px 0 8px; font-size: 16px; line-height: 1.65; }
+        .charge-table th, .charge-table td { border: 1px solid #000; padding: 5px 8px; text-align: center; vertical-align: top; }
+        .charge-table th { background: #ffffff; font-weight: 900; font-family: "Jameel Noori Nastaleeq Kasheeda", serif; }
         .amount-highlight { font-weight: 900; text-decoration: underline; }
-        .signatures { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 12.5px; line-height: 1.55; }
-        .signatures td { border: 1px solid #111; padding: 5px 7px; vertical-align: top; width: 50%; }
-        .line { display: inline-block; border-bottom: 1px solid #111; min-width: 170px; height: 16px; vertical-align: bottom; }
-        .footer { border-top: 2px solid #111; margin-top: 7px; padding-top: 4px; text-align: center; font-family: Arial, Helvetica, sans-serif; font-size: 9px; line-height: 1.35; direction: ltr; }
+        .signatures { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; line-height: 1.5; }
+        .signatures td { border: 1px solid #000; padding: 6px 8px; vertical-align: top; width: 50%; }
+        .line { display: inline-block; border-bottom: 1px solid #000; min-width: 170px; height: 18px; vertical-align: bottom; }
+        .en-inline { display: inline-block; direction: ltr; unicode-bidi: embed; font-family: Arial, Helvetica, sans-serif; font-size: 13.5px; line-height: 1; border-bottom: 1px solid #000; padding: 0 4px 1px 4px; margin: 0 2px; text-align: center; vertical-align: baseline; font-weight: bold; }
+        .footer { border-top: 1.5px solid #000; margin-top: 8px; padding-top: 4px; text-align: center; font-family: Arial, Helvetica, sans-serif; font-size: 11px; line-height: 1.35; direction: ltr; }
         @media print {
-            @page { size: A4; margin: 7mm; }
-            html, body { margin: 0 !important; padding: 0 !important; background: #eef2f6 !important; }
-            .ashtam-page { width: 196mm !important; min-height: 283mm !important; margin: 0 auto !important; background: #fff !important; border: 1px solid #111 !important; padding: 8mm 9mm !important; box-shadow: none !important; }
+            @page { size: Legal portrait; margin: 12mm 14mm; }
+            html, body { margin: 0 !important; padding: 0 !important; background: #fff !important; }
+            .ashtam-page { width: 100% !important; min-height: 0 !important; height: auto !important; margin: 0 auto !important; background: #fff !important; border: 1px solid #000 !important; padding: 0 !important; box-shadow: none !important; }
             body, .ashtam-page, .ashtam-page * { color: #000 !important; }
-            .doc-title, .info-grid th, .charge-table th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
     </style>
 </head>
@@ -998,32 +998,29 @@ HTML;
             font-style: normal;
             font-display: swap;
         }
-        @page { size: A4; margin: 0; }
-        * { box-sizing: border-box; }
-        body {
+        @page { size: Legal portrait; margin: 12mm 14mm; }
+        * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+        html, body {
             margin: 0;
             padding: 0;
             direction: rtl;
             unicode-bidi: embed;
-            background: #0f172a;
-            color: #1e293b;
-            font-family: "Jameel Noori Nastaleeq", "Noto Nastaliq Urdu", "Nafees Nastaleeq", serif;
-            font-size: 13.4px;
-            line-height: 1.5;
-            word-spacing: 0;
-            letter-spacing: 0;
+            background: #ffffff;
+            color: #000000;
+            font-family: "Jameel Noori Nastaleeq", "Noto Nastaliq Urdu", sans-serif;
+            font-size: 16px;
+            line-height: 1.65;
             -webkit-font-smoothing: antialiased;
         }
         .page {
-            width: 210mm;
-            min-height: 297mm;
-            margin: 20px auto;
-            padding: 11mm 14mm;
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0;
             background: #fff;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,.3);
+            border: none;
+            box-shadow: none;
             position: relative;
-            border-radius: 4px;
             overflow: visible;
             display: flex;
             flex-direction: column;
@@ -1033,113 +1030,144 @@ HTML;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) rotate(-30deg);
-            font-size: 64px;
+            font-size: 58px;
             font-weight: 900;
-            color: rgba(16,185,129,.035);
-            font-family: "Jameel Noori Nastaleeq Kasheeda", Arial, sans-serif;
+            color: rgba(0,0,0,.035);
+            font-family: Arial, sans-serif;
             pointer-events: none;
             user-select: none;
             z-index: 1;
             white-space: nowrap;
-            border: 7px double rgba(16,185,129,.035);
-            padding: 5px 26px;
-            border-radius: 15px;
+            border: 6px double rgba(0,0,0,.035);
+            padding: 4px 20px;
+            border-radius: 12px;
         }
         .page > *:not(.watermark) { position: relative; z-index: 2; }
-        .letterhead { text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 7px; margin-bottom: 9px; }
-        .head-row { display: grid; grid-template-columns: 64px minmax(0,1fr) 64px; align-items: center; gap: 10px; }
-        .logo-box { width: 56px; height: 56px; border: 1px solid #0f172a; padding: 3px; display: flex; align-items: center; justify-content: center; overflow: hidden; direction: ltr; }
-        .agency-name { font-size: 22px; font-weight: 900; line-height: 1.2; color: #0f172a; font-family: Arial, Helvetica, sans-serif; text-transform: uppercase; }
-        .agency-sub { font-size: 12px; color: #475569; margin-top: 2px; font-family: "Jameel Noori Nastaleeq", serif; }
-        .agency-contact { font-size: 10px; color: #334155; margin-top: 3px; font-family: Arial, Helvetica, sans-serif; direction: ltr; }
+        .letterhead { text-align: center; border-bottom: 2px solid #000000; padding-bottom: 6px; margin-bottom: 8px; }
+        .head-row { display: grid; grid-template-columns: 60px minmax(0,1fr) 60px; align-items: center; gap: 10px; }
+        .logo-box { width: 56px; height: 56px; border: 1px solid #000000; padding: 2px; display: flex; align-items: center; justify-content: center; overflow: hidden; direction: ltr; }
+        .agency-name { font-size: 18px; font-weight: 900; line-height: 1.25; color: #000000; font-family: Arial, Helvetica, sans-serif; text-transform: uppercase; }
+        .agency-sub { font-size: 13px; color: #333333; margin-top: 2px; font-family: "Jameel Noori Nastaleeq", sans-serif; }
+        .agency-contact { font-size: 10.5px; color: #333333; margin-top: 2px; font-family: Arial, Helvetica, sans-serif; direction: ltr; }
         .document-title {
             text-align: center;
             font-family: "Jameel Noori Nastaleeq Kasheeda", "Jameel Noori Nastaleeq", serif;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 900;
             text-decoration: underline;
-            text-underline-offset: 6px;
-            margin: 8px 0 2px;
-            color: #0f172a;
+            text-underline-offset: 4px;
+            margin: 6px 0 2px;
+            line-height: 1.65;
+            color: #000000;
         }
         .document-subtitle {
             text-align: center;
             font-family: "Jameel Noori Nastaleeq Kasheeda", "Jameel Noori Nastaleeq", serif;
             font-size: 16px;
             font-weight: 700;
-            color: #334155;
-            margin-bottom: 9px;
+            color: #000000;
+            margin-bottom: 6px;
+            line-height: 1.65;
         }
         .meta-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 12.5px;
+            font-size: 14px;
             font-weight: 800;
-            color: #1f2937;
-            margin-bottom: 8px;
-            background: #f8fafc;
+            color: #000000;
+            margin-bottom: 6px;
+            background: #ffffff;
             padding: 4px 8px;
-            border: 1px solid #d7e0ea;
+            border: 1px solid #000000;
             border-radius: 4px;
+            line-height: 1.65;
         }
         p {
-            margin: 0 0 5px;
+            margin: 0 0 6px;
+            direction: rtl;
             text-align: justify;
-            line-height: 1.55;
-            font-size: 13.6px;
-            word-spacing: 0;
-            letter-spacing: 0;
+            text-justify: inter-word;
+            line-height: 1.65;
+            font-size: 16px;
         }
         .section-title {
             font-family: "Jameel Noori Nastaleeq Kasheeda", "Jameel Noori Nastaleeq", serif;
             font-size: 16px;
             font-weight: 900;
             text-decoration: underline;
-            text-underline-offset: 4px;
+            text-underline-offset: 3px;
             margin: 8px 0 4px;
-            color: #0f4c3a;
-            line-height: 1.35;
+            color: #000000;
+            line-height: 1.65;
             page-break-after: avoid;
         }
-        .clause { font-size: 13.2px; line-height: 1.5; margin-bottom: 4px; text-align: justify; word-spacing: 0; letter-spacing: 0; }
-        .field { border-bottom: 1px solid #000; padding: 0 3px; font-weight: 900; color: #000; line-height: 1.2; word-spacing: 0; letter-spacing: 0; }
+        .clause, .numbered-clause {
+            font-size: 16px;
+            line-height: 1.65;
+            margin-bottom: 5px;
+            direction: rtl;
+            text-align: justify;
+            text-justify: inter-word;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+        .field { border-bottom: 1px solid #000000; padding: 0 4px; font-weight: 900; color: #000000; display: inline; }
         .amount-box {
-            border: 1.5px solid #065f46;
-            background: #f9fafb;
+            border: 1.5px solid #000000;
+            background: #ffffff;
             padding: 6px 12px;
-            margin: 6px 0;
+            margin: 8px 0;
             text-align: center;
-            font-size: 14.5px;
+            font-size: 16px;
             font-weight: 900;
-            line-height: 1.5;
-            border-radius: 6px;
+            line-height: 1.65;
+            border-radius: 4px;
+            page-break-inside: avoid;
+            break-inside: avoid;
         }
         .note-box {
-            border: 1px solid #cbd5e1;
-            border-right: 4px solid #059669;
-            background: #f8fafc;
+            border: 1px solid #000000;
+            border-right: 4px solid #000000;
+            background: #ffffff;
             padding: 6px 10px;
-            margin: 5px 0;
-            font-size: 12.8px;
-            line-height: 1.48;
+            margin: 6px 0;
+            font-size: 16px;
+            line-height: 1.65;
             text-align: justify;
-            border-radius: 0 6px 6px 0;
+            text-justify: inter-word;
+            border-radius: 0 4px 4px 0;
+            page-break-inside: avoid;
+            break-inside: avoid;
         }
-        .sign-area, .witness-area { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .sign-box { border: 1px solid #d7e0ea; background: #f8fafc; border-radius: 6px; padding: 8px 10px; min-height: 110px; line-height: 1.45; font-size: 12.5px; }
-        .sign-title { font-family: "Jameel Noori Nastaleeq Kasheeda", serif; font-weight: 900; color: #0f172a; border-bottom: 1px solid #d7e0ea; padding-bottom: 3px; margin-bottom: 5px; font-size: 13px; }
-        .sign-line { border-bottom: 1px solid #94a3b8; display: block; min-height: 22px; margin-top: 4px; margin-bottom: 4px; }
-        .thumb-box { height: 36px; border: 1px dashed #cbd5e1; background: #fff; border-radius: 4px; margin-top: 5px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #64748b; }
-        .footer { border-top: 1.5px solid #0f172a; padding-top: 4px; text-align: center; font-size: 9.5px; line-height: 1.25; color: #475569; font-family: Arial, Helvetica, sans-serif; margin-top: auto; }
-        .page-body { padding-bottom: 6mm; flex: 1 1 auto; }
+        .en-inline {
+            display: inline-block;
+            direction: ltr;
+            unicode-bidi: embed;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 13.5px;
+            line-height: 1;
+            border-bottom: 1px solid #000000;
+            padding: 0 4px 1px 4px;
+            margin: 0 2px;
+            text-align: center;
+            vertical-align: baseline;
+            font-weight: bold;
+            color: #000000;
+        }
+        .field .en-inline { border-bottom: none; }
+        .sign-area, .witness-area { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; page-break-inside: avoid; break-inside: avoid; }
+        .sign-box { border: 1px solid #000000; background: #ffffff; border-radius: 4px; padding: 8px 10px; min-height: 90px; line-height: 1.4; font-size: 14px; page-break-inside: avoid; break-inside: avoid; }
+        .sign-title { font-family: "Jameel Noori Nastaleeq Kasheeda", serif; font-weight: 900; color: #000000; border-bottom: 1px solid #000000; padding-bottom: 3px; margin-bottom: 5px; font-size: 15px; line-height: 1.4; }
+        .sign-line { border-bottom: 1px solid #000000; display: block; min-height: 20px; margin-top: 3px; margin-bottom: 3px; }
+        .thumb-box { height: 32px; border: 1px dashed #000000; background: #ffffff; border-radius: 3px; margin-top: 4px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #333333; }
+        .footer { border-top: 1.5px solid #000000; padding-top: 4px; text-align: center; font-size: 11px; line-height: 1.25; color: #000000; font-family: Arial, Helvetica, sans-serif; margin-top: auto; }
+        .page-body { flex: 1 1 auto; }
         @media print {
             body { background: #fff !important; color: #000 !important; padding: 0 !important; }
-            .page { width: 210mm !important; height: auto !important; min-height: 297mm !important; margin: 0 auto !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; page-break-after: always; page-break-inside: auto; overflow: visible !important; display: flex !important; flex-direction: column !important; }
-            .page:last-of-type { page-break-after: auto; }
-            .field { border-bottom: 1px solid #000 !important; background: transparent !important; color: #000 !important; padding: 0 !important; }
-            .amount-box { border-color: #000 !important; background: transparent !important; }
-            .note-box { border-color: #cbd5e1 !important; border-right-color: #000 !important; background: transparent !important; }
+            .page { width: 100% !important; max-width: 100% !important; height: auto !important; min-height: 0 !important; margin: 0 auto !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; }
+            .field { border-bottom: 1px solid #000 !important; background: transparent !important; color: #000 !important; }
+            .amount-box, .note-box, .sign-box { border-color: #000 !important; background: transparent !important; }
             .watermark { color: rgba(0,0,0,.02) !important; border-color: rgba(0,0,0,.02) !important; }
             .footer { color: #000 !important; }
         }
@@ -5354,6 +5382,24 @@ HTML;
         return '<div class="digital-stamp-mock">Securely Signed<br><strong>'.htmlspecialchars((string)$fallbackTitle, ENT_QUOTES, 'UTF-8').'</strong><br>Verification Ref</div>';
     }
 
+    /**
+     * Wrap dynamic English text, dates, CNICs, plot/file numbers, and currency values
+     * inside <span dir="ltr" class="en-inline">...</span> for bi-directional Nastaleeq alignment.
+     */
+    protected function _wrapEnInline($value)
+    {
+        $val = trim((string)$value);
+        if ($val === '' || $val === 'N/A' || $val === '-')
+        {
+            return $val;
+        }
+        if (strpos($val, 'en-inline') !== false)
+        {
+            return $val;
+        }
+        return '<span dir="ltr" class="en-inline">' . $val . '</span>';
+    }
+
     protected function _placeholderMap($letterRow)
     {
         $letter = isset($letterRow['Realestateletter']) ? (array)$letterRow['Realestateletter'] : array();
@@ -5946,6 +5992,11 @@ HTML;
             $clientRelationPrefix = $this->_resolveRelationPrefix($clientRelationType, $clientGender);
         }
 
+        $isBookingOrWelcome = in_array($letterTypeCode, array('RLT_BOOKING', 'RLT_WELCOME'), true);
+        $en = function($v) use ($isBookingOrWelcome) {
+            return $isBookingOrWelcome ? $v : $this->_wrapEnInline($v);
+        };
+
         return array(
             '{{site_name}}' => (string)$this->siteName,
             '{{site_organization}}' => (string)$this->siteOrganization,
@@ -5958,11 +6009,11 @@ HTML;
             '{{agency_address}}' => $agencyAddress,
             '{{agency_phone}}' => $agencyPhone,
             '{{agency_email}}' => $agencyEmail,
-            '{{today}}' => date($this->dtFormat),
-            '{{letter_date}}' => $letterDate,
+            '{{today}}' => $en(date($this->dtFormat)),
+            '{{letter_date}}' => $en($letterDate),
             '{{agreement_date_text_urdu}}' => $this->_letterDateUrduText($agreementDateSource),
             '{{agreement_day_name_urdu}}' => $this->_letterUrduDayName($agreementDateSource),
-            '{{letter_ref_no}}' => isset($letter['reference_no']) ? (string)$letter['reference_no'] : '',
+            '{{letter_ref_no}}' => $en(isset($letter['reference_no']) ? (string)$letter['reference_no'] : ''),
             '{{letter_title}}' => isset($letter['title']) ? (string)$letter['title'] : '',
             '{{letter_type_label}}' => $letterTypeLabel,
             '{{client_name}}' => $clientNameDisplay,
@@ -5974,18 +6025,18 @@ HTML;
             '{{applicant_name_with_so}}' => $clientNameWithFather,
             '{{client_relation_prefix}}' => $clientRelationPrefix,
             '{{client_father_with_prefix}}' => (trim((string)$clientFatherNameDisplay) !== '' ? ($clientRelationPrefix . ' ' . trim((string)$clientFatherNameDisplay)) : ''),
-            '{{client_cnic}}' => isset($client['pincode']) ? (string)$client['pincode'] : '',
-            '{{client_phone}}' => isset($client['phone']) ? (string)$client['phone'] : '',
-            '{{client_mobile}}' => isset($client['mobile']) ? (string)$client['mobile'] : '',
+            '{{client_cnic}}' => $en(isset($client['pincode']) ? (string)$client['pincode'] : ''),
+            '{{client_phone}}' => $en(isset($client['phone']) ? (string)$client['phone'] : ''),
+            '{{client_mobile}}' => $en(isset($client['mobile']) ? (string)$client['mobile'] : ''),
             '{{client_email}}' => isset($client['email']) ? (string)$client['email'] : '',
             '{{client_address}}' => $clientAddressDisplay,
             '{{client_occupation}}' => !empty($deal['occupation']) ? (string)$deal['occupation'] : 'N/A',
             '{{occupation}}' => !empty($deal['occupation']) ? (string)$deal['occupation'] : 'N/A',
             '{{deal_occupation}}' => !empty($deal['occupation']) ? (string)$deal['occupation'] : 'N/A',
             '{{nominee_name}}' => isset($deal['nominee_name']) ? (string)$deal['nominee_name'] : '',
-            '{{nominee_cnic}}' => isset($deal['nominee_cnic']) ? (string)$deal['nominee_cnic'] : '',
-            '{{nominee_mobile}}' => isset($deal['nominee_mobile']) ? (string)$deal['nominee_mobile'] : '',
-            '{{nominee_phone}}' => isset($deal['nominee_mobile']) ? (string)$deal['nominee_mobile'] : '',
+            '{{nominee_cnic}}' => $en(isset($deal['nominee_cnic']) ? (string)$deal['nominee_cnic'] : ''),
+            '{{nominee_mobile}}' => $en(isset($deal['nominee_mobile']) ? (string)$deal['nominee_mobile'] : ''),
+            '{{nominee_phone}}' => $en(isset($deal['nominee_mobile']) ? (string)$deal['nominee_mobile'] : ''),
             '{{nominee_relation}}' => isset($deal['nominee_relation']) ? (string)$deal['nominee_relation'] : '',
             '{{client_profile_photo_url}}' => $profileUrl,
             '{{client_id_front_image_url}}' => $idFrontUrl,
@@ -5995,29 +6046,29 @@ HTML;
             '{{client_id_back_image}}' => $this->_contactImageTag($idBackUrl, 'Client ID Back'),
             '{{applicant_photo}}' => $this->_contactImageTag($profileUrl, 'Applicant Photo'),
             '{{applicant_photo_url}}' => $profileUrl,
-            '{{deal_invoice_no}}' => isset($deal['invoice_no']) ? (string)$deal['invoice_no'] : '',
-            '{{deal_date}}' => !empty($deal['date']) ? $this->_formatDateValue($deal['date'], '') : '',
+            '{{deal_invoice_no}}' => $en(isset($deal['invoice_no']) ? (string)$deal['invoice_no'] : ''),
+            '{{deal_date}}' => $en(!empty($deal['date']) ? $this->_formatDateValue($deal['date'], '') : ''),
             '{{deal_status}}' => $dealStatusForQr,
-            '{{deal_total_amount}}' => isset($deal['total_amount']) ? $this->currency.CakeNumber::format((float)$deal['total_amount']) : '',
+            '{{deal_total_amount}}' => $en(isset($deal['total_amount']) ? $this->currency.CakeNumber::format((float)$deal['total_amount']) : ''),
             '{{deal_total_amount_words}}' => $this->_letterAmountInWords($dealTotalAmount),
             '{{deal_total_amount_words_urdu}}' => $this->_letterAmountInUrduWords($dealTotalAmount),
-            '{{deal_total_with_charges}}' => $this->currency.CakeNumber::format((float)$dealTotalWithCharges),
+            '{{deal_total_with_charges}}' => $en($this->currency.CakeNumber::format((float)$dealTotalWithCharges)),
             '{{deal_total_with_charges_words_urdu}}' => $this->_letterAmountInUrduWords($dealTotalWithCharges),
-            '{{deal_discount}}' => isset($deal['discount']) ? $this->currency.CakeNumber::format((float)$deal['discount']) : '',
-            '{{deal_booking_amount}}' => isset($deal['booking_amount']) ? $this->currency.CakeNumber::format((float)$deal['booking_amount']) : '',
-            '{{deal_balance_amount}}' => $this->currency.CakeNumber::format((float)$dealBalanceAmount),
+            '{{deal_discount}}' => $en(isset($deal['discount']) ? $this->currency.CakeNumber::format((float)$deal['discount']) : ''),
+            '{{deal_booking_amount}}' => $en(isset($deal['booking_amount']) ? $this->currency.CakeNumber::format((float)$deal['booking_amount']) : ''),
+            '{{deal_balance_amount}}' => $en($this->currency.CakeNumber::format((float)$dealBalanceAmount)),
             '{{deal_balance_amount_words_urdu}}' => $this->_letterAmountInUrduWords($dealBalanceAmount),
-            '{{deal_booking_receipt_no}}' => isset($firstDealPayment['receipt_no']) ? (string)$firstDealPayment['receipt_no'] : '',
+            '{{deal_booking_receipt_no}}' => $en(isset($firstDealPayment['receipt_no']) ? (string)$firstDealPayment['receipt_no'] : ''),
             '{{deal_booking_payment_method}}' => isset($firstDealPayment['payment_method']) ? (string)$firstDealPayment['payment_method'] : '',
             '{{deal_booking_payment_remarks}}' => isset($firstDealPayment['remarks']) ? (string)$firstDealPayment['remarks'] : '',
-            '{{deal_booking_payment_date}}' => isset($firstDealPayment['payment_date']) ? (string)$firstDealPayment['payment_date'] : '',
-            '{{deal_booking_payment_amount}}' => $this->currency.CakeNumber::format($firstDealPaymentAmount),
+            '{{deal_booking_payment_date}}' => $en(isset($firstDealPayment['payment_date']) ? (string)$firstDealPayment['payment_date'] : ''),
+            '{{deal_booking_payment_amount}}' => $en($this->currency.CakeNumber::format($firstDealPaymentAmount)),
             '{{deal_booking_payment_amount_words}}' => $this->_letterAmountInWords($firstDealPaymentAmount),
             '{{deal_booking_payment_amount_words_urdu}}' => $this->_letterAmountInUrduWords($firstDealPaymentAmount),
             '{{deal_booking_payment_against}}' => $firstDealPaymentNames,
-            '{{first_deal_payment_receipt_no}}' => isset($firstDealPayment['receipt_no']) ? (string)$firstDealPayment['receipt_no'] : '',
+            '{{first_deal_payment_receipt_no}}' => $en(isset($firstDealPayment['receipt_no']) ? (string)$firstDealPayment['receipt_no'] : ''),
             '{{first_deal_payment_method}}' => isset($firstDealPayment['payment_method']) ? (string)$firstDealPayment['payment_method'] : '',
-            '{{first_deal_payment_amount}}' => $this->currency.CakeNumber::format($firstDealPaymentAmount),
+            '{{first_deal_payment_amount}}' => $en($this->currency.CakeNumber::format($firstDealPaymentAmount)),
             '{{first_deal_payment_amount_words}}' => $this->_letterAmountInWords($firstDealPaymentAmount),
             '{{first_deal_payment_amount_words_urdu}}' => $this->_letterAmountInUrduWords($firstDealPaymentAmount),
             '{{first_deal_payment_against}}' => $firstDealPaymentNames,
@@ -6031,39 +6082,39 @@ HTML;
             '{{letter_security_hash}}' => $letterSecurityHash,
             '{{letter_security_token}}' => $letterSecurityHash,
             '{{overdue_installments_label}}' => isset($overdueSummary['label']) ? (string)$overdueSummary['label'] : '-',
-            '{{overdue_installments_count}}' => isset($overdueSummary['count']) ? (string)$overdueSummary['count'] : '0',
-            '{{overdue_amount}}' => isset($overdueSummary['amount_text']) ? (string)$overdueSummary['amount_text'] : $this->currency.CakeNumber::format(0),
+            '{{overdue_installments_count}}' => $en(isset($overdueSummary['count']) ? (string)$overdueSummary['count'] : '0'),
+            '{{overdue_amount}}' => $en(isset($overdueSummary['amount_text']) ? (string)$overdueSummary['amount_text'] : $this->currency.CakeNumber::format(0)),
             '{{overdue_amount_words}}' => isset($overdueSummary['amount_words']) ? (string)$overdueSummary['amount_words'] : $this->_letterAmountInWords(0),
             '{{final_notice_deadline_days}}' => '7',
             '{{bank_name}}' => isset($primaryBank['bank_name']) ? (string)$primaryBank['bank_name'] : '',
             '{{bank_account_title}}' => isset($primaryBank['account_title']) ? (string)$primaryBank['account_title'] : '',
-            '{{bank_account_no}}' => isset($primaryBank['account_no']) ? (string)$primaryBank['account_no'] : '',
-            '{{bank_iban}}' => isset($primaryBank['iban']) ? (string)$primaryBank['iban'] : '',
+            '{{bank_account_no}}' => $en(isset($primaryBank['account_no']) ? (string)$primaryBank['account_no'] : ''),
+            '{{bank_iban}}' => $en(isset($primaryBank['iban']) ? (string)$primaryBank['iban'] : ''),
             '{{bank_branch}}' => isset($primaryBank['branch']) ? (string)$primaryBank['branch'] : '',
             '{{bank_swift_code}}' => isset($primaryBank['swift_code']) ? (string)$primaryBank['swift_code'] : '',
             '{{agency_bank_name}}' => isset($primaryBank['bank_name']) ? (string)$primaryBank['bank_name'] : '',
             '{{agency_account_title}}' => isset($primaryBank['account_title']) ? (string)$primaryBank['account_title'] : '',
-            '{{agency_account_no}}' => isset($primaryBank['account_no']) ? (string)$primaryBank['account_no'] : '',
-            '{{agency_iban}}' => isset($primaryBank['iban']) ? (string)$primaryBank['iban'] : '',
+            '{{agency_account_no}}' => $en(isset($primaryBank['account_no']) ? (string)$primaryBank['account_no'] : ''),
+            '{{agency_iban}}' => $en(isset($primaryBank['iban']) ? (string)$primaryBank['iban'] : ''),
             '{{ceo_signature_url}}' => $ceoSignatureUrl,
             '{{chairman_signature_url}}' => $chairmanSignatureUrl,
             '{{ceo_signature}}' => $this->_signatureImageTag($ceoSignatureUrl, 'CEO Signature', 'CEO Office'),
             '{{chairman_signature}}' => $this->_signatureImageTag($chairmanSignatureUrl, 'Chairman Signature', 'Board Chairman'),
-            '{{deal_charges_total}}' => $this->currency.CakeNumber::format((float)$dealChargeTotal),
+            '{{deal_charges_total}}' => $en($this->currency.CakeNumber::format((float)$dealChargeTotal)),
             '{{deal_charges_total_words}}' => $this->_letterAmountInWords($dealChargeTotal),
             '{{deal_charges_total_words_urdu}}' => $this->_letterAmountInUrduWords($dealChargeTotal),
-            '{{deal_charges_count}}' => (string)$dealChargeCount,
+            '{{deal_charges_count}}' => $en((string)$dealChargeCount),
             '{{deal_charges_types}}' => $dealChargeTypes,
             '{{deal_charges_types_urdu}}' => $dealChargeTypesUrdu,
             '{{deal_charges_table}}' => $this->_dealChargesTableHtml($dealChargeRows),
             '{{deal_charge_type}}' => $latestChargeType,
             '{{deal_charge_type_urdu}}' => $this->_translateDealChargeUrdu($latestChargeType),
             '{{deal_charge_cycle_type}}' => $latestChargeCycleTypeLabel,
-            '{{deal_charge_cycle_count}}' => (string)$latestChargeCycleCount,
-            '{{deal_charge_cycle_amount}}' => $this->currency.CakeNumber::format((float)$latestChargeCycleAmount),
-            '{{deal_charge_total_amount}}' => $this->currency.CakeNumber::format((float)$latestChargeTotalAmount),
+            '{{deal_charge_cycle_count}}' => $en((string)$latestChargeCycleCount),
+            '{{deal_charge_cycle_amount}}' => $en($this->currency.CakeNumber::format((float)$latestChargeCycleAmount)),
+            '{{deal_charge_total_amount}}' => $en($this->currency.CakeNumber::format((float)$latestChargeTotalAmount)),
             '{{deal_charge_total_amount_words_urdu}}' => $this->_letterAmountInUrduWords($latestChargeTotalAmount),
-            '{{deal_charge_start_date}}' => $latestChargeStartDateLabel,
+            '{{deal_charge_start_date}}' => $en($latestChargeStartDateLabel),
             '{{charge_work_details}}' => $chargeWorkDetails,
             '{{charge_work_status}}' => $chargeWorkStatus,
             '{{charge_work_status_urdu}}' => $this->_chargeWorkStatusUrdu($chargeWorkStatus),
@@ -6072,56 +6123,56 @@ HTML;
             '{{agreement_place}}' => $agreementPlace,
             '{{agency_representative_name}}' => $agencyRepresentativeName,
             '{{agency_representative_father}}' => $agencyRepresentativeFather,
-            '{{agency_representative_cnic}}' => $agencyRepresentativeCnic,
+            '{{agency_representative_cnic}}' => $en($agencyRepresentativeCnic),
             '{{agency_representative_designation}}' => $agencyRepresentativeDesignation,
             '{{agreement_payment_plan}}' => $agreementPaymentPlan,
-            '{{agreement_penalty_rate}}' => $agreementPenaltyRate,
-            '{{agreement_possession_months}}' => $agreementPossessionMonths,
-            '{{agreement_extra_work_amount}}' => $agreementExtraWorkAmount,
+            '{{agreement_penalty_rate}}' => $en($agreementPenaltyRate),
+            '{{agreement_possession_months}}' => $en($agreementPossessionMonths),
+            '{{agreement_extra_work_amount}}' => $en($agreementExtraWorkAmount),
             '{{agreement_extra_work_schedule}}' => $agreementExtraWorkSchedule,
-            '{{agreement_cancellation_deduction_rate}}' => $agreementCancellationDeductionRate,
-            '{{agreement_refund_period}}' => $agreementRefundPeriod,
+            '{{agreement_cancellation_deduction_rate}}' => $en($agreementCancellationDeductionRate),
+            '{{agreement_refund_period}}' => $en($agreementRefundPeriod),
             '{{agreement_court_jurisdiction}}' => $agreementCourtJurisdiction,
-            '{{agreement_property_block}}' => $agreementPropertyBlock,
-            '{{agreement_property_unit_no}}' => $agreementPropertyUnitNo,
-            '{{agreement_property_floor}}' => $agreementPropertyFloor,
-            '{{agreement_property_covered_area}}' => $agreementPropertyCoveredArea,
+            '{{agreement_property_block}}' => $en($agreementPropertyBlock),
+            '{{agreement_property_unit_no}}' => $en($agreementPropertyUnitNo),
+            '{{agreement_property_floor}}' => $en($agreementPropertyFloor),
+            '{{agreement_property_covered_area}}' => $en($agreementPropertyCoveredArea),
             '{{agreement_property_location}}' => $agreementPropertyLocation,
             '{{property_agreement_category}}' => $propertyAgreementCategory,
             '{{property_agreement_terms}}' => $propertyAgreementTerms,
             '{{witness_one_name}}' => $witnessOneName,
-            '{{witness_one_cnic}}' => $witnessOneCnic,
-            '{{witness_one_contact}}' => $witnessOneContact,
+            '{{witness_one_cnic}}' => $en($witnessOneCnic),
+            '{{witness_one_contact}}' => $en($witnessOneContact),
             '{{witness_one_address}}' => $witnessOneAddress,
             '{{witness_two_name}}' => $witnessTwoName,
-            '{{witness_two_cnic}}' => $witnessTwoCnic,
-            '{{witness_two_contact}}' => $witnessTwoContact,
+            '{{witness_two_cnic}}' => $en($witnessTwoCnic),
+            '{{witness_two_contact}}' => $en($witnessTwoContact),
             '{{witness_two_address}}' => $witnessTwoAddress,
             '{{refund_id}}' => $refundId > 0 ? (string)$refundId : '',
             '{{deal_refund_id}}' => $refundDisplayId,
-            '{{refund_request_date}}' => $refundRequestDate,
-            '{{refund_total_paid}}' => $this->currency.CakeNumber::format((float)$refundTotalPaid),
+            '{{refund_request_date}}' => $en($refundRequestDate),
+            '{{refund_total_paid}}' => $en($this->currency.CakeNumber::format((float)$refundTotalPaid)),
             '{{refund_deduction_percent}}' => ($isRefundMarkup ? ('+' . $refundAdjPercentText . ' (Markup)') : $refundAdjPercentText),
-            '{{refund_deduction_amount}}' => $refundAdjAmountText,
+            '{{refund_deduction_amount}}' => $en($refundAdjAmountText),
             '{{refund_adjustment_label}}' => $refundAdjLabel,
             '{{refund_adjustment_sign}}' => $refundAdjSign,
             '{{refund_adjustment_percent}}' => $refundAdjPercentText,
-            '{{refund_adjustment_amount}}' => $refundAdjAmountText,
+            '{{refund_adjustment_amount}}' => $en($refundAdjAmountText),
             '{{refund_adjustment_color}}' => $refundAdjColor,
             '{{refund_adjustment_statement}}' => $refundAdjStatement,
             '{{refund_father_name}}' => !empty($refundData['father_name']) ? (string)$refundData['father_name'] : $clientFatherNameDisplay,
             '{{refund_relation_type}}' => !empty($refundData['relation_type']) ? (string)$refundData['relation_type'] : $clientRelationType,
             '{{client_relation_type_label}}' => (!empty($clientRelationType) ? $clientRelationType : 'Guardian'),
-            '{{refund_net_refund}}' => $this->currency.CakeNumber::format((float)$refundNet),
+            '{{refund_net_refund}}' => $en($this->currency.CakeNumber::format((float)$refundNet)),
             '{{refund_net_refund_words}}' => $this->_letterAmountInWords($refundNet),
             '{{refund_net_refund_words_urdu}}' => $this->_letterAmountInUrduWords($refundNet),
-            '{{refund_paid_total}}' => $this->currency.CakeNumber::format((float)$refundPaidTotal),
-            '{{refund_completion_date}}' => $refundCompletionDate,
-            '{{refund_cycle_count}}' => (string)$refundCycleCount,
+            '{{refund_paid_total}}' => $en($this->currency.CakeNumber::format((float)$refundPaidTotal)),
+            '{{refund_completion_date}}' => $en($refundCompletionDate),
+            '{{refund_cycle_count}}' => $en((string)$refundCycleCount),
             '{{refund_cycle_frequency}}' => $refundCycleFrequency,
-            '{{refund_cycle_amount}}' => $this->currency.CakeNumber::format((float)$refundCycleAmount),
+            '{{refund_cycle_amount}}' => $en($this->currency.CakeNumber::format((float)$refundCycleAmount)),
             '{{refund_account_title}}' => isset($refundData['account_title']) ? (string)$refundData['account_title'] : '',
-            '{{refund_account_no}}' => isset($refundData['account_no']) ? (string)$refundData['account_no'] : '',
+            '{{refund_account_no}}' => $en(isset($refundData['account_no']) ? (string)$refundData['account_no'] : ''),
             '{{refund_bank_name}}' => isset($refundData['bank_name']) ? (string)$refundData['bank_name'] : '',
             '{{refund_bank_branch}}' => isset($refundData['bank_branch_city']) ? (string)$refundData['bank_branch_city'] : '',
             '{{refund_reason}}' => isset($refundData['reason']) ? (string)$refundData['reason'] : '',
@@ -6136,15 +6187,15 @@ HTML;
             '{{PropertyName}}' => $propertyName,
             '{{property_title}}' => $propertyName,
             '{{property_file}}' => $propertyName,
-            '{{property_area}}' => $propertyArea,
+            '{{property_area}}' => $en($propertyArea),
             '{{property_unit}}' => isset($unit['name']) ? (string)$unit['name'] : '',
-            '{{property_price}}' => isset($property['price']) ? $this->currency.CakeNumber::format((float)$property['price']) : '',
+            '{{property_price}}' => $en(isset($property['price']) ? $this->currency.CakeNumber::format((float)$property['price']) : ''),
             '{{property_type}}' => isset($type['name']) ? (string)$type['name'] : '',
             '{{property_contract}}' => isset($contract['name']) ? (string)$contract['name'] : '',
             '{{project_name}}' => isset($project['name']) ? (string)$project['name'] : '',
-            '{{ballot_allotment_no}}' => isset($ballot['allotment_no']) ? (string)$ballot['allotment_no'] : '',
+            '{{ballot_allotment_no}}' => $en(isset($ballot['allotment_no']) ? (string)$ballot['allotment_no'] : ''),
             '{{ballot_permanent_type}}' => isset($ballot['permanent_type']) ? (string)$ballot['permanent_type'] : '',
-            '{{ballot_property_no}}' => isset($ballot['property_no']) ? (string)$ballot['property_no'] : '',
+            '{{ballot_property_no}}' => $en(isset($ballot['property_no']) ? (string)$ballot['property_no'] : ''),
             '{{ballot_street_no}}' => isset($ballot['street_no']) ? (string)$ballot['street_no'] : '',
             '{{ballot_block_name}}' => $ballotBlockDisplay,
             '{{block_name}}' => $ballotBlockDisplay,
@@ -6153,12 +6204,12 @@ HTML;
             '{{ballot_street_address}}' => isset($ballot['street_address']) ? (string)$ballot['street_address'] : '',
             '{{ballot_unit_area}}' => isset($ballot['unit_area']) ? (string)$ballot['unit_area'] : '',
             '{{ballot_area_unit}}' => isset($ballot['area_unit']) ? (string)$ballot['area_unit'] : '',
-            '{{ballot_area_full}}' => $ballotArea,
+            '{{ballot_area_full}}' => $en($ballotArea),
             '{{ballot_property_type}}' => isset($ballot['property_type']) ? (string)$ballot['property_type'] : '',
             '{{ballot_unit_name}}' => isset($ballot['unit_name']) ? (string)$ballot['unit_name'] : '',
             '{{ballot_category_name}}' => isset($ballot['category_name']) ? (string)$ballot['category_name'] : '',
-            '{{ballot_allotment_date}}' => $ballotDate,
-            '{{allotment_no}}' => isset($ballot['allotment_no']) ? (string)$ballot['allotment_no'] : '',
+            '{{ballot_allotment_date}}' => $en($ballotDate),
+            '{{allotment_no}}' => $en(isset($ballot['allotment_no']) ? (string)$ballot['allotment_no'] : ''),
             '{{street_address}}' => isset($ballot['street_address']) ? (string)$ballot['street_address'] : '',
             '{{client_id}}' => isset($deal['client_id']) ? (string)$deal['client_id'] : (isset($client['id']) ? (string)$client['id'] : '')
         );
@@ -6239,6 +6290,33 @@ HTML;
         {
             $rendered = preg_replace('/(<div\s+class=["\'][^"\']*form-container[^"\']*["\'][^>]*>)/i', "$1\n" . $this->_floralBorderFrameSvg() . "\n", $rendered, 1);
         }
+
+        $isBookingOrWelcome = (
+            in_array($letterType, array('RLT_BOOKING', 'RLT_WELCOME'), true) ||
+            stripos($rendered, '12.18in') !== false ||
+            stripos($rendered, 'form-container') !== false ||
+            stripos($rendered, 'wv-welcome') !== false
+        );
+
+        if (!$isBookingOrWelcome)
+        {
+            // Strip out conflicting legacy inline font-size and excessive line-height attributes
+            $rendered = preg_replace('/style=(["\'])(.*?)\bfont-size\s*:\s*[\d\.]+(?:px|pt|rem)\s*;?(.*?)\1/i', 'style=$1$2$3$1', $rendered);
+            $rendered = preg_replace('/style=(["\'])(.*?)\bline-height\s*:\s*(?:[2-9]|1\.[7-9]|1\.[0-5]|3|4)[\d\.]*(?:px|pt|rem)?\s*;?(.*?)\1/i', 'style=$1$2$3$1', $rendered);
+            $rendered = preg_replace('/style=["\']\s*["\']/i', '', $rendered);
+
+            // Strip obsolete duplicate style tags that had hardcoded line-height: 1.85 or other conflicting overrides
+            $rendered = preg_replace('/<style\b[^>]*id=["\']wv-urdu-font-definitions["\'][^>]*>.*?<\/style>/is', '', $rendered);
+
+            // Auto-wrap any unwrapped CNICs and currency patterns in Urdu text
+            $rendered = preg_replace_callback('/(?<!class=["\']en-inline["\']>)\b(\d{5}-\d{7}-\d)\b/', function($m) {
+                return '<span dir="ltr" class="en-inline">' . $m[1] . '</span>';
+            }, $rendered);
+            $rendered = preg_replace_callback('/(?<!class=["\']en-inline["\']>)\b(Rs\.?\s*[\d,]+(?:\.\d+)?)\b/i', function($m) {
+                return '<span dir="ltr" class="en-inline">' . $m[1] . '</span>';
+            }, $rendered);
+        }
+
         if ($letterType === 'RLT_DEAL_AGREEMENT')
         {
             $rendered = $this->_prepareDealAgreementPrintHtml($rendered);
@@ -6447,40 +6525,44 @@ HTML;
         {
             return $html;
         }
+        $fontStack = '"Jameel Noori Nastaleeq", "Noto Nastaliq Urdu", sans-serif';
+        $fontKasheedaStack = '"Jameel Noori Nastaleeq Kasheeda", "Jameel Noori Nastaleeq", "Noto Nastaliq Urdu", serif';
         $fixCss = '<style id="wv-deal-agreement-print-fix">'
-            . '@font-face { font-family: "Jameel Noori Nastaleeq"; src: url("/whitevillas/fonts/JameelNooriNastaleeq.ttf") format("truetype"), url("/fonts/JameelNooriNastaleeq.ttf") format("truetype"), url("../fonts/JameelNooriNastaleeq.ttf") format("truetype"); font-weight: normal; font-style: normal; font-display: swap; }'
-            . '@font-face { font-family: "Jameel Noori Nastaleeq Kasheeda"; src: url("/whitevillas/fonts/JameelNooriNastaleeqKasheeda.ttf") format("truetype"), url("/fonts/JameelNooriNastaleeqKasheeda.ttf") format("truetype"), url("../fonts/JameelNooriNastaleeqKasheeda.ttf") format("truetype"); font-weight: normal; font-style: normal; font-display: swap; }'
+            . '@font-face { font-family: "Jameel Noori Nastaleeq"; src: url("/fonts/JameelNooriNastaleeq.ttf") format("truetype"), url("/whitevillas/fonts/JameelNooriNastaleeq.ttf") format("truetype"), url("../fonts/JameelNooriNastaleeq.ttf") format("truetype"); font-weight: normal; font-style: normal; font-display: swap; }'
+            . '@font-face { font-family: "Jameel Noori Nastaleeq Kasheeda"; src: url("/fonts/JameelNooriNastaleeqKasheeda.ttf") format("truetype"), url("/whitevillas/fonts/JameelNooriNastaleeqKasheeda.ttf") format("truetype"), url("../fonts/JameelNooriNastaleeqKasheeda.ttf") format("truetype"); font-weight: normal; font-style: normal; font-display: swap; }'
             . '*, *:before, *:after { box-sizing: border-box !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }'
-            . '@page { size: A4 portrait; margin: 0 !important; }'
-            . 'html,body { margin: 0 !important; padding: 0 !important; width: 100% !important; background: #fff !important; color: #0f172a !important; direction: rtl !important; unicode-bidi: embed !important; text-align: center !important; }'
-            . '.page { width: 196mm !important; max-width: 196mm !important; min-height: 275mm !important; height: auto !important; max-height: none !important; box-sizing: border-box !important; margin: 4mm auto !important; padding: 4mm 8mm 3mm 8mm !important; background: #ffffff !important; border: none !important; box-shadow: none !important; position: relative !important; overflow: visible !important; display: flex !important; flex-direction: column !important; justify-content: space-between !important; page-break-after: always !important; page-break-inside: avoid !important; break-after: page !important; break-inside: avoid !important; text-align: right !important; }'
+            . '@page { size: Legal portrait; margin: 12mm 14mm !important; }'
+            . 'html,body { margin: 0 !important; padding: 0 !important; width: 100% !important; background: #fff !important; color: #000000 !important; direction: rtl !important; unicode-bidi: embed !important; text-align: right !important; font-family: ' . $fontStack . ' !important; font-size: 16px !important; line-height: 1.65 !important; }'
+            . '.page { width: 100% !important; max-width: 100% !important; min-height: 0 !important; height: auto !important; max-height: none !important; box-sizing: border-box !important; margin: 0 auto !important; padding: 0 !important; background: #ffffff !important; border: none !important; box-shadow: none !important; position: relative !important; overflow: visible !important; display: flex !important; flex-direction: column !important; justify-content: space-between !important; page-break-after: always !important; page-break-inside: avoid !important; break-after: page !important; break-inside: avoid !important; text-align: right !important; }'
             . '.page:last-of-type { page-break-after: auto !important; break-after: auto !important; }'
-            . '.watermark { position: absolute !important; top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) rotate(-30deg) !important; font-size: 52px !important; font-weight: 900 !important; color: rgba(0,0,0,0.025) !important; font-family: Arial, Helvetica, sans-serif !important; pointer-events: none !important; user-select: none !important; z-index: 1 !important; white-space: nowrap !important; border: 4px double rgba(0,0,0,0.025) !important; padding: 4px 18px !important; border-radius: 10px !important; }'
+            . '.watermark { position: absolute !important; top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) rotate(-30deg) !important; font-size: 58px !important; font-weight: 900 !important; color: rgba(0,0,0,0.035) !important; font-family: Arial, Helvetica, sans-serif !important; pointer-events: none !important; user-select: none !important; z-index: 1 !important; white-space: nowrap !important; border: 6px double rgba(0,0,0,0.035) !important; padding: 4px 20px !important; border-radius: 12px !important; }'
             . '.page > *:not(.watermark) { position: relative !important; z-index: 2 !important; }'
-            . '.letterhead { text-align: center !important; border-bottom: 1.2px solid #0f172a !important; padding-bottom: 2px !important; margin-bottom: 2px !important; flex: 0 0 auto !important; }'
-            . '.head-row { display: grid !important; grid-template-columns: 38px minmax(0, 1fr) 38px !important; align-items: center !important; gap: 4px !important; }'
-            . '.logo-box { width: 36px !important; height: 36px !important; border: 1px solid #0f172a !important; padding: 1px !important; display: flex !important; align-items: center !important; justify-content: center !important; overflow: hidden !important; }'
+            . '.letterhead { text-align: center !important; border-bottom: 2px solid #000000 !important; padding-bottom: 6px !important; margin-bottom: 8px !important; flex: 0 0 auto !important; }'
+            . '.head-row { display: grid !important; grid-template-columns: 60px minmax(0, 1fr) 60px !important; align-items: center !important; gap: 10px !important; }'
+            . '.logo-box { width: 56px !important; height: 56px !important; border: 1px solid #000000 !important; padding: 2px !important; display: flex !important; align-items: center !important; justify-content: center !important; overflow: hidden !important; }'
             . '.logo-box img { max-width: 100% !important; max-height: 100% !important; object-fit: contain !important; }'
-            . '.agency-name { font-size: 14px !important; font-weight: 900 !important; line-height: 1.15 !important; color: #0f172a !important; font-family: Arial, Helvetica, sans-serif !important; text-transform: uppercase !important; }'
-            . '.agency-sub { font-size: 9px !important; color: #475569 !important; margin-top: 1px !important; line-height: 1.15 !important; }'
-            . '.agency-contact { font-size: 7.8px !important; color: #334155 !important; margin-top: 1px !important; font-family: Arial, Helvetica, sans-serif !important; direction: ltr !important; }'
-            . '.document-title { font-family: "Jameel Noori Nastaleeq Kasheeda", "Jameel Noori Nastaleeq", serif !important; text-align: center !important; font-size: 15px !important; font-weight: 900 !important; text-decoration: underline !important; text-underline-offset: 3px !important; margin: 1px 0 !important; line-height: 1.15 !important; color: #0f172a !important; }'
-            . '.document-subtitle { font-family: "Jameel Noori Nastaleeq Kasheeda", "Jameel Noori Nastaleeq", serif !important; text-align: center !important; font-size: 11px !important; font-weight: 700 !important; color: #334155 !important; margin-bottom: 2px !important; line-height: 1.15 !important; }'
-            . '.meta-row { display: flex !important; justify-content: space-between !important; align-items: center !important; font-size: 9.8px !important; font-weight: 800 !important; color: #1f2937 !important; margin-bottom: 2px !important; background: #f8fafc !important; padding: 1.5px 5px !important; border: 1px solid #cbd5e1 !important; border-radius: 3px !important; line-height: 1.25 !important; }'
+            . '.agency-name { font-size: 18px !important; font-weight: 900 !important; line-height: 1.25 !important; color: #000000 !important; font-family: Arial, Helvetica, sans-serif !important; text-transform: uppercase !important; }'
+            . '.agency-sub { font-size: 13px !important; color: #333333 !important; margin-top: 2px !important; line-height: 1.4 !important; font-family: ' . $fontStack . ' !important; }'
+            . '.agency-contact { font-size: 10.5px !important; color: #333333 !important; margin-top: 2px !important; font-family: Arial, Helvetica, sans-serif !important; direction: ltr !important; }'
+            . '.document-title { font-family: ' . $fontKasheedaStack . ' !important; text-align: center !important; font-size: 20px !important; font-weight: 900 !important; text-decoration: underline !important; text-underline-offset: 4px !important; margin: 4px 0 2px !important; line-height: 1.65 !important; color: #000000 !important; }'
+            . '.document-subtitle { font-family: ' . $fontKasheedaStack . ' !important; text-align: center !important; font-size: 16px !important; font-weight: 700 !important; color: #000000 !important; margin-bottom: 6px !important; line-height: 1.65 !important; }'
+            . '.meta-row { display: flex !important; justify-content: space-between !important; align-items: center !important; font-size: 14px !important; font-weight: 800 !important; color: #000000 !important; margin-bottom: 6px !important; background: #ffffff !important; padding: 4px 8px !important; border: 1px solid #000000 !important; border-radius: 4px !important; line-height: 1.65 !important; }'
             . '.page-body { flex: 1 1 auto !important; display: flex !important; flex-direction: column !important; justify-content: flex-start !important; overflow: visible !important; }'
-            . 'p { margin: 0 0 2px !important; text-align: justify !important; line-height: 1.4 !important; font-size: 11px !important; font-family: "Jameel Noori Nastaleeq", "Noto Nastaliq Urdu", serif !important; }'
-            . '.section-title { font-family: "Jameel Noori Nastaleeq Kasheeda", "Jameel Noori Nastaleeq", serif !important; font-size: 12px !important; font-weight: 900 !important; text-decoration: underline !important; text-underline-offset: 2.5px !important; margin: 2.5px 0 1px !important; line-height: 1.15 !important; color: #065f46 !important; page-break-after: avoid !important; break-after: avoid !important; }'
-            . '.clause { font-size: 10.2px !important; line-height: 1.36 !important; margin-bottom: 1.5px !important; text-align: justify !important; font-family: "Jameel Noori Nastaleeq", "Noto Nastaliq Urdu", serif !important; page-break-inside: avoid !important; break-inside: avoid !important; }'
-            . '.field { border-bottom: 1px solid #000 !important; padding: 0 2px !important; font-weight: 900 !important; color: #000 !important; display: inline !important; }'
-            . '.amount-box { border: 1.2px solid #065f46 !important; background: #f9fafb !important; padding: 3px 6px !important; margin: 2px 0 !important; text-align: center !important; font-size: 11px !important; font-weight: 900 !important; line-height: 1.35 !important; border-radius: 3px !important; page-break-inside: avoid !important; break-inside: avoid !important; }'
-            . '.note-box { border: 1px solid #cbd5e1 !important; border-right: 3.5px solid #059669 !important; background: #f8fafc !important; padding: 2.5px 5px !important; margin: 1.5px 0 !important; font-size: 10px !important; line-height: 1.35 !important; border-radius: 0 3px 3px 0 !important; page-break-inside: avoid !important; break-inside: avoid !important; }'
-            . '.sign-area, .witness-area { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 4px !important; margin-top: 2px !important; page-break-inside: avoid !important; break-inside: avoid !important; }'
-            . '.sign-box { border: 1px solid #cbd5e1 !important; background: #f8fafc !important; border-radius: 3px !important; padding: 2px 5px !important; min-height: 44px !important; line-height: 1.2 !important; font-size: 9.5px !important; page-break-inside: avoid !important; break-inside: avoid !important; }'
-            . '.sign-title { font-family: "Jameel Noori Nastaleeq Kasheeda", "Jameel Noori Nastaleeq", serif !important; font-weight: 900 !important; color: #0f172a !important; border-bottom: 1px solid #cbd5e1 !important; padding-bottom: 1px !important; margin-bottom: 1.5px !important; font-size: 9.5px !important; line-height: 1.15 !important; }'
-            . '.sign-line { border-bottom: 1px solid #94a3b8 !important; display: block !important; min-height: 11px !important; margin-top: 1px !important; margin-bottom: 1px !important; }'
-            . '.thumb-box { height: 18px !important; border: 1px dashed #cbd5e1 !important; background: #fff !important; border-radius: 2px !important; margin-top: 1px !important; display: flex !important; align-items: center !important; justify-content: center !important; font-size: 8px !important; color: #64748b !important; }'
-            . '.footer { border-top: 1px solid #0f172a !important; padding-top: 1.5px !important; text-align: center !important; font-size: 7.8px !important; line-height: 1.15 !important; color: #475569 !important; font-family: Arial, Helvetica, sans-serif !important; margin-top: auto !important; flex: 0 0 auto !important; }'
-            . '@media print { html, body { text-align: center !important; background: #fff !important; } .page { margin: 4mm auto !important; border: none !important; box-shadow: none !important; text-align: right !important; overflow: visible !important; min-height: 275mm !important; height: auto !important; max-height: none !important; } }'
+            . 'p { margin: 0 0 6px !important; text-align: justify !important; text-justify: inter-word !important; line-height: 1.65 !important; font-size: 16px !important; font-family: ' . $fontStack . ' !important; }'
+            . '.section-title { font-family: ' . $fontKasheedaStack . ' !important; font-size: 16px !important; font-weight: 900 !important; text-decoration: underline !important; text-underline-offset: 3px !important; margin: 8px 0 4px !important; line-height: 1.65 !important; color: #000000 !important; page-break-after: avoid !important; break-after: avoid !important; }'
+            . '.clause, .numbered-clause { font-size: 16px !important; line-height: 1.65 !important; margin-bottom: 5px !important; text-align: justify !important; text-justify: inter-word !important; font-family: ' . $fontStack . ' !important; page-break-inside: avoid !important; break-inside: avoid !important; }'
+            . '.field { border-bottom: 1px solid #000000 !important; padding: 0 4px !important; font-weight: 900 !important; color: #000000 !important; display: inline !important; }'
+            . '.amount-box { border: 1.5px solid #000000 !important; background: #ffffff !important; padding: 6px 12px !important; margin: 8px 0 !important; text-align: center !important; font-size: 16px !important; font-weight: 900 !important; line-height: 1.65 !important; border-radius: 4px !important; page-break-inside: avoid !important; break-inside: avoid !important; }'
+            . '.note-box { border: 1px solid #000000 !important; border-right: 4px solid #000000 !important; background: #ffffff !important; padding: 6px 10px !important; margin: 6px 0 !important; font-size: 16px !important; line-height: 1.65 !important; border-radius: 0 4px 4px 0 !important; page-break-inside: avoid !important; break-inside: avoid !important; text-align: justify !important; text-justify: inter-word !important; }'
+            . '.en-inline { display: inline-block !important; direction: ltr !important; unicode-bidi: embed !important; font-family: Arial, Helvetica, sans-serif !important; font-size: 13.5px !important; line-height: 1 !important; border-bottom: 1px solid #000000 !important; padding: 0 4px 1px 4px !important; margin: 0 2px !important; text-align: center !important; vertical-align: baseline !important; font-weight: bold !important; color: #000000 !important; }'
+            . '.field .en-inline { border-bottom: none !important; }'
+            . '.sign-area, .witness-area { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 12px !important; margin-top: 12px !important; page-break-inside: avoid !important; break-inside: avoid !important; }'
+            . '.sign-box { border: 1px solid #000000 !important; background: #ffffff !important; border-radius: 4px !important; padding: 8px 10px !important; min-height: 90px !important; line-height: 1.4 !important; font-size: 14px !important; page-break-inside: avoid !important; break-inside: avoid !important; }'
+            . '.sign-title { font-family: ' . $fontKasheedaStack . ' !important; font-weight: 900 !important; color: #000000 !important; border-bottom: 1px solid #000000 !important; padding-bottom: 3px !important; margin-bottom: 5px !important; font-size: 15px !important; line-height: 1.4 !important; }'
+            . '.sign-line { border-bottom: 1px solid #000000 !important; display: block !important; min-height: 20px !important; margin-top: 3px !important; margin-bottom: 3px !important; }'
+            . '.thumb-box { height: 32px !important; border: 1px dashed #000000 !important; background: #ffffff !important; border-radius: 3px !important; margin-top: 4px !important; display: flex !important; align-items: center !important; justify-content: center !important; font-size: 12px !important; color: #333333 !important; }'
+            . '.footer { border-top: 1.5px solid #000000 !important; padding-top: 4px !important; text-align: center !important; font-size: 11px !important; line-height: 1.25 !important; color: #000000 !important; font-family: Arial, Helvetica, sans-serif !important; margin-top: auto !important; flex: 0 0 auto !important; }'
+            . '@media print { html, body { text-align: right !important; background: #fff !important; } .page { margin: 0 auto !important; border: none !important; box-shadow: none !important; text-align: right !important; overflow: visible !important; width: 100% !important; max-width: 100% !important; min-height: 0 !important; height: auto !important; max-height: none !important; } }'
             . '</style>';
         if (stripos($html, '</head>') !== false)
         {
@@ -6500,22 +6582,21 @@ HTML;
         {
             return $html;
         }
-        $fontStack = '"Jameel Noori Nastaleeq","Noto Nastaliq Urdu","Nafees Nastaleeq",serif';
+        $fontStack = '"Jameel Noori Nastaleeq", "Noto Nastaliq Urdu", sans-serif';
+        $fontKasheedaStack = '"Jameel Noori Nastaleeq Kasheeda", "Jameel Noori Nastaleeq", "Noto Nastaliq Urdu", serif';
         $fixCss = '<style id="wv-refund-clearance-print-fix">'
-            . '@font-face { font-family: "Jameel Noori Nastaleeq"; src: url("/whitevillas/fonts/JameelNooriNastaleeq.ttf") format("truetype"), url("/fonts/JameelNooriNastaleeq.ttf") format("truetype"), url("../fonts/JameelNooriNastaleeq.ttf") format("truetype"); font-weight: normal; font-style: normal; font-display: swap; }'
-            . '@font-face { font-family: "Jameel Noori Nastaleeq Kasheeda"; src: url("/whitevillas/fonts/JameelNooriNastaleeqKasheeda.ttf") format("truetype"), url("/fonts/JameelNooriNastaleeqKasheeda.ttf") format("truetype"), url("../fonts/JameelNooriNastaleeqKasheeda.ttf") format("truetype"); font-weight: normal; font-style: normal; font-display: swap; }'
-            . '*, *:before, *:after { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }'
-            . 'html,body{background:#fff!important;color:#000!important;}'
-            . '.legal-page-canvas{width:8.5in!important;min-height:14in!important;height:auto!important;overflow:visible!important;background:#fff!important;color:#000!important;box-sizing:border-box!important;display:flex!important;flex-direction:column!important;justify-content:flex-start!important;padding:.36in .5in .32in .5in!important;}'
+            . '@font-face { font-family: "Jameel Noori Nastaleeq"; src: url("/fonts/JameelNooriNastaleeq.ttf") format("truetype"), url("/whitevillas/fonts/JameelNooriNastaleeq.ttf") format("truetype"), url("../fonts/JameelNooriNastaleeq.ttf") format("truetype"); font-weight: normal; font-style: normal; font-display: swap; }'
+            . '@font-face { font-family: "Jameel Noori Nastaleeq Kasheeda"; src: url("/fonts/JameelNooriNastaleeqKasheeda.ttf") format("truetype"), url("/whitevillas/fonts/JameelNooriNastaleeqKasheeda.ttf") format("truetype"), url("../fonts/JameelNooriNastaleeqKasheeda.ttf") format("truetype"); font-weight: normal; font-style: normal; font-display: swap; }'
+            . '*, *:before, *:after { box-sizing: border-box !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }'
+            . '@page { size: Legal portrait; margin: 12mm 14mm !important; }'
+            . 'html,body{background:#fff!important;color:#000!important;font-family:' . $fontStack . '!important;font-size:16px!important;line-height:1.65!important;direction:rtl!important;}'
+            . '.legal-page-canvas{width:100%!important;max-width:100%!important;min-height:0!important;height:auto!important;overflow:visible!important;background:#fff!important;color:#000!important;box-sizing:border-box!important;padding:0!important;}'
             . '.stamp-top-gap{height:3.65in!important;min-height:0!important;flex:0 0 auto!important;}'
-            . '.legal-frame{border-right:3px double #dc2626!important;border-left:1px solid #fee2e2!important;padding-right:1.45rem!important;padding-left:.85rem!important;}'
+            . '.legal-frame{border-right:3px double #000000!important;border-left:1px solid #cccccc!important;padding-right:1.45rem!important;padding-left:.85rem!important;}'
             . '.urdu-legal,.legal-frame,.signature-block{font-family:' . $fontStack . '!important;letter-spacing:0!important;}'
-            . '.urdu-legal{font-size:10.5px!important;line-height:1.8!important;word-spacing:0!important;text-align:justify!important;text-justify:inter-word!important;}'
-            . '#urdu-paragraphs{font-size:10.5px!important;line-height:1.8!important;word-spacing:0!important;}'
-            . '#urdu-paragraphs>*{margin-top:5px!important;margin-bottom:0!important;}'
-            . '#urdu-paragraphs p{margin-top:5px!important;margin-bottom:0!important;line-height:1.8!important;}'
-            . '#urdu-paragraphs strong,#urdu-paragraphs span{line-height:1.35!important;}'
-            . '.signature-block{display:block!important;margin-top:10px!important;padding-top:8px!important;border-top:1px solid #cbd5e1!important;page-break-inside:avoid!important;break-inside:avoid!important;color:#020617!important;}'
+            . '.urdu-legal,#urdu-paragraphs p{font-size:16px!important;line-height:1.65!important;word-spacing:0!important;text-align:justify!important;text-justify:inter-word!important;margin-top:6px!important;margin-bottom:0!important;}'
+            . '.en-inline{display:inline-block!important;direction:ltr!important;unicode-bidi:embed!important;font-family:Arial,Helvetica,sans-serif!important;font-size:13.5px!important;line-height:1!important;border-bottom:1px solid #000000!important;padding:0 4px 1px 4px!important;margin:0 2px!important;text-align:center!important;vertical-align:baseline!important;font-weight:bold!important;color:#000000!important;}'
+            . '.signature-block{display:block!important;margin-top:14px!important;padding-top:10px!important;border-top:1px solid #000000!important;page-break-inside:avoid!important;break-inside:avoid!important;color:#000000!important;}'
             . '.signature-block .grid{display:grid!important;}'
             . '.signature-block .grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))!important;}'
             . '.signature-block .grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))!important;}'
@@ -6524,8 +6605,8 @@ HTML;
             . '.signature-block .text-center{text-align:center!important;}'
             . '.signature-block .h-10{height:34px!important;}'
             . '.signature-block .h-8{height:27px!important;}'
-            . '.signature-block .border-b{border-bottom:1px dashed #94a3b8!important;}'
-            . '.signature-block .border-t{border-top:1px solid #e2e8f0!important;}'
+            . '.signature-block .border-b{border-bottom:1px dashed #000000!important;}'
+            . '.signature-block .border-t{border-top:1px solid #000000!important;}'
             . '.signature-block .w-3\/4{width:75%!important;}'
             . '.signature-block .w-11\/12{width:91.666667%!important;}'
             . '.signature-block .mx-auto{margin-left:auto!important;margin-right:auto!important;}'
@@ -6534,17 +6615,15 @@ HTML;
             . '.signature-block .items-center{align-items:center!important;}'
             . '.signature-block .justify-center{justify-content:center!important;}'
             . '.signature-block .justify-end{justify-content:flex-end!important;}'
-            . '.signature-block p{margin:2px 0!important;line-height:1.35!important;}'
-            . '.signature-block .text-\\[10px\\],.signature-block .text-\\[11px\\]{font-size:10.5px!important;}'
-            . '.signature-block .text-\\[8px\\],.signature-block .text-\\[7px\\]{font-size:8px!important;}'
-            . '.qr-container-fixed{width:1.55in!important;height:1.55in!important;display:flex!important;align-items:center!important;justify-content:center!important;background:#fff!important;padding:.06in!important;box-sizing:border-box!important;border:1px solid #e2e8f0!important;}'
+            . '.signature-block p{margin:2px 0!important;line-height:1.4!important;font-size:14px!important;}'
+            . '.qr-container-fixed{width:1.55in!important;height:1.55in!important;display:flex!important;align-items:center!important;justify-content:center!important;background:#fff!important;padding:.06in!important;box-sizing:border-box!important;border:1px solid #000000!important;}'
             . '#ashtam-qrcode{width:100%!important;height:100%!important;display:flex!important;align-items:center!important;justify-content:center!important;}'
             . '#ashtam-qrcode img{display:block!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important;}'
-            . '@media print{@page{size:legal portrait;margin:0!important;}'
+            . '@media print{@page{size:Legal portrait;margin:12mm 14mm!important;}'
             . 'html,body{width:auto!important;min-height:0!important;margin:0!important;padding:0!important;background:#fff!important;color:#000!important;}'
             . '.no-print{display:none!important;}'
             . '.print-container,main{width:100%!important;max-width:100%!important;margin:0!important;padding:0!important;background:#fff!important;box-shadow:none!important;overflow:visible!important;}'
-            . '.legal-page-canvas{width:8.5in!important;min-height:14in!important;height:auto!important;margin:0 auto!important;padding:.36in .5in .32in .5in!important;overflow:visible!important;page-break-after:auto!important;page-break-before:auto!important;box-shadow:none!important;border:0!important;border-radius:0!important;}'
+            . '.legal-page-canvas{width:100%!important;min-height:0!important;height:auto!important;margin:0!important;padding:0!important;box-shadow:none!important;border:0!important;border-radius:0!important;}'
             . '.stamp-top-gap{height:3.65in!important;}'
             . '.signature-block{page-break-inside:avoid!important;break-inside:avoid!important;}'
             . '*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important;}}'
@@ -6612,16 +6691,20 @@ HTML;
 
     protected function _letterPdfPageFormat($renderedDescription)
     {
+        if (isset($_GET['paper']) && strtolower(trim($_GET['paper'])) === 'a4')
+        {
+            return 'a4';
+        }
         $html = strtolower((string)$renderedDescription);
         if (strpos($html, '12.18in') !== false || strpos($html, '8.5in 12.18in') !== false || strpos($html, 'form-container') !== false || strpos($html, 'wv-welcome') !== false)
         {
             return array(8.5, 12.18);
         }
-        if (strpos($html, 'size: legal') !== false || strpos($html, '8.5in') !== false || strpos($html, '14in') !== false)
+        if (strpos($html, 'paper-a4') !== false)
         {
-            return 'legal';
+            return 'a4';
         }
-        return 'a4';
+        return 'legal';
     }
 
     protected function _floralBorderFrameSvg()
@@ -7436,9 +7519,17 @@ HTML;
             throw new NotFoundException(__('Invalid post'));
         }
         $templateDescription = isset($post['Template']['description']) ? (string)$post['Template']['description'] : '';
+        $renderedDescription = $this->_renderTemplatePreviewDescription($post);
+        $letterType = isset($post['Template']['type']) ? (string)$post['Template']['type'] : '';
         $this->set('post', $post);
-        $this->set('templateDescription', $this->_renderTemplatePreviewDescription($post));
+        $this->set('templateDescription', $renderedDescription);
+        $this->set('renderedDescription', $renderedDescription);
         $this->set('isFullHtmlTemplate', $this->_isFullHtmlDocument($templateDescription));
+        $this->set('letterType', $letterType);
+        $this->set('letterTypeLabel', isset($this->_letterTypeArr[$letterType]) ? $this->_letterTypeArr[$letterType] : $letterType);
+        $this->set('pdfFileName', 'Template-' . (isset($post['Template']['name']) ? Inflector::slug($post['Template']['name'], '-') : $letterType) . '.pdf');
+        $this->set('pdfPageFormat', $this->_letterPdfPageFormat($renderedDescription));
+        $this->set('mode', 'print');
     }
 
     protected function _templatePreviewSvgDataUri($label, $width = 320, $height = 220)
@@ -7492,6 +7583,11 @@ HTML;
         $clientName = 'SANA ULLAH S/O MUHAMMAD SHARIF';
         $dealNo = 'WV-L/AB/2024-4012';
         $propertyName = 'MA7055386-5M';
+        $typeCode = isset($template['type']) ? trim((string)$template['type']) : '';
+        $isBookingOrWelcome = in_array($typeCode, array('RLT_BOOKING', 'RLT_WELCOME'), true);
+        $en = function($v) use ($isBookingOrWelcome) {
+            return $isBookingOrWelcome ? $v : $this->_wrapEnInline($v);
+        };
         $logoUrl = $this->_resolveImageFromCandidates(array(
             'logo-website.fw.png',
             'organisation-logo-20260511101817-recovered.png',
@@ -7541,7 +7637,7 @@ HTML;
             '{{site_address}}' => (string)$this->siteAddress,
             '{{site_contact}}' => (string)$this->contact,
             '{{site_email}}' => (string)$this->siteEmail,
-            '{{today}}' => $today,
+            '{{today}}' => $en($today),
             '{{agency_name}}' => $agencyName,
             '{{agency_address}}' => 'Khoud Pur Road, Marka, Lahore',
             '{{agency_phone}}' => '+923391101156',
@@ -7550,37 +7646,37 @@ HTML;
             '{{agency_logo}}' => $this->_agencyLogoImageTag($logoUrl, $agencyName),
             '{{project_name}}' => $agencyName,
             '{{agency_contact}}' => '+923391101156 | info@whitevillas.com.pk',
-            '{{receipt_no}}' => 'RR-00025',
-            '{{receipt_date}}' => $today,
-            '{{print_date}}' => $today,
-            '{{rent_month}}' => date('Y-m'),
-            '{{rent_month_label}}' => date('M Y'),
-            '{{rent_amount}}' => $this->currency.CakeNumber::format(21000),
+            '{{receipt_no}}' => $en('RR-00025'),
+            '{{receipt_date}}' => $en($today),
+            '{{print_date}}' => $en($today),
+            '{{rent_month}}' => $en(date('Y-m')),
+            '{{rent_month_label}}' => $en(date('M Y')),
+            '{{rent_amount}}' => $en($this->currency.CakeNumber::format(21000)),
             '{{rent_amount_words}}' => 'Twenty One Thousand Rupees Only',
-            '{{expense_amount}}' => $this->currency.CakeNumber::format(0),
-            '{{net_amount}}' => $this->currency.CakeNumber::format(21000),
+            '{{expense_amount}}' => $en($this->currency.CakeNumber::format(0)),
+            '{{net_amount}}' => $en($this->currency.CakeNumber::format(21000)),
             '{{payment_mode}}' => 'Online Bank',
             '{{payment_reference}}' => 'Rental payment received',
             '{{allocated_months}}' => date('M Y').' ('.$this->currency.CakeNumber::format(21000).')',
-            '{{agreement_no}}' => 'RA-00025',
+            '{{agreement_no}}' => $en('RA-00025'),
             '{{tenant_name}}' => $clientName,
-            '{{tenant_cnic}}' => '35202-1234567-1',
-            '{{tenant_mobile}}' => '+923001234567',
+            '{{tenant_cnic}}' => $en('35202-1234567-1'),
+            '{{tenant_mobile}}' => $en('+923001234567'),
             '{{tenant_email}}' => 'client@example.com',
             '{{tenant_address}}' => 'House # 16, Street # 47, Lahore',
-            '{{monthly_rent}}' => $this->currency.CakeNumber::format(21000),
-            '{{security_deposit}}' => $this->currency.CakeNumber::format(42000),
-            '{{start_date}}' => $today,
-            '{{end_date}}' => date('d-M-Y', strtotime('+1 year')),
-            '{{due_day}}' => '5',
-            '{{total_rent_paid}}' => $this->currency.CakeNumber::format(84000),
-            '{{outstanding_rent}}' => $this->currency.CakeNumber::format(168000),
-            '{{overdue_rent}}' => $this->currency.CakeNumber::format(21000),
-            '{{advance_credit}}' => $this->currency.CakeNumber::format(0),
+            '{{monthly_rent}}' => $en($this->currency.CakeNumber::format(21000)),
+            '{{security_deposit}}' => $en($this->currency.CakeNumber::format(42000)),
+            '{{start_date}}' => $en($today),
+            '{{end_date}}' => $en(date('d-M-Y', strtotime('+1 year'))),
+            '{{due_day}}' => $en('5'),
+            '{{total_rent_paid}}' => $en($this->currency.CakeNumber::format(84000)),
+            '{{outstanding_rent}}' => $en($this->currency.CakeNumber::format(168000)),
+            '{{overdue_rent}}' => $en($this->currency.CakeNumber::format(21000)),
+            '{{advance_credit}}' => $en($this->currency.CakeNumber::format(0)),
             '{{receipt_qr_url}}' => $qrUrl,
             '{{receipt_qr}}' => $this->_templatePreviewImageTag($qrUrl, 'Rental Receipt QR'),
-            '{{letter_date}}' => $today,
-            '{{letter_ref_no}}' => 'REL-2026-0001',
+            '{{letter_date}}' => $en($today),
+            '{{letter_ref_no}}' => $en('REL-2026-0001'),
             '{{letter_title}}' => 'Welcome Letter',
             '{{letter_type_label}}' => 'Welcome Letter',
             '{{client_name}}' => $clientName,
@@ -7588,18 +7684,18 @@ HTML;
             '{{applicant_name}}' => $clientName,
             '{{applicant_name_with_father}}' => $clientName,
             '{{client_father_name}}' => 'MUHAMMAD SHARIF',
-            '{{client_cnic}}' => '35202-1234567-1',
-            '{{client_phone}}' => '+923001234567',
-            '{{client_mobile}}' => '+923001234567',
+            '{{client_cnic}}' => $en('35202-1234567-1'),
+            '{{client_phone}}' => $en('+923001234567'),
+            '{{client_mobile}}' => $en('+923001234567'),
             '{{client_email}}' => 'client@example.com',
             '{{client_address}}' => 'House # 16, Street # 47, Lahore',
             '{{client_occupation}}' => 'Business',
             '{{occupation}}' => 'Business',
             '{{deal_occupation}}' => 'Business',
             '{{nominee_name}}' => 'MUHAMMAD AHMAD',
-            '{{nominee_cnic}}' => '35202-7654321-1',
-            '{{nominee_mobile}}' => '+923451234567',
-            '{{nominee_phone}}' => '+923451234567',
+            '{{nominee_cnic}}' => $en('35202-7654321-1'),
+            '{{nominee_mobile}}' => $en('+923451234567'),
+            '{{nominee_phone}}' => $en('+923451234567'),
             '{{nominee_relation}}' => 'Brother',
             '{{client_profile_photo_url}}' => $clientPhotoUrl,
             '{{client_id_front_image_url}}' => $idFrontUrl,
@@ -7609,29 +7705,29 @@ HTML;
             '{{client_id_front_image}}' => $this->_templatePreviewImageTag($idFrontUrl, 'CNIC Front'),
             '{{client_id_back_image}}' => $this->_templatePreviewImageTag($idBackUrl, 'CNIC Back'),
             '{{applicant_photo}}' => $this->_templatePreviewImageTag($clientPhotoUrl, 'Applicant Photo'),
-            '{{deal_invoice_no}}' => $dealNo,
-            '{{deal_date}}' => $today,
+            '{{deal_invoice_no}}' => $en($dealNo),
+            '{{deal_date}}' => $en($today),
             '{{deal_status}}' => 'Active',
-            '{{deal_total_amount}}' => $this->currency.CakeNumber::format(3600000),
+            '{{deal_total_amount}}' => $en($this->currency.CakeNumber::format(3600000)),
             '{{deal_total_amount_words}}' => 'Thirty Six Lakh Rupees Only',
             '{{deal_total_amount_words_urdu}}' => 'Thirty Six Lakh Rupees Only',
-            '{{deal_total_with_charges}}' => $this->currency.CakeNumber::format(5700000),
+            '{{deal_total_with_charges}}' => $en($this->currency.CakeNumber::format(5700000)),
             '{{deal_total_with_charges_words_urdu}}' => 'Fifty Seven Lakh Rupees Only',
-            '{{deal_discount}}' => $this->currency.CakeNumber::format(100000),
-            '{{deal_booking_amount}}' => $this->currency.CakeNumber::format(30000),
-            '{{deal_balance_amount}}' => $this->currency.CakeNumber::format(2720000),
+            '{{deal_discount}}' => $en($this->currency.CakeNumber::format(100000)),
+            '{{deal_booking_amount}}' => $en($this->currency.CakeNumber::format(30000)),
+            '{{deal_balance_amount}}' => $en($this->currency.CakeNumber::format(2720000)),
             '{{deal_balance_amount_words_urdu}}' => 'Twenty Seven Lakh Twenty Thousand Rupees Only',
-            '{{deal_booking_receipt_no}}' => 'WV/AB/2026-1010',
+            '{{deal_booking_receipt_no}}' => $en('WV/AB/2026-1010'),
             '{{deal_booking_payment_method}}' => 'Online Bank',
             '{{deal_booking_payment_remarks}}' => 'Booking amount received',
-            '{{deal_booking_payment_date}}' => $today,
-            '{{deal_booking_payment_amount}}' => $this->currency.CakeNumber::format(30000),
+            '{{deal_booking_payment_date}}' => $en($today),
+            '{{deal_booking_payment_amount}}' => $en($this->currency.CakeNumber::format(30000)),
             '{{deal_booking_payment_amount_words}}' => 'Thirty Thousand Rupees Only',
             '{{deal_booking_payment_amount_words_urdu}}' => 'Thirty Thousand Rupees Only',
             '{{deal_booking_payment_against}}' => 'Booking Amount',
-            '{{first_deal_payment_receipt_no}}' => 'WV/AB/2026-1010',
+            '{{first_deal_payment_receipt_no}}' => $en('WV/AB/2026-1010'),
             '{{first_deal_payment_method}}' => 'Online Bank',
-            '{{first_deal_payment_amount}}' => $this->currency.CakeNumber::format(30000),
+            '{{first_deal_payment_amount}}' => $en($this->currency.CakeNumber::format(30000)),
             '{{first_deal_payment_amount_words}}' => 'Thirty Thousand Rupees Only',
             '{{first_deal_payment_amount_words_urdu}}' => 'Thirty Thousand Rupees Only',
             '{{first_deal_payment_against}}' => 'Booking Amount',
@@ -7641,65 +7737,65 @@ HTML;
             '{{deal_letter_qr}}' => $this->_templatePreviewImageTag($qrUrl, 'Deal QR Code'),
             '{{bank_name}}' => 'United Bank (UBL)',
             '{{bank_account_title}}' => 'White Villas',
-            '{{bank_account_no}}' => '0773310485346',
-            '{{bank_iban}}' => 'PK50UNIL0109000310485346',
+            '{{bank_account_no}}' => $en('0773310485346'),
+            '{{bank_iban}}' => $en('PK50UNIL0109000310485346'),
             '{{bank_branch}}' => '0773',
             '{{bank_swift_code}}' => 'UNILPKKA',
             '{{agency_bank_name}}' => 'United Bank (UBL)',
             '{{agency_account_title}}' => 'White Villas',
-            '{{agency_account_no}}' => '0773310485346',
-            '{{agency_iban}}' => 'PK50UNIL0109000310485346',
+            '{{agency_account_no}}' => $en('0773310485346'),
+            '{{agency_iban}}' => $en('PK50UNIL0109000310485346'),
             '{{ceo_signature_url}}' => $ceoSignatureUrl,
             '{{chairman_signature_url}}' => $chairmanSignatureUrl,
             '{{ceo_signature}}' => $this->_signatureImageTag($ceoSignatureUrl, 'CEO Signature', 'CEO Office'),
             '{{chairman_signature}}' => $this->_signatureImageTag($chairmanSignatureUrl, 'Chairman Signature', 'Board Chairman'),
-            '{{property_name}}' => $propertyName,
-            '{{property_file}}' => $propertyName,
-            '{{property_area}}' => '5 Marla',
+            '{{property_name}}' => $en($propertyName),
+            '{{property_file}}' => $en($propertyName),
+            '{{property_area}}' => $en('5 Marla'),
             '{{property_unit}}' => 'Marla',
-            '{{property_price}}' => $this->currency.CakeNumber::format(3600000),
+            '{{property_price}}' => $en($this->currency.CakeNumber::format(3600000)),
             '{{property_type}}' => 'PLOT',
             '{{property_contract}}' => 'Installment',
-            '{{ballot_allotment_no}}' => 'AB-4012',
+            '{{ballot_allotment_no}}' => $en('AB-4012'),
             '{{ballot_permanent_type}}' => 'Permanent',
-            '{{ballot_property_no}}' => '122',
-            '{{ballot_street_no}}' => '47',
+            '{{ballot_property_no}}' => $en('122'),
+            '{{ballot_street_no}}' => $en('47'),
             '{{ballot_block_name}}' => 'N/A',
             '{{ballot_street_address}}' => 'Street # 47, Awami Block',
-            '{{ballot_unit_area}}' => '5',
+            '{{ballot_unit_area}}' => $en('5'),
             '{{ballot_area_unit}}' => 'Marla',
-            '{{ballot_area_full}}' => '5 Marla',
+            '{{ballot_area_full}}' => $en('5 Marla'),
             '{{ballot_property_type}}' => 'PLOT',
             '{{ballot_unit_name}}' => 'Marla',
             '{{ballot_category_name}}' => 'Residential',
-            '{{ballot_allotment_date}}' => $today,
-            '{{allotment_no}}' => 'AB-4012',
+            '{{ballot_allotment_date}}' => $en($today),
+            '{{allotment_no}}' => $en('AB-4012'),
             '{{street_address}}' => 'Street # 47, Awami Block',
             '{{overdue_installments_label}}' => 'Overdue Installments (3)',
-            '{{overdue_installments_count}}' => '3',
-            '{{overdue_amount}}' => $this->currency.CakeNumber::format(445000),
+            '{{overdue_installments_count}}' => $en('3'),
+            '{{overdue_amount}}' => $en($this->currency.CakeNumber::format(445000)),
             '{{overdue_amount_words}}' => 'Four Lakh Forty Five Thousand Rupees Only',
-            '{{final_notice_deadline_days}}' => '7',
-            '{{deal_charges_total}}' => $this->currency.CakeNumber::format(2100000),
+            '{{final_notice_deadline_days}}' => $en('7'),
+            '{{deal_charges_total}}' => $en($this->currency.CakeNumber::format(2100000)),
             '{{deal_charges_total_words}}' => 'Twenty One Lakh Rupees Only',
             '{{deal_charges_total_words_urdu}}' => 'Twenty One Lakh Rupees Only',
-            '{{deal_charges_count}}' => '1',
+            '{{deal_charges_count}}' => $en('1'),
             '{{deal_charges_types}}' => 'Extra Work',
             '{{deal_charges_types_urdu}}' => 'Extra Work',
             '{{deal_charges_table}}' => $sampleRows,
             '{{deal_charge_type}}' => 'Extra Work',
             '{{deal_charge_type_urdu}}' => 'Extra Work',
             '{{deal_charge_cycle_type}}' => 'One Time',
-            '{{deal_charge_cycle_count}}' => '1',
-            '{{deal_charge_cycle_amount}}' => $this->currency.CakeNumber::format(2100000),
-            '{{deal_charge_total_amount}}' => $this->currency.CakeNumber::format(2100000),
+            '{{deal_charge_cycle_count}}' => $en('1'),
+            '{{deal_charge_cycle_amount}}' => $en($this->currency.CakeNumber::format(2100000)),
+            '{{deal_charge_total_amount}}' => $en($this->currency.CakeNumber::format(2100000)),
             '{{deal_charge_total_amount_words_urdu}}' => 'Twenty One Lakh Rupees Only',
-            '{{deal_charge_start_date}}' => $today,
+            '{{deal_charge_start_date}}' => $en($today),
             '{{charge_work_details}}' => 'Extra finishing and construction work',
             '{{charge_work_status}}' => 'In Progress',
             '{{charge_work_status_urdu}}' => 'In Progress',
             '{{charge_payment_method}}' => 'Bank Transfer / Cash Receipt',
-            '{{charge_payment_deadline}}' => $today,
+            '{{charge_payment_deadline}}' => $en($today),
             '{{agreement_place}}' => 'Lahore',
             '{{agency_representative_name}}' => 'Authorized Officer',
             '{{agency_representative_father}}' => 'N/A',
@@ -7708,42 +7804,42 @@ HTML;
             '{{agreement_payment_plan}}' => '36 monthly installments',
             '{{agreement_penalty_rate}}' => '0.1%',
             '{{agreement_possession_months}}' => '36 Months',
-            '{{agreement_extra_work_amount}}' => $this->currency.CakeNumber::format(2100000),
+            '{{agreement_extra_work_amount}}' => $en($this->currency.CakeNumber::format(2100000)),
             '{{agreement_extra_work_schedule}}' => 'As mutually agreed',
             '{{agreement_cancellation_deduction_rate}}' => '20%',
             '{{agreement_refund_period}}' => '90 Days',
             '{{agreement_court_jurisdiction}}' => 'Lahore',
             '{{agreement_property_block}}' => 'N/A',
-            '{{agreement_property_unit_no}}' => $propertyName,
+            '{{agreement_property_unit_no}}' => $en($propertyName),
             '{{agreement_property_floor}}' => 'Ground Floor',
             '{{agreement_property_covered_area}}' => 'N/A',
             '{{agreement_property_location}}' => 'Awami Block, Lahore',
             '{{property_agreement_category}}' => 'Plot / File',
             '{{property_agreement_terms}}' => $this->_dealAgreementPropertyTermsHtml('plot'),
             '{{witness_one_name}}' => 'Witness One',
-            '{{witness_one_cnic}}' => '35202-0000000-1',
-            '{{witness_one_contact}}' => '+923001111111',
+            '{{witness_one_cnic}}' => $en('35202-0000000-1'),
+            '{{witness_one_contact}}' => $en('+923001111111'),
             '{{witness_one_address}}' => 'Lahore',
             '{{witness_two_name}}' => 'Witness Two',
-            '{{witness_two_cnic}}' => '35202-0000000-2',
-            '{{witness_two_contact}}' => '+923002222222',
+            '{{witness_two_cnic}}' => $en('35202-0000000-2'),
+            '{{witness_two_contact}}' => $en('+923002222222'),
             '{{witness_two_address}}' => 'Lahore',
-            '{{refund_request_date}}' => $today,
-            '{{refund_total_paid}}' => $this->currency.CakeNumber::format(880000),
+            '{{refund_request_date}}' => $en($today),
+            '{{refund_total_paid}}' => $en($this->currency.CakeNumber::format(880000)),
             '{{refund_deduction_percent}}' => '20%',
-            '{{refund_deduction_amount}}' => $this->currency.CakeNumber::format(176000),
-            '{{refund_net_refund}}' => $this->currency.CakeNumber::format(704000),
-            '{{refund_cycle_count}}' => '3',
+            '{{refund_deduction_amount}}' => $en($this->currency.CakeNumber::format(176000)),
+            '{{refund_net_refund}}' => $en($this->currency.CakeNumber::format(704000)),
+            '{{refund_cycle_count}}' => $en('3'),
             '{{refund_cycle_frequency}}' => 'Monthly',
-            '{{refund_cycle_amount}}' => $this->currency.CakeNumber::format(234666.67),
+            '{{refund_cycle_amount}}' => $en($this->currency.CakeNumber::format(234666.67)),
             '{{refund_account_title}}' => $clientName,
-            '{{refund_account_no}}' => '1234567890',
+            '{{refund_account_no}}' => $en('1234567890'),
             '{{refund_bank_name}}' => 'United Bank (UBL)',
             '{{refund_bank_branch}}' => 'Lahore',
             '{{refund_reason}}' => 'Client request',
             '{{refund_schedule_table}}' => $refundSchedule,
             '{{refund_passport_no}}' => 'N/A',
-            '{{client_id}}' => '1001'
+            '{{client_id}}' => $en('1001')
         ));
     }
 
@@ -7751,12 +7847,44 @@ HTML;
     {
         $template = isset($post['Template']) ? (array)$post['Template'] : array();
         $description = isset($template['description']) ? (string)$template['description'] : '';
+        $typeCode = isset($template['type']) ? trim((string)$template['type']) : '';
+        $isBookingOrWelcome = (
+            in_array($typeCode, array('RLT_BOOKING', 'RLT_WELCOME'), true) ||
+            stripos($description, '12.18in') !== false ||
+            stripos($description, 'form-container') !== false ||
+            stripos($description, 'wv-welcome') !== false
+        );
+
+        if (!$isBookingOrWelcome)
+        {
+            // Strip out conflicting legacy inline font-size and excessive line-height attributes
+            $description = preg_replace('/style=(["\'])(.*?)\bfont-size\s*:\s*[\d\.]+(?:px|pt|rem)\s*;?(.*?)\1/i', 'style=$1$2$3$1', $description);
+            $description = preg_replace('/style=(["\'])(.*?)\bline-height\s*:\s*(?:[2-9]|1\.[7-9]|1\.[0-5]|3|4)[\d\.]*(?:px|pt|rem)?\s*;?(.*?)\1/i', 'style=$1$2$3$1', $description);
+            $description = preg_replace('/style=["\']\s*["\']/i', '', $description);
+            $description = preg_replace('/<style\b[^>]*id=["\']wv-urdu-font-definitions["\'][^>]*>.*?<\/style>/is', '', $description);
+        }
+
         $rendered = strtr($description, $this->_templatePreviewPlaceholderMap($template));
         $rendered = preg_replace('/\{\{\s*[^}]+\s*\}\}/', 'N/A', $rendered);
-        $typeCode = isset($template['type']) ? trim((string)$template['type']) : '';
+
+        if (!$isBookingOrWelcome)
+        {
+            // Auto-wrap any unwrapped CNICs and currency patterns in Urdu text
+            $rendered = preg_replace_callback('/(?<!class=["\']en-inline["\']>)\b(\d{5}-\d{7}-\d)\b/', function($m) {
+                return '<span dir="ltr" class="en-inline">' . $m[1] . '</span>';
+            }, $rendered);
+            $rendered = preg_replace_callback('/(?<!class=["\']en-inline["\']>)\b(Rs\.?\s*[\d,]+(?:\.\d+)?)\b/i', function($m) {
+                return '<span dir="ltr" class="en-inline">' . $m[1] . '</span>';
+            }, $rendered);
+        }
+
         if ($typeCode === 'RLT_DEAL_AGREEMENT')
         {
             $rendered = $this->_prepareDealAgreementPrintHtml($rendered);
+        }
+        elseif ($typeCode === 'RLT_REFUND_CLEARANCE')
+        {
+            $rendered = $this->_prepareRefundCompletionPrintHtml($rendered);
         }
         else
         {
@@ -8682,12 +8810,16 @@ HTML;
             $this->Session->setFlash(__('Invalid Post.'), 'flash', array('alert' => 'danger'));
             return $this->redirect(array('action' => 'index'));
         }
-        $this->set('post', $post);
         $renderedDescription = $this->_renderLetterBody($post);
+        $letterType = isset($post['Realestateletter']['letter_type']) ? $post['Realestateletter']['letter_type'] : '';
+        $this->set('post', $post);
         $this->set('renderedDescription', $renderedDescription);
         $this->set('isFullHtmlTemplate', $this->_isFullHtmlDocument($renderedDescription));
-        $letterType = isset($post['Realestateletter']['letter_type']) ? $post['Realestateletter']['letter_type'] : '';
+        $this->set('letterType', $letterType);
         $this->set('letterTypeLabel', isset($this->_letterTypeArr[$letterType]) ? $this->_letterTypeArr[$letterType] : $letterType);
+        $this->set('pdfFileName', $this->_letterPdfFileName($post));
+        $this->set('pdfPageFormat', $this->_letterPdfPageFormat($renderedDescription));
+        $this->set('mode', 'print');
     }
 
     public function exportletterpdf($id = null)
@@ -8705,13 +8837,15 @@ HTML;
             return $this->redirect(array('action' => 'index'));
         }
         $renderedDescription = $this->_renderLetterBody($post);
+        $letterType = isset($post['Realestateletter']['letter_type']) ? $post['Realestateletter']['letter_type'] : '';
         $this->set('post', $post);
         $this->set('renderedDescription', $renderedDescription);
         $this->set('isFullHtmlTemplate', $this->_isFullHtmlDocument($renderedDescription));
+        $this->set('letterType', $letterType);
+        $this->set('letterTypeLabel', isset($this->_letterTypeArr[$letterType]) ? $this->_letterTypeArr[$letterType] : $letterType);
         $this->set('pdfFileName', $this->_letterPdfFileName($post));
         $this->set('pdfPageFormat', $this->_letterPdfPageFormat($renderedDescription));
-        $letterType = isset($post['Realestateletter']['letter_type']) ? $post['Realestateletter']['letter_type'] : '';
-        $this->set('letterTypeLabel', isset($this->_letterTypeArr[$letterType]) ? $this->_letterTypeArr[$letterType] : $letterType);
+        $this->set('mode', 'pdf');
     }
 
     public function sendsms($id = null)

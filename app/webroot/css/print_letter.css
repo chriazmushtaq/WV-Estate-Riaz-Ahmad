@@ -1,0 +1,488 @@
+/**
+ * Master Real Estate Letters Print & PDF Stylesheet
+ * Standardized Typography, RTL/LTR Bi-Directional Alignment, Nastaleeq Font & Legal Page Setup
+ */
+
+/* 1. FONT-FACE DEFINITIONS */
+@font-face {
+    font-family: 'Jameel Noori Nastaleeq';
+    src: url('../fonts/JameelNooriNastaleeq.ttf') format('truetype'),
+         url('/fonts/JameelNooriNastaleeq.ttf') format('truetype'),
+         url('/whitevillas/fonts/JameelNooriNastaleeq.ttf') format('truetype'),
+         local('Jameel Noori Nastaleeq');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Jameel Noori Nastaleeq Kasheeda';
+    src: url('../fonts/JameelNooriNastaleeqKasheeda.ttf') format('truetype'),
+         url('/fonts/JameelNooriNastaleeqKasheeda.ttf') format('truetype'),
+         url('/whitevillas/fonts/JameelNooriNastaleeqKasheeda.ttf') format('truetype'),
+         local('Jameel Noori Nastaleeq Kasheeda');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* 2. STANDARDIZED PAGE SETUP */
+@page {
+    size: Legal portrait;
+    margin: 12mm 14mm;
+}
+
+/* Optional A4 toggle */
+body.paper-a4 @page,
+@page a4-page {
+    size: A4 portrait;
+    margin: 12mm 14mm;
+}
+
+*, *:before, *:after {
+    box-sizing: border-box;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+    color: #000000;
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+/* 3. GLOBAL ENFORCEMENT OF NASTALEEQ FONT */
+body,
+.letter-master-wrapper,
+.letter-preview-print,
+#letter-pdf-export-root,
+.ashtam-page,
+.legal-page,
+.page,
+.urdu-body,
+.urdu-legal,
+[lang="ur"],
+[dir="rtl"] {
+    font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', sans-serif !important;
+}
+
+/* Headings in Nastaleeq letters */
+.letter-master-wrapper h1,
+.letter-master-wrapper h2,
+.letter-master-wrapper h3,
+.letter-master-wrapper h4,
+.letter-master-wrapper h5,
+.letter-master-wrapper h6,
+.ashtam-page h1, .ashtam-page h2, .ashtam-page h3, .ashtam-page h4,
+.page h1, .page h2, .page h3, .page h4,
+.letter-preview-print h1, .letter-preview-print h2, .letter-preview-print h3,
+#letter-pdf-export-root h1, #letter-pdf-export-root h2, #letter-pdf-export-root h3,
+.urdu-heading,
+.ashtam-heading,
+.document-title,
+.document-subtitle,
+.section-title,
+.sign-title,
+.bismillah {
+    font-family: 'Jameel Noori Nastaleeq Kasheeda', 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif !important;
+    font-weight: bold !important;
+    line-height: 1.65 !important;
+    color: #000000 !important;
+}
+
+.document-title {
+    font-size: 20px !important;
+    text-align: center !important;
+    text-decoration: underline !important;
+    text-underline-offset: 4px !important;
+    margin: 6px 0 3px !important;
+}
+
+.document-subtitle {
+    font-size: 16px !important;
+    text-align: center !important;
+    margin-bottom: 8px !important;
+}
+
+.section-title {
+    font-size: 16px !important;
+    text-decoration: underline !important;
+    text-underline-offset: 3px !important;
+    margin: 8px 0 4px !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+}
+
+/* 4. UNIFORM 16PX FONT SIZE & TIGHT 1.65 NASTALEEQ LINE SPACING */
+.letter-master-wrapper p,
+.letter-master-wrapper li,
+.letter-master-wrapper td,
+.letter-master-wrapper th,
+.letter-master-wrapper .clause,
+.letter-master-wrapper .numbered-clause,
+.letter-master-wrapper .note-box,
+.letter-master-wrapper .amount-box,
+.letter-master-wrapper .alert-box,
+.letter-master-wrapper .notice-box,
+.letter-master-wrapper .legal-frame,
+.letter-preview-print p,
+.letter-preview-print li,
+.letter-preview-print td,
+.letter-preview-print th,
+.letter-preview-print .clause,
+.letter-preview-print .note-box,
+.letter-preview-print .amount-box,
+#letter-pdf-export-root p,
+#letter-pdf-export-root li,
+#letter-pdf-export-root td,
+#letter-pdf-export-root th,
+#letter-pdf-export-root .clause,
+#letter-pdf-export-root .note-box,
+#letter-pdf-export-root .amount-box,
+.ashtam-page p,
+.ashtam-page li,
+.ashtam-page td,
+.ashtam-page th,
+.ashtam-page .clause,
+.ashtam-page .note-box,
+.ashtam-page .amount-box,
+.page p,
+.page li,
+.page td,
+.page th,
+.page .clause,
+.page .note-box,
+.page .amount-box,
+.urdu-body p,
+.urdu-legal,
+#urdu-paragraphs p,
+[lang="ur"] p, [lang="ur"] li, [lang="ur"] td, [lang="ur"] th, [lang="ur"] .clause,
+[dir="rtl"] p, [dir="rtl"] li, [dir="rtl"] td, [dir="rtl"] th, [dir="rtl"] .clause {
+    font-size: 16px !important;
+    line-height: 1.65 !important;
+    letter-spacing: 0 !important;
+    word-spacing: 0 !important;
+    color: #000000 !important;
+}
+
+/* 5. AUTO-JUSTIFY & BI-DIRECTIONAL RTL TEXT */
+.letter-master-wrapper p,
+.ashtam-page p,
+.page p,
+.letter-preview-print p,
+#letter-pdf-export-root p,
+.urdu-body p,
+.urdu-legal,
+#urdu-paragraphs p,
+.clause,
+.numbered-clause,
+.note-box,
+[dir="rtl"] p,
+[lang="ur"] p {
+    direction: rtl !important;
+    unicode-bidi: embed !important;
+    text-align: justify !important;
+    text-justify: inter-word !important;
+    margin-top: 0 !important;
+    margin-bottom: 6px !important;
+}
+
+/* 6. BI-DIRECTIONAL INLINE EN/NUMBER FORMATTING */
+.en-inline,
+span.en-inline {
+    display: inline-block !important;
+    direction: ltr !important;
+    unicode-bidi: embed !important;
+    font-family: Arial, Helvetica, sans-serif !important;
+    font-size: 13.5px !important;
+    line-height: 1 !important;
+    border-bottom: 1px solid #000000 !important;
+    padding: 0 4px 1px 4px !important;
+    margin: 0 2px !important;
+    text-align: center !important;
+    vertical-align: baseline !important;
+    color: #000000 !important;
+    font-weight: bold !important;
+}
+
+/* Prevent double underlines when wrapped inside .field */
+.field {
+    border-bottom: 1px solid #000000 !important;
+    padding: 0 3px !important;
+    font-weight: bold !important;
+    color: #000000 !important;
+}
+
+.field .en-inline {
+    border-bottom: none !important;
+}
+
+/* 7. NOTICE BOXES, TABLES & CLAUSES */
+.clause,
+.numbered-clause {
+    margin-bottom: 6px !important;
+    padding: 0 !important;
+    text-align: justify !important;
+    text-justify: inter-word !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+}
+
+.note-box,
+.alert-box,
+.notice-box {
+    border: 1px solid #000000 !important;
+    background: #ffffff !important;
+    padding: 6px 10px !important;
+    margin: 6px 0 !important;
+    border-radius: 4px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+}
+
+.amount-box {
+    border: 1.5px solid #000000 !important;
+    background: #ffffff !important;
+    padding: 6px 12px !important;
+    margin: 8px 0 !important;
+    text-align: center !important;
+    font-weight: bold !important;
+    border-radius: 4px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+}
+
+/* Standard crisp table borders */
+table.table-bordered,
+table.ashtam-table,
+table.meta-table,
+.letter-master-wrapper table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin: 6px 0 !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+}
+
+table.table-bordered td,
+table.table-bordered th,
+table.ashtam-table td,
+table.ashtam-table th,
+.letter-master-wrapper table td,
+.letter-master-wrapper table th {
+    border: 1px solid #000000 !important;
+    padding: 5px 8px !important;
+    vertical-align: middle !important;
+}
+
+/* Signatures & Witness blocks */
+.sign-area,
+.witness-area {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+    margin-top: 12px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+}
+
+.sign-box {
+    border: 1px solid #000000 !important;
+    background: #ffffff !important;
+    border-radius: 4px !important;
+    padding: 8px 10px !important;
+    min-height: 90px !important;
+    font-size: 14px !important;
+    line-height: 1.4 !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+}
+
+.sign-title {
+    font-size: 15px !important;
+    border-bottom: 1px solid #000000 !important;
+    padding-bottom: 2px !important;
+    margin-bottom: 4px !important;
+}
+
+.sign-line {
+    border-bottom: 1px solid #000000 !important;
+    display: block !important;
+    min-height: 20px !important;
+    margin-top: 3px !important;
+    margin-bottom: 3px !important;
+}
+
+.thumb-box {
+    height: 32px !important;
+    border: 1px dashed #000000 !important;
+    background: #ffffff !important;
+    border-radius: 3px !important;
+    margin-top: 4px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 12px !important;
+    color: #333333 !important;
+}
+
+/* Letterhead & Meta Rows */
+.letterhead {
+    border-bottom: 2px solid #000000 !important;
+    padding-bottom: 6px !important;
+    margin-bottom: 8px !important;
+}
+
+.head-row {
+    display: grid !important;
+    grid-template-columns: 60px minmax(0, 1fr) 60px !important;
+    align-items: center !important;
+    gap: 10px !important;
+}
+
+.meta-row {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+    color: #000000 !important;
+    margin-bottom: 8px !important;
+    background: #ffffff !important;
+    padding: 4px 8px !important;
+    border: 1px solid #000000 !important;
+    border-radius: 4px !important;
+}
+
+/* Watermark */
+.watermark {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) rotate(-30deg) !important;
+    font-size: 58px !important;
+    font-weight: 900 !important;
+    color: rgba(0, 0, 0, 0.035) !important;
+    pointer-events: none !important;
+    user-select: none !important;
+    z-index: 1 !important;
+    white-space: nowrap !important;
+    border: 6px double rgba(0, 0, 0, 0.035) !important;
+    padding: 4px 20px !important;
+    border-radius: 12px !important;
+}
+
+/* Footer */
+.footer {
+    border-top: 1.5px solid #000000 !important;
+    padding-top: 4px !important;
+    text-align: center !important;
+    font-size: 11px !important;
+    line-height: 1.25 !important;
+    color: #000000 !important;
+    font-family: Arial, Helvetica, sans-serif !important;
+    margin-top: auto !important;
+}
+
+/* 8. PRESERVE BOOKING & WELCOME LETTERS (DO NOT CHANGE THEIR VIEW STYLE) */
+.form-container,
+.wv-welcome-a4 {
+    width: 8.5in !important;
+    max-width: 8.5in !important;
+    margin: 0 auto !important;
+    box-shadow: none !important;
+    box-sizing: border-box !important;
+    position: relative !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    overflow: visible !important;
+    padding: 0.25rem 0.85rem !important;
+    font-size: 11.5px !important;
+    line-height: 1.55 !important;
+}
+
+.wv-welcome-a4 header {
+    margin-bottom: 0.2rem !important;
+    padding: 0.25rem 0.5rem !important;
+    padding-bottom: 0.25rem !important;
+}
+
+.wv-welcome-a4 header .w-24 { width: 75px !important; }
+.wv-welcome-a4 header .h-32 { height: 98px !important; }
+.wv-welcome-a4 h1 { font-size: 1.35rem !important; line-height: 1.3 !important; margin: 0 !important; font-family: inherit !important; }
+.wv-welcome-a4 h2 { font-size: 0.85rem !important; line-height: 1.3 !important; margin: 0 !important; font-family: inherit !important; }
+.wv-welcome-a4 .form-content-wrapper { height: auto !important; min-height: auto !important; display: block !important; }
+.wv-welcome-a4 .bg-stone-50\/50 { padding: 0.35rem 0.55rem !important; margin-bottom: 0.25rem !important; }
+.wv-welcome-a4 .space-y-4>:not([hidden])~:not([hidden]) { margin-top: 0.25rem !important; }
+.wv-welcome-a4 .space-y-2>:not([hidden])~:not([hidden]) { margin-top: 0.15rem !important; }
+.wv-welcome-a4 p { margin-top: 0 !important; margin-bottom: 0.2rem !important; line-height: 1.5 !important; font-size: 11px !important; font-family: inherit !important; }
+.wv-welcome-a4 p.pt-4, .wv-welcome-a4 p.pt-2, .wv-welcome-a4 p.pt-3 { padding-top: 0.15rem !important; }
+.wv-welcome-a4 .my-4 { margin-top: 0.25rem !important; margin-bottom: 0.25rem !important; }
+.wv-welcome-a4 .mb-6 { margin-bottom: 0.25rem !important; }
+.wv-welcome-a4 .mb-4 { margin-bottom: 0.2rem !important; }
+.wv-welcome-a4 .mt-4 { margin-top: 0.25rem !important; }
+.wv-welcome-a4 .p-4 { padding: 0.35rem !important; }
+.wv-welcome-a4 .p-3 { padding: 0.25rem !important; }
+.wv-welcome-a4 .p-2\.5 { padding: 0.2rem 0.4rem !important; min-height: 28px !important; }
+.wv-welcome-a4 .form-section-title { font-size: 0.78rem !important; padding: 0.12rem 0.5rem !important; margin-bottom: 0.15rem !important; font-family: inherit !important; }
+.wv-welcome-a4 footer {
+    margin-top: 0.35rem !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+}
+.wv-welcome-a4 footer .grid { padding-top: 0.15rem !important; gap: 0.25rem !important; }
+.wv-welcome-a4 footer .h-16 { height: 24px !important; }
+.wv-welcome-a4 footer .mt-6 { margin-top: 0.15rem !important; }
+.wv-welcome-a4 footer .mb-1 { margin-bottom: 0.05rem !important; }
+.wv-welcome-a4 #secure-barcode { height: 12px !important; width: 140px !important; }
+
+/* 9. PRINT-SPECIFIC RULES (1:1 IDENTICAL WITH PDF EXPORT) */
+@media print {
+    body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .no-print,
+    .wv-smart-toolbar,
+    .action-dashboard,
+    .page-separator,
+    .btn,
+    .floating-tools {
+        display: none !important;
+    }
+
+    .letter-master-wrapper,
+    .letter-preview-print,
+    #letter-pdf-export-root,
+    .ashtam-page,
+    .legal-page,
+    .page {
+        margin: 0 auto !important;
+        box-shadow: none !important;
+        border: none !important;
+        overflow: visible !important;
+        page-break-inside: auto;
+    }
+
+    /* Page container sizing */
+    .ashtam-page,
+    .legal-page-canvas {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-height: 0 !important;
+        height: auto !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+}

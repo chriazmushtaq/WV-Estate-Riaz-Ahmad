@@ -3026,8 +3026,23 @@ protected function _calculateLateFee($principal, $socId = 1)
         exit;
     }
 
-    protected function _renderBillVoucherHtml($bill, $html)
+    public function _renderBillVoucherHtml($bill, $html = null)
     {
+        if(empty($html))
+        {
+            $template = $this->BillingTemplate->find('first', array(
+                'conditions' => array('BillingTemplate.template_type' => 'print_bill', 'BillingTemplate.is_default' => 1)
+            ));
+            if(empty($template) || empty($template['BillingTemplate']['html_content']))
+            {
+                $template = $this->BillingTemplate->findById(11);
+            }
+            if(empty($template) || empty($template['BillingTemplate']['html_content']))
+            {
+                $template = $this->BillingTemplate->find('first', array('order' => array('BillingTemplate.id' => 'ASC')));
+            }
+            $html = !empty($template['BillingTemplate']['html_content']) ? $template['BillingTemplate']['html_content'] : '<h2>Template HTML not found</h2>';
+        }
         // Prepare Bill, Property, Client fields with full fallback
         $b = !empty($bill['BillingBill']) ? $bill['BillingBill'] : array();
         $p = !empty($bill['BillingProperty']) ? $bill['BillingProperty'] : array();
