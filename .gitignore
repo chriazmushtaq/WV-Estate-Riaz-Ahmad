@@ -14,6 +14,7 @@
 *.zip
 *.tar.gz
 *.sql
+!database/*.sql
 *.apk
 antigravity_brain_backup/
 flutter_app/
