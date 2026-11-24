@@ -15,10 +15,29 @@
 *.tar.gz
 *.sql
 !database/*.sql
+!database/patches/*.sql
 *.apk
 antigravity_brain_backup/
 flutter_app/
 subm-billing-manager/
+
+# User uploaded images & media (Protects client uploads from being touched by Git)
+/app/webroot/img/propertiesphotos/*
+!/app/webroot/img/propertiesphotos/index.html
+/app/webroot/img/propertiesphotos_thumb/*
+/app/webroot/img/paymentslips/*
+/app/webroot/img/dealsdocuments/*
+/app/webroot/img/propertiesdocuments/*
+/app/webroot/img/propertiesfloorplans/*
+/app/webroot/img/propertiesfloorplans_thumb/*
+/app/webroot/img/client/*
+/app/webroot/img/client_thumb/*
+/app/webroot/img/user/*
+/app/webroot/img/user_thumb/*
+/app/webroot/img/media_gallery/*
+/app/webroot/img/media_gallery_thumb/*
+/app/webroot/files/*
+!/app/webroot/files/payment_plans/
 
 # Development history, scratch & temporary debug scripts
 CHAT_HISTORY.md
