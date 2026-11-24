@@ -564,6 +564,9 @@ if($settingsCurrencyText === '')
             <li class="<?php echo ($activeTab==='commission') ? 'active' : '';?>">
                 <?php echo $this->Html->link('<span class="fa fa-percent"></span> '.__('Agent Commission'),array('controller'=>'Ardaccounts','action'=>'settings',$currentProjectId,'?'=>array('tab'=>'commission')),array('escape'=>false,'onclick'=>'window.location=this.href;return false;'));?>
             </li>
+            <li class="<?php echo ($activeTab==='bulk') ? 'active' : '';?>">
+                <?php echo $this->Html->link('<span class="fa fa-list-alt"></span> '.__('Bulk Vouchers'),array('controller'=>'Ardaccounts','action'=>'settings',$currentProjectId,'?'=>array('tab'=>'bulk')),array('escape'=>false,'onclick'=>'window.location=this.href;return false;'));?>
+            </li>
         </ul>
 
         <?php if($isTemplateTab){?>
@@ -1244,6 +1247,152 @@ if($settingsCurrencyText === '')
                         </div>
                     </div>
                 </div>
+            <?php }?>
+
+            <?php if($activeTab==='bulk'){?>
+                <!-- BULK VOUCHERS CONFIGURATION -->
+                <div class="alert alert-info" style="margin-bottom:20px; font-size:12.5px;">
+                    <i class="fa fa-info-circle"></i> <strong><?php echo __('Bulk Voucher Heads & Policy Configuration');?></strong><br>
+                    <?php echo __('Configure which default account heads appear on the Bulk Voucher entry form for daily expenses (e.g. Office, Bike/Motorcycle, Kitchen/Mess, Car Fuel, Advertisement, Material) and income (e.g. Booking, Installments, Rentals), plus cash/bank payment source and changeable date permissions.');?>
+                </div>
+
+                <!-- CARD 1: EXPENSE ACCOUNT HEADS -->
+                <div class="panel panel-default" style="border:1px solid #d9e4f1; border-radius:8px; margin-bottom:20px;">
+                    <div class="panel-heading" style="background:#07152a; color:#fff; font-weight:800; padding:10px 14px; display:flex; justify-content:space-between; align-items:center;">
+                        <span><i class="fa fa-credit-card"></i> <?php echo __('1. Default Expense Account Heads for Bulk Entry');?></span>
+                        <span style="font-weight:400; font-size:11.5px; color:#cbd5e1;"><?php echo __('Selected heads will pre-populate the daily bulk expense grid');?></span>
+                    </div>
+                    <div class="panel-body" style="padding:16px;">
+                        <p class="help-block" style="margin-bottom:12px; font-size:12px;">
+                            <i class="fa fa-lightbulb-o text-warning"></i> <?php echo __('Check the expense accounts frequently used (e.g. Office, Bike, Kitchen / Grocery, Car Expense / Fuel, Marketing / Ads, Material). Ledgers with 0 amount on bulk entry are safely ignored during posting.');?>
+                        </p>
+                        <div style="margin-bottom:10px;">
+                            <input type="text" id="bulkExpSearch" class="form-control input-sm" placeholder="<?php echo __('Quick search expense heads...');?>" style="max-width:320px; display:inline-block;">
+                            <button type="button" class="btn btn-xs btn-default" onclick="jQuery('.bulk-exp-cb').prop('checked', true);"><?php echo __('Select All');?></button>
+                            <button type="button" class="btn btn-xs btn-default" onclick="jQuery('.bulk-exp-cb').prop('checked', false);"><?php echo __('Clear All');?></button>
+                        </div>
+                        <div class="row" id="bulkExpGrid" style="max-height:360px; overflow-y:auto; border:1px solid #e2e8f0; border-radius:6px; padding:12px 6px; background:#fafcff;">
+                            <?php
+                            $configuredExpSet = !empty($configuredBulkExpenseIds) ? array_flip($configuredBulkExpenseIds) : array();
+                            if(!empty($bulkExpenseLedgers)):
+                                foreach($bulkExpenseLedgers as $bExpRow):
+                                    $bId = (int)$bExpRow['Ardledger']['id'];
+                                    $bName = trim((string)$bExpRow['Ardledger']['name']);
+                                    $bCat = trim((string)$bExpRow['Ardledger']['category']);
+                                    $isChecked = isset($configuredExpSet[$bId]);
+                            ?>
+                                <div class="col-sm-4 bulk-exp-item" style="margin-bottom:8px;">
+                                    <label style="font-weight:normal; cursor:pointer; font-size:12px; display:flex; align-items:center; gap:6px; margin:0; padding:6px 8px; border-radius:4px; border:1px solid #edf2f7; background:#fff;">
+                                        <input type="checkbox" name="data[Ardsetting][bulk_expense_ledger_ids][]" value="<?php echo $bId;?>" class="bulk-exp-cb" <?php echo $isChecked ? 'checked' : '';?>>
+                                        <span style="font-weight:600; color:#1e293b;"><?php echo h($bName);?></span>
+                                        <?php if($bCat !== ''): ?><span class="label label-default" style="font-size:9.5px; margin-left:auto;"><?php echo h($bCat);?></span><?php endif; ?>
+                                    </label>
+                                </div>
+                            <?php
+                                endforeach;
+                            else:
+                            ?>
+                                <div class="col-sm-12 text-muted" style="padding:10px;"><?php echo __('No expense ledgers found for this agency.');?></div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 2: INCOME ACCOUNT HEADS -->
+                <div class="panel panel-default" style="border:1px solid #d9e4f1; border-radius:8px; margin-bottom:20px;">
+                    <div class="panel-heading" style="background:#07152a; color:#fff; font-weight:800; padding:10px 14px; display:flex; justify-content:space-between; align-items:center;">
+                        <span><i class="fa fa-arrow-circle-down"></i> <?php echo __('2. Default Income Account Heads for Bulk Entry');?></span>
+                        <span style="font-weight:400; font-size:11.5px; color:#cbd5e1;"><?php echo __('Selected heads will pre-populate the daily bulk income grid');?></span>
+                    </div>
+                    <div class="panel-body" style="padding:16px;">
+                        <p class="help-block" style="margin-bottom:12px; font-size:12px;">
+                            <i class="fa fa-lightbulb-o text-warning"></i> <?php echo __('Check the revenue accounts frequently credited (e.g. Booking Income, Installment Income, Rental Income, Transfer Fee, Charges). Ledgers with 0 amount are safely ignored during posting.');?>
+                        </p>
+                        <div style="margin-bottom:10px;">
+                            <input type="text" id="bulkIncSearch" class="form-control input-sm" placeholder="<?php echo __('Quick search income heads...');?>" style="max-width:320px; display:inline-block;">
+                            <button type="button" class="btn btn-xs btn-default" onclick="jQuery('.bulk-inc-cb').prop('checked', true);"><?php echo __('Select All');?></button>
+                            <button type="button" class="btn btn-xs btn-default" onclick="jQuery('.bulk-inc-cb').prop('checked', false);"><?php echo __('Clear All');?></button>
+                        </div>
+                        <div class="row" id="bulkIncGrid" style="max-height:360px; overflow-y:auto; border:1px solid #e2e8f0; border-radius:6px; padding:12px 6px; background:#fafcff;">
+                            <?php
+                            $configuredIncSet = !empty($configuredBulkIncomeIds) ? array_flip($configuredBulkIncomeIds) : array();
+                            if(!empty($bulkIncomeLedgers)):
+                                foreach($bulkIncomeLedgers as $bIncRow):
+                                    $biId = (int)$bIncRow['Ardledger']['id'];
+                                    $biName = trim((string)$bIncRow['Ardledger']['name']);
+                                    $biCat = trim((string)$bIncRow['Ardledger']['category']);
+                                    $isCheckedInc = isset($configuredIncSet[$biId]);
+                            ?>
+                                <div class="col-sm-4 bulk-inc-item" style="margin-bottom:8px;">
+                                    <label style="font-weight:normal; cursor:pointer; font-size:12px; display:flex; align-items:center; gap:6px; margin:0; padding:6px 8px; border-radius:4px; border:1px solid #edf2f7; background:#fff;">
+                                        <input type="checkbox" name="data[Ardsetting][bulk_income_ledger_ids][]" value="<?php echo $biId;?>" class="bulk-inc-cb" <?php echo $isCheckedInc ? 'checked' : '';?>>
+                                        <span style="font-weight:600; color:#1e293b;"><?php echo h($biName);?></span>
+                                        <?php if($biCat !== ''): ?><span class="label label-info" style="font-size:9.5px; margin-left:auto;"><?php echo h($biCat);?></span><?php endif; ?>
+                                    </label>
+                                </div>
+                            <?php
+                                endforeach;
+                            else:
+                            ?>
+                                <div class="col-sm-12 text-muted" style="padding:10px;"><?php echo __('No income ledgers found for this agency.');?></div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 3: DEFAULT SOURCE & DATE POLICIES -->
+                <div class="panel panel-default" style="border:1px solid #d9e4f1; border-radius:8px; margin-bottom:20px;">
+                    <div class="panel-heading" style="background:#07152a; color:#fff; font-weight:800; padding:10px 14px;">
+                        <i class="fa fa-sliders"></i> <?php echo __('3. Bulk Voucher Source Account & Date Policy');?>
+                    </div>
+                    <div class="panel-body" style="padding:16px;">
+                        <div class="row">
+                            <div class="col-sm-6" style="margin-bottom:15px;">
+                                <label style="display:block; font-weight:800;"><?php echo __('Default Payment / Receipt Source Account');?></label>
+                                <?php
+                                $sourceSelectOptions = array(0 => __('Auto / Cash in Hand'));
+                                if(!empty($bulkSourceLedgers))
+                                {
+                                    foreach($bulkSourceLedgers as $bsId => $bsName)
+                                    {
+                                        $sourceSelectOptions[$bsId] = $bsName;
+                                    }
+                                }
+                                echo $this->Form->select('bulk_default_source_ledger_id', $sourceSelectOptions, array('empty'=>false, 'class'=>'form-control'));
+                                ?>
+                                <p class="help-block" style="font-size:11px; margin-top:4px;">
+                                    <?php echo __('Pre-selected Cash or Bank Account on the Bulk Voucher entry form.');?>
+                                </p>
+                            </div>
+                            <div class="col-sm-6" style="margin-bottom:15px;">
+                                <label style="display:block; font-weight:800; margin-bottom:6px;">
+                                    <?php echo $this->Form->checkbox('bulk_voucher_custom_date_enabled'); ?>
+                                    <span><?php echo __('Allow Changeable Voucher Date (ON / OFF)');?></span>
+                                </label>
+                                <p class="help-block" style="font-size:11px; margin-top:4px;">
+                                    <?php echo __('ON: Users can select and change the voucher date (e.g. for past day vouchers). OFF: Date is locked to today’s date.');?>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <script type="text/javascript">
+                jQuery(function($){
+                    $('#bulkExpSearch').on('keyup', function(){
+                        var val = $.trim($(this).val()).toLowerCase();
+                        $('#bulkExpGrid .bulk-exp-item').each(function(){
+                            $(this).toggle($(this).text().toLowerCase().indexOf(val) > -1);
+                        });
+                    });
+                    $('#bulkIncSearch').on('keyup', function(){
+                        var val = $.trim($(this).val()).toLowerCase();
+                        $('#bulkIncGrid .bulk-inc-item').each(function(){
+                            $(this).toggle($(this).text().toLowerCase().indexOf(val) > -1);
+                        });
+                    });
+                });
+                </script>
             <?php }?>
 
             <div class="form-group">

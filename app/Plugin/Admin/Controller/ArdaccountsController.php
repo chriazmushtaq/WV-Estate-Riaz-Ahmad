@@ -161,10 +161,16 @@ class ArdaccountsController extends AdminAppController
         $ensured = true;
         try
         {
-            $this->loadModel('Smstemplate');
-            $this->loadModel('Emailtemplate');
-            $this->Smstemplate->ensureOwnershipSchema();
-            $this->Emailtemplate->ensureOwnershipSchema();
+            $this->loadModel('Admin.Smstemplate');
+            $this->loadModel('Admin.Emailtemplate');
+            if(is_object($this->Smstemplate) && method_exists($this->Smstemplate, 'ensureOwnershipSchema'))
+            {
+                $this->Smstemplate->ensureOwnershipSchema();
+            }
+            if(is_object($this->Emailtemplate) && method_exists($this->Emailtemplate, 'ensureOwnershipSchema'))
+            {
+                $this->Emailtemplate->ensureOwnershipSchema();
+            }
             foreach($this->_expenseApprovalNotificationTemplateDefaults() as $type => $template)
             {
                 $smsExists = $this->Smstemplate->find('first', array('fields' => array('Smstemplate.id'), 'conditions' => array('Smstemplate.type' => $type), 'recursive' => -1));
@@ -7409,6 +7415,445 @@ class ArdaccountsController extends AdminAppController
         }
     }
 
+    public function bulkvouchers($id = null)
+    {
+        $this->loadModel('Admin.Ardtransaction');
+        $this->loadModel('Admin.Ardledger');
+        $this->loadModel('Admin.Ardsite');
+        $this->loadModel('Admin.Ardsetting');
+        $this->loadModel('Admin.Agency');
+
+        // Resolve Project ID with multi-tenancy & access control
+        $id = $this->_activeProjectId($id);
+        if(!$this->_isGlobalAdmin())
+        {
+            $id = (int)$this->agencyId;
+        }
+
+        $projectList = $this->_activeAgencyProjectList();
+        $this->set('projectName', $projectList);
+        $this->set('agencyId', $this->agencyId);
+        $this->set('currentProjectId', $id);
+        $this->set('isGlobalAdmin', $this->_isGlobalAdmin());
+
+        $defaults = $this->_defaultSettings();
+        $settingsRow = ((int)$id > 0) ? $this->_fetchArdSettingsRowRaw((int)$id) : array();
+        $settings = !empty($settingsRow) ? $this->_normalizeArdSettingsWithDefaults($settingsRow, $defaults) : $defaults;
+
+        $allowCustomDate = !empty($settings['bulk_voucher_custom_date_enabled']);
+        $defaultSourceLedgerId = !empty($settings['bulk_default_source_ledger_id']) ? (int)$settings['bulk_default_source_ledger_id'] : 0;
+        $configuredBulkExpenseIds = array_filter(array_map('intval', explode(',', (string)$settings['bulk_expense_ledger_ids'])));
+        $configuredBulkIncomeIds = array_filter(array_map('intval', explode(',', (string)$settings['bulk_income_ledger_ids'])));
+
+        // Handle POST submission
+        if($this->request->is(array('post', 'put')))
+        {
+            $posted = isset($this->request->data['BulkVoucher']) ? (array)$this->request->data['BulkVoucher'] : array();
+            $targetProjectId = isset($posted['project_id']) ? (int)$posted['project_id'] : (int)$id;
+            if(!$this->_isGlobalAdmin())
+            {
+                $targetProjectId = (int)$this->agencyId;
+            }
+
+            if(!$this->_isAllowedProject($targetProjectId))
+            {
+                $this->Session->setFlash(__('Please select valid agency/project.'), 'flash', array('alert' => 'danger'));
+                return $this->redirect(array('action' => 'bulkvouchers', $id));
+            }
+
+            $voucherType = (isset($posted['type']) && strtolower(trim((string)$posted['type'])) === 'income') ? 'income' : 'expense';
+
+            // Resolve Voucher Date
+            $rawDate = isset($posted['entry_date']) ? trim((string)$posted['entry_date']) : '';
+            if($allowCustomDate && $rawDate !== '')
+            {
+                $entryDate = $this->_reportNormalizeDate($rawDate, false);
+                if($entryDate === '')
+                {
+                    $entryDate = date('Y-m-d');
+                }
+            }
+            else
+            {
+                $entryDate = date('Y-m-d');
+            }
+
+            // Check Fiscal Lock Date
+            $fiscalLockDate = trim((string)(isset($settings['fiscal_lock_date']) ? $settings['fiscal_lock_date'] : ''));
+            if($fiscalLockDate !== '' && $fiscalLockDate !== '0000-00-00')
+            {
+                if(strtotime($entryDate) <= strtotime($fiscalLockDate))
+                {
+                    $this->Session->setFlash(sprintf(__('The fiscal books are locked up to %s. Transactions cannot be posted on or before this date.'), $fiscalLockDate), 'flash', array('alert' => 'danger'));
+                    return $this->redirect(array('action' => 'bulkvouchers', $targetProjectId));
+                }
+            }
+
+            // Source Ledger (Cash / Bank)
+            $sourceLedgerId = isset($posted['source_ledger_id']) ? (int)$posted['source_ledger_id'] : 0;
+            if($sourceLedgerId <= 0)
+            {
+                $this->Session->setFlash(__('Please select a valid Cash or Bank Account as Payment/Receipt source.'), 'flash', array('alert' => 'danger'));
+                return $this->redirect(array('action' => 'bulkvouchers', $targetProjectId));
+            }
+
+            $sourceLedger = $this->Ardledger->find('first', array(
+                'conditions' => array(
+                    'Ardledger.id' => $sourceLedgerId,
+                    'Ardledger.project_id' => $targetProjectId,
+                    'Ardledger.is_trashed' => 0
+                ),
+                'recursive' => -1
+            ));
+            if(empty($sourceLedger['Ardledger']['id']))
+            {
+                $this->Session->setFlash(__('Selected Source Account does not belong to this agency.'), 'flash', array('alert' => 'danger'));
+                return $this->redirect(array('action' => 'bulkvouchers', $targetProjectId));
+            }
+            $sourceType = strtolower(trim((string)$sourceLedger['Ardledger']['type']));
+            if($sourceType === 'expense')
+            {
+                $this->Session->setFlash(__('Source Account cannot be an Expense account. Please select a Cash or Bank account.'), 'flash', array('alert' => 'danger'));
+                return $this->redirect(array('action' => 'bulkvouchers', $targetProjectId));
+            }
+
+            // Process Rows: STRICT SAFEGUARD - Filter out amount <= 0 or empty rows
+            $rawRows = isset($posted['rows']) && is_array($posted['rows']) ? $posted['rows'] : array();
+            $validRows = array();
+            $skippedZeroCount = 0;
+            $grandTotal = 0.0;
+
+            foreach($rawRows as $r)
+            {
+                $r = is_array($r) ? $r : array();
+                $destLedgerId = isset($r['ledger_id']) ? (int)$r['ledger_id'] : 0;
+                $amount = round((float)(isset($r['amount']) ? $r['amount'] : 0), 2);
+                $description = isset($r['description']) ? trim((string)$r['description']) : '';
+                $refNo = isset($r['ref_no']) ? trim((string)$r['ref_no']) : '';
+                $siteId = isset($r['construction_site_id']) ? (int)$r['construction_site_id'] : 0;
+
+                // SAFEGUARD: If no amount, zero amount, negative amount, or no ledger, safely ignore!
+                if($amount <= 0 || $destLedgerId <= 0)
+                {
+                    $skippedZeroCount++;
+                    continue;
+                }
+
+                // Verify destination ledger belongs to this project
+                $destLedger = $this->Ardledger->find('first', array(
+                    'fields' => array('Ardledger.id', 'Ardledger.name', 'Ardledger.type'),
+                    'conditions' => array(
+                        'Ardledger.id' => $destLedgerId,
+                        'Ardledger.project_id' => $targetProjectId,
+                        'Ardledger.is_trashed' => 0
+                    ),
+                    'recursive' => -1
+                ));
+                if(empty($destLedger['Ardledger']['id']))
+                {
+                    $skippedZeroCount++;
+                    continue;
+                }
+
+                // Prevent source and destination being the same account
+                if($destLedgerId === $sourceLedgerId)
+                {
+                    $skippedZeroCount++;
+                    continue;
+                }
+
+                $grandTotal += $amount;
+                $validRows[] = array(
+                    'ledger_id' => $destLedgerId,
+                    'ledger_name' => trim((string)$destLedger['Ardledger']['name']),
+                    'amount' => $amount,
+                    'description' => $description,
+                    'ref_no' => $refNo,
+                    'construction_site_id' => $siteId
+                );
+            }
+
+            if(empty($validRows))
+            {
+                $this->Session->setFlash(__('No vouchers were posted. All rows had 0.00 or empty amounts. No ledger entries were created.'), 'flash', array('alert' => 'warning'));
+                return $this->redirect(array('action' => 'bulkvouchers', $targetProjectId));
+            }
+
+            // Post all valid vouchers in database transaction
+            $ds = $this->Ardtransaction->getDataSource();
+            $ds->begin();
+            try
+            {
+                $postedCount = 0;
+                $affectedLedgerIds = array($sourceLedgerId);
+
+                foreach($validRows as $item)
+                {
+                    $itemRefNo = $item['ref_no'];
+                    if($itemRefNo === '')
+                    {
+                        $itemRefNo = $this->_nextVoucherReferenceNo($targetProjectId, $voucherType);
+                    }
+
+                    $txDesc = $item['description'];
+                    if($txDesc === '')
+                    {
+                        $txDesc = ($voucherType === 'expense')
+                            ? sprintf(__('Bulk Expense: %s'), $item['ledger_name'])
+                            : sprintf(__('Bulk Income: %s'), $item['ledger_name']);
+                    }
+
+                    $txData = array(
+                        'project_id' => $targetProjectId,
+                        'ledger_id' => $sourceLedgerId,
+                        'expense_ledger_id' => ($voucherType === 'expense') ? $item['ledger_id'] : 0,
+                        'income_ledger_id' => ($voucherType === 'income') ? $item['ledger_id'] : 0,
+                        'type' => $voucherType,
+                        'status' => 'Posted',
+                        'amount' => $item['amount'],
+                        'description' => $txDesc,
+                        'ref_no' => $itemRefNo,
+                        'entry_date' => $entryDate,
+                        'construction_site_id' => $item['construction_site_id'],
+                        'source_type' => 'bulk_voucher',
+                        'created_by' => (int)$this->userId,
+                        'modified_by' => (int)$this->userId
+                    );
+
+                    $txData = $this->_ardDecorateTransactionPayload($txData, array(
+                        'status' => 'Posted',
+                        'source_type' => 'bulk_voucher'
+                    ));
+
+                    $this->Ardtransaction->create();
+                    $saved = $this->Ardtransaction->save(array('Ardtransaction' => $txData), false);
+                    if(!$saved)
+                    {
+                        throw new Exception(sprintf(__('Failed to save voucher for ledger %s'), $item['ledger_name']));
+                    }
+
+                    $savedTxId = (int)$this->Ardtransaction->id;
+
+                    if($voucherType === 'expense')
+                    {
+                        $this->Ardtransaction->query(
+                            "UPDATE `ardaccounts_transactions` SET `expense_ledger_id`=".(int)$item['ledger_id']." WHERE `id`=".(int)$savedTxId
+                        );
+                    }
+                    elseif($voucherType === 'income')
+                    {
+                        $this->Ardtransaction->query(
+                            "UPDATE `ardaccounts_transactions` SET `income_ledger_id`=".(int)$item['ledger_id']." WHERE `id`=".(int)$savedTxId
+                        );
+                    }
+
+                    // Double-entry journal sync
+                    $this->_syncJournalForTransaction($savedTxId, 'voucher', $savedTxId);
+
+                    $affectedLedgerIds[] = $item['ledger_id'];
+                    $postedCount++;
+                }
+
+                // Recalculate balances for all affected ledgers
+                foreach(array_unique($affectedLedgerIds) as $affLedgerId)
+                {
+                    $this->_recalculateLedgerBalance($affLedgerId);
+                }
+
+                $ds->commit();
+
+                $successMsg = sprintf(
+                    __('Successfully posted %d %s vouchers (Total PKR %s). %d zero/empty rows were safely ignored.'),
+                    $postedCount,
+                    ucfirst($voucherType),
+                    number_format($grandTotal, 2),
+                    $skippedZeroCount
+                );
+                $this->Session->setFlash($successMsg, 'flash', array('alert' => 'success'));
+
+                $redirectAction = ($voucherType === 'expense') ? 'expensetransactions' : 'incometransactions';
+                return $this->redirect(array('action' => $redirectAction, $targetProjectId));
+            }
+            catch(Exception $e)
+            {
+                $ds->rollback();
+                $this->Session->setFlash(__('Bulk voucher posting failed: ') . $e->getMessage(), 'flash', array('alert' => 'danger'));
+                return $this->redirect(array('action' => 'bulkvouchers', $targetProjectId));
+            }
+        }
+
+        // GET: Prepare Data
+        // 1. Source Accounts (Bank & Asset)
+        $sourceLedgers = $this->Ardledger->find('all', array(
+            'fields' => array('Ardledger.id', 'Ardledger.name', 'Ardledger.type', 'Ardledger.balance'),
+            'conditions' => array(
+                'Ardledger.project_id' => $id,
+                'Ardledger.is_trashed' => 0,
+                'Ardledger.type IN' => array('asset', 'bank')
+            ),
+            'order' => array('Ardledger.name' => 'asc'),
+            'recursive' => -1
+        ));
+        $sourceOptions = array();
+        $sourceBalances = array();
+        foreach($sourceLedgers as $sl)
+        {
+            $sId = (int)$sl['Ardledger']['id'];
+            $sName = trim((string)$sl['Ardledger']['name']);
+            $sBal = (float)$sl['Ardledger']['balance'];
+            $sourceOptions[$sId] = $sName;
+            $sourceBalances[$sId] = $sBal;
+        }
+
+        // 2. All Expense Ledgers (for extra rows & presets)
+        $allExpenseLedgers = $this->Ardledger->find('all', array(
+            'fields' => array('Ardledger.id', 'Ardledger.name', 'Ardledger.category', 'Ardledger.account_code'),
+            'conditions' => array(
+                'Ardledger.project_id' => $id,
+                'Ardledger.is_trashed' => 0,
+                'Ardledger.type' => 'expense'
+            ),
+            'order' => array('Ardledger.name' => 'asc'),
+            'recursive' => -1
+        ));
+
+        // 3. All Income Ledgers (for extra rows & presets)
+        $allIncomeLedgers = $this->Ardledger->find('all', array(
+            'fields' => array('Ardledger.id', 'Ardledger.name', 'Ardledger.category', 'Ardledger.account_code'),
+            'conditions' => array(
+                'Ardledger.project_id' => $id,
+                'Ardledger.is_trashed' => 0,
+                'Ardledger.type' => 'income'
+            ),
+            'order' => array('Ardledger.name' => 'asc'),
+            'recursive' => -1
+        ));
+
+        // 4. Construction Sites
+        $siteOptions = $this->Ardsite->find('list', array(
+            'fields' => array('Ardsite.id', 'Ardsite.site_name'),
+            'conditions' => array(
+                'Ardsite.project_id' => $id,
+                'Ardsite.status' => 'Active'
+            ),
+            'order' => array('Ardsite.site_name' => 'asc')
+        ));
+
+        // 5. Build Preset Rows for Expense
+        $presetExpenseRows = array();
+        if(!empty($configuredBulkExpenseIds))
+        {
+            $configuredExpLedgers = $this->Ardledger->find('all', array(
+                'fields' => array('Ardledger.id', 'Ardledger.name', 'Ardledger.category', 'Ardledger.account_code'),
+                'conditions' => array(
+                    'Ardledger.id' => $configuredBulkExpenseIds,
+                    'Ardledger.project_id' => $id,
+                    'Ardledger.is_trashed' => 0
+                ),
+                'recursive' => -1
+            ));
+            // Preserve configured order
+            $expMap = array();
+            foreach($configuredExpLedgers as $el)
+            {
+                $expMap[(int)$el['Ardledger']['id']] = $el['Ardledger'];
+            }
+            foreach($configuredBulkExpenseIds as $cfgId)
+            {
+                if(isset($expMap[$cfgId]))
+                {
+                    $presetExpenseRows[] = $expMap[$cfgId];
+                }
+            }
+        }
+        // If not configured, auto-detect common heads matching prompt (Office, Motor Cycle/Bike, Kitchen/Grocery/Tea, Car Fuel, Advertisement/Marketing, Material)
+        if(empty($presetExpenseRows))
+        {
+            $defaultKeywords = array('office', 'bike', 'motor', 'car', 'fuel', 'grocery', 'tea', 'kitchen', 'marketing', 'advertis', 'material', 'cement', 'general');
+            foreach($allExpenseLedgers as $el)
+            {
+                $nameLower = strtolower($el['Ardledger']['name']);
+                $catLower = strtolower((string)$el['Ardledger']['category']);
+                foreach($defaultKeywords as $kw)
+                {
+                    if(strpos($nameLower, $kw) !== false || strpos($catLower, $kw) !== false)
+                    {
+                        $presetExpenseRows[] = $el['Ardledger'];
+                        break;
+                    }
+                }
+            }
+            if(empty($presetExpenseRows) && !empty($allExpenseLedgers))
+            {
+                $presetExpenseRows = array_slice(array_map(function($r){ return $r['Ardledger']; }, $allExpenseLedgers), 0, 5);
+            }
+        }
+
+        // 6. Build Preset Rows for Income
+        $presetIncomeRows = array();
+        if(!empty($configuredBulkIncomeIds))
+        {
+            $configuredIncLedgers = $this->Ardledger->find('all', array(
+                'fields' => array('Ardledger.id', 'Ardledger.name', 'Ardledger.category', 'Ardledger.account_code'),
+                'conditions' => array(
+                    'Ardledger.id' => $configuredBulkIncomeIds,
+                    'Ardledger.project_id' => $id,
+                    'Ardledger.is_trashed' => 0
+                ),
+                'recursive' => -1
+            ));
+            $incMap = array();
+            foreach($configuredIncLedgers as $il)
+            {
+                $incMap[(int)$il['Ardledger']['id']] = $il['Ardledger'];
+            }
+            foreach($configuredBulkIncomeIds as $cfgId)
+            {
+                if(isset($incMap[$cfgId]))
+                {
+                    $presetIncomeRows[] = $incMap[$cfgId];
+                }
+            }
+        }
+        if(empty($presetIncomeRows))
+        {
+            $defaultIncKeywords = array('booking', 'installment', 'rental', 'transfer', 'fee', 'sales', 'commission', 'charges');
+            foreach($allIncomeLedgers as $il)
+            {
+                $nameLower = strtolower($il['Ardledger']['name']);
+                $catLower = strtolower((string)$il['Ardledger']['category']);
+                foreach($defaultIncKeywords as $kw)
+                {
+                    if(strpos($nameLower, $kw) !== false || strpos($catLower, $kw) !== false)
+                    {
+                        $presetIncomeRows[] = $il['Ardledger'];
+                        break;
+                    }
+                }
+            }
+            if(empty($presetIncomeRows) && !empty($allIncomeLedgers))
+            {
+                $presetIncomeRows = array_slice(array_map(function($r){ return $r['Ardledger']; }, $allIncomeLedgers), 0, 5);
+            }
+        }
+
+        $activeKind = isset($this->request->query['type']) && strtolower(trim((string)$this->request->query['type'])) === 'income' ? 'income' : 'expense';
+
+        $this->set(compact(
+            'sourceOptions',
+            'sourceBalances',
+            'defaultSourceLedgerId',
+            'allowCustomDate',
+            'allExpenseLedgers',
+            'allIncomeLedgers',
+            'presetExpenseRows',
+            'presetIncomeRows',
+            'siteOptions',
+            'activeKind',
+            'settings'
+        ));
+    }
+
     protected function _defaultVoucherTemplateContent()
     {
         return <<<'HTML'
@@ -12889,7 +13334,11 @@ HTML;
             'default_agent_commission_rate' => 2.00,
             'default_agent_commission_type' => 'percentage',
             'agent_commission_payable_ledger_id' => 0,
-            'commission_wht_payable_ledger_id' => 0
+            'commission_wht_payable_ledger_id' => 0,
+            'bulk_expense_ledger_ids' => '',
+            'bulk_income_ledger_ids' => '',
+            'bulk_default_source_ledger_id' => 0,
+            'bulk_voucher_custom_date_enabled' => 1
         );
     }
 
@@ -16126,7 +16575,7 @@ HTML;
         $this->set('projectName', $projectList);
         $this->set('agencyId', $this->agencyId);
         $this->set('currentProjectId', $id);
-        $allowedTabs = array('general','vouchers','construction','backup','templates','commission');
+        $allowedTabs = array('general','vouchers','construction','backup','templates','commission','bulk');
         $activeTab = isset($this->request->query['tab']) ? strtolower(trim((string)$this->request->query['tab'])) : 'general';
         if(!in_array($activeTab, $allowedTabs))
         {
@@ -16278,6 +16727,40 @@ HTML;
                 $row['commission_wht_payable_ledger_id'] = max(0, (int)(isset($postedRow['commission_wht_payable_ledger_id']) ? $postedRow['commission_wht_payable_ledger_id'] : 0));
             }
 
+            if($activeTab === 'bulk')
+            {
+                if(isset($postedRow['bulk_expense_ledger_ids']))
+                {
+                    $expIds = is_array($postedRow['bulk_expense_ledger_ids']) ? $postedRow['bulk_expense_ledger_ids'] : explode(',', (string)$postedRow['bulk_expense_ledger_ids']);
+                    $cleanExpIds = array();
+                    foreach($expIds as $eid)
+                    {
+                        $eid = (int)$eid;
+                        if($eid > 0)
+                        {
+                            $cleanExpIds[] = $eid;
+                        }
+                    }
+                    $row['bulk_expense_ledger_ids'] = implode(',', array_unique($cleanExpIds));
+                }
+                if(isset($postedRow['bulk_income_ledger_ids']))
+                {
+                    $incIds = is_array($postedRow['bulk_income_ledger_ids']) ? $postedRow['bulk_income_ledger_ids'] : explode(',', (string)$postedRow['bulk_income_ledger_ids']);
+                    $cleanIncIds = array();
+                    foreach($incIds as $iid)
+                    {
+                        $iid = (int)$iid;
+                        if($iid > 0)
+                        {
+                            $cleanIncIds[] = $iid;
+                        }
+                    }
+                    $row['bulk_income_ledger_ids'] = implode(',', array_unique($cleanIncIds));
+                }
+                $row['bulk_default_source_ledger_id'] = max(0, (int)(isset($postedRow['bulk_default_source_ledger_id']) ? $postedRow['bulk_default_source_ledger_id'] : 0));
+                $row['bulk_voucher_custom_date_enabled'] = !empty($postedRow['bulk_voucher_custom_date_enabled']) ? 1 : 0;
+            }
+
             $row['company_name'] = trim((string)$row['company_name']);
             if($row['company_name'] === '')
             {
@@ -16377,7 +16860,8 @@ HTML;
             $checkboxByTab = array(
                 'general' => array('currency_space','paid_receipt_share_link_enabled','paid_notification_popup_enabled'),
                 'backup' => array('daily_backup_enabled'),
-                'construction' => array('low_stock_auto_draft_po')
+                'construction' => array('low_stock_auto_draft_po'),
+                'bulk' => array('bulk_voucher_custom_date_enabled')
             );
             $tabCheckboxFields = isset($checkboxByTab[$activeTab]) ? $checkboxByTab[$activeTab] : array();
             foreach($tabCheckboxFields as $checkboxField)
@@ -16705,12 +17189,59 @@ HTML;
             'source' => array(0 => __('Please Select'))
         );
         $receiptMergeLedgerOptions = array();
-        if($activeTab === 'general')
+        $bulkExpenseLedgers = array();
+        $bulkIncomeLedgers = array();
+        $bulkSourceLedgers = array();
+        $configuredBulkExpenseIds = array();
+        $configuredBulkIncomeIds = array();
+        if(in_array($activeTab, array('general', 'commission', 'bulk'), true))
         {
             $selectedSettingsProjectId = !empty($rowData['project_id']) ? (int)$rowData['project_id'] : 0;
             if($selectedSettingsProjectId > 0 && $this->_isAllowedProject($selectedSettingsProjectId))
             {
                 $this->loadModel('Admin.Ardledger');
+                if($activeTab === 'bulk')
+                {
+                    $bulkExpenseLedgers = $this->Ardledger->find('all', array(
+                        'fields' => array('Ardledger.id', 'Ardledger.name', 'Ardledger.category', 'Ardledger.account_code'),
+                        'conditions' => array(
+                            'Ardledger.project_id' => $selectedSettingsProjectId,
+                            'Ardledger.is_trashed' => 0,
+                            'Ardledger.type' => 'expense'
+                        ),
+                        'order' => array('Ardledger.name' => 'asc'),
+                        'recursive' => -1
+                    ));
+                    $bulkIncomeLedgers = $this->Ardledger->find('all', array(
+                        'fields' => array('Ardledger.id', 'Ardledger.name', 'Ardledger.category', 'Ardledger.account_code'),
+                        'conditions' => array(
+                            'Ardledger.project_id' => $selectedSettingsProjectId,
+                            'Ardledger.is_trashed' => 0,
+                            'Ardledger.type' => 'income'
+                        ),
+                        'order' => array('Ardledger.name' => 'asc'),
+                        'recursive' => -1
+                    ));
+                    $bulkSourceLedgers = $this->Ardledger->find('list', array(
+                        'fields' => array('Ardledger.id', 'Ardledger.name'),
+                        'conditions' => array(
+                            'Ardledger.project_id' => $selectedSettingsProjectId,
+                            'Ardledger.is_trashed' => 0,
+                            'Ardledger.type IN' => array('asset', 'bank')
+                        ),
+                        'order' => array('Ardledger.name' => 'asc'),
+                        'recursive' => -1
+                    ));
+                    if(!empty($rowData['bulk_expense_ledger_ids']))
+                    {
+                        $configuredBulkExpenseIds = array_filter(array_map('intval', explode(',', (string)$rowData['bulk_expense_ledger_ids'])));
+                    }
+                    if(!empty($rowData['bulk_income_ledger_ids']))
+                    {
+                        $configuredBulkIncomeIds = array_filter(array_map('intval', explode(',', (string)$rowData['bulk_income_ledger_ids'])));
+                    }
+                }
+
                 $receiptAssetLedgerOptions += (array)$this->Ardledger->find('list', array(
                     'fields' => array('Ardledger.id', 'Ardledger.name'),
                     'conditions' => array(
@@ -16772,6 +17303,11 @@ HTML;
         $this->set('businessLedgerOptionsByType', $businessLedgerOptionsByType);
         $this->set('businessDefaultLedgerFields', $this->_ardBusinessMappingFields());
         $this->set('receiptMergeLedgerOptions', $receiptMergeLedgerOptions);
+        $this->set('bulkExpenseLedgers', $bulkExpenseLedgers);
+        $this->set('bulkIncomeLedgers', $bulkIncomeLedgers);
+        $this->set('bulkSourceLedgers', $bulkSourceLedgers);
+        $this->set('configuredBulkExpenseIds', $configuredBulkExpenseIds);
+        $this->set('configuredBulkIncomeIds', $configuredBulkIncomeIds);
         $paymentBankAccounts = array();
         $paymentBankAccountPreview = '';
         $selectedSettingsProjectId = !empty($rowData['project_id']) ? (int)$rowData['project_id'] : 0;
@@ -17201,6 +17737,12 @@ HTML;
                 'agent_commission_expense_ledger_id',
                 'agent_commission_payable_ledger_id',
                 'commission_wht_payable_ledger_id'
+            ),
+            'bulk' => array(
+                'bulk_expense_ledger_ids',
+                'bulk_income_ledger_ids',
+                'bulk_default_source_ledger_id',
+                'bulk_voucher_custom_date_enabled'
             )
         );
     }

@@ -143,6 +143,7 @@ $ledgerListByProject = (isset($ledgerListByProject) && is_array($ledgerListByPro
                 <a href="javascript:void(0);" class="btn btn-success js-voucher-add" data-kind="income"><span class="fa fa-plus"></span>&nbsp;<?php echo __('Add Income');?></a>
                 <?php if(!$expenseApprovalEnabled || $canCreateExpenseApproval):?><a href="javascript:void(0);" class="btn btn-danger js-voucher-add" data-kind="expense"><span class="fa fa-minus"></span>&nbsp;<?php echo $expenseApprovalEnabled ? __('Create Expense Request') : __('Add Expense');?></a><?php endif;?>
                 <a href="javascript:void(0);" class="btn btn-info js-voucher-add"><span class="fa fa-file-text-o"></span>&nbsp;<?php echo __('Add Voucher');?></a>
+                <?php echo $this->Html->link('<span class="fa fa-list-alt"></span>&nbsp;'.__('Bulk Vouchers'),array('controller'=>'Ardaccounts','action'=>'bulkvouchers',$tabProjectId, '?'=>array('type'=>!empty($isIncomeMode)?'income':'expense')),array('escape'=>false,'class'=>'btn btn-default', 'style'=>'font-weight:700; background:#4338ca; color:#fff; border-color:#3730a3;'));?>
             </div>
         </div>
 
