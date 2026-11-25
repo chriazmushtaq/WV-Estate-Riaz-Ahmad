@@ -33,6 +33,30 @@ $receiptQrText = implode("\n", array(
     'Total Paid: '.$currency.$this->Number->format($qrTotalPaid)
 ));
 $receiptQrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=420x420&ecc=M&qzone=2&margin=1&format=png&charset-source=UTF-8&charset-target=UTF-8&data=' . rawurlencode($receiptQrText) . '&v=' . rawurlencode((string)$post['DealsPayment']['id']) . '&cb=' . rawurlencode(date('YmdHis'));
+$receiptQrDataUri = '';
+$qrCacheDir = TMP . 'cache' . DS . 'qr_codes';
+if (!is_dir($qrCacheDir)) {
+    @mkdir($qrCacheDir, 0777, true);
+}
+$qrCacheFile = $qrCacheDir . DS . 'qr_' . md5($receiptQrText) . '.png';
+if (file_exists($qrCacheFile) && filesize($qrCacheFile) > 100) {
+    $qrBytes = @file_get_contents($qrCacheFile);
+    if ($qrBytes) {
+        $receiptQrDataUri = 'data:image/png;base64,' . base64_encode($qrBytes);
+    }
+}
+if ($receiptQrDataUri === '') {
+    $ctx = stream_context_create(array(
+        'http' => array('timeout' => 2),
+        'ssl' => array('verify_peer' => false, 'verify_peer_name' => false)
+    ));
+    $qrBytes = @file_get_contents($receiptQrUrl, false, $ctx);
+    if ($qrBytes && strlen($qrBytes) > 100) {
+        @file_put_contents($qrCacheFile, $qrBytes);
+        $receiptQrDataUri = 'data:image/png;base64,' . base64_encode($qrBytes);
+    }
+}
+$receiptQrSrc = ($receiptQrDataUri !== '') ? $receiptQrDataUri : $receiptQrUrl;
 $resolveHeaderImage = function($candidates)
 {
     foreach((array)$candidates as $candidate)
@@ -93,7 +117,12 @@ elseif($receiptAmountWordsLength > 82)
 <head>
 <meta charset="utf-8">
 <title>Payment Receipt</title>
-<?php echo $this->Html->css('print.css'); ?>
+<?php echo $this->Html->css(array('print.css', 'font-awesome.min.css')); ?>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="<?php echo $this->webroot;?>js/html2pdf.bundle.min.js"></script>
+<script>if(typeof html2pdf === 'undefined'){document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"><\/script>');}</script>
+<script src="<?php echo $this->webroot;?>js/qrcode.min.js"></script>
+<script>if(typeof QRCode === 'undefined'){document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>');}</script>
 <style type="text/css">
 .table>thead>tr>th, .table>tbody>tr>th, .table>tfoot>tr>th, .table>thead>tr>td, .table>tbody>tr>td, .table>tfoot>tr>td {
 border-top: 0px solid #ddd;}
@@ -137,8 +166,8 @@ body{font-size:13px;line-height:1.35;}
         position: fixed !important;
     }
 }
-.receipt-page{background:#fff;box-shadow:0 12px 35px rgba(15,23,42,.18);box-sizing:border-box;margin:0 auto 22px auto;max-width:calc(100vw - 24px);min-height:auto;overflow:hidden;padding:6mm 8mm 6mm 8mm;width:210mm;}
-.receipt-header-table-main{width:100%;table-layout:fixed;margin:0 0 8px 0;border-bottom:2px solid #111;border-top:0 !important;}
+.receipt-page{background:#fff;box-shadow:0 12px 35px rgba(15,23,42,.18);box-sizing:border-box;margin:0 auto 22px auto;max-width:210mm;min-height:auto;overflow:hidden;padding:6mm 8mm 6mm 8mm;width:210mm;}
+.receipt-header-table-main{width:100%;table-layout:fixed;margin:0 0 8px 0;border-bottom:2px solid #111;border-top:0 !important;box-sizing:border-box;}
 .receipt-header-logo-cell{width:145px;vertical-align:middle;text-align:left;}
 .receipt-header-content-cell{vertical-align:middle;text-align:center;}
 .receipt-header-qr-cell{width:145px;vertical-align:middle;text-align:right;}
@@ -148,12 +177,12 @@ body{font-size:13px;line-height:1.35;}
 .receipt-header-meta{display:inline-table;margin:0 auto;text-align:center;}
 .receipt-header-meta td{text-align:center!important;}
 .receipt-title{border-bottom:1px solid #111;border-top:1px solid #111;font-size:14px;letter-spacing:.2px;padding:4px 0!important;text-align:center;}
-.receipt-meta-table{font-family:"Times New Roman",Times,serif;margin:0 0 5px 0;}
-.receipt-meta-table td{border:0!important;font-family:"Times New Roman",Times,serif;font-size:18px!important;line-height:1.3!important;padding:3px 3px!important;}
-.receipt-meta-table p{font-family:"Times New Roman",Times,serif;font-size:18px!important;line-height:1.3!important;margin:0!important;}
+.receipt-meta-table{font-family:"Times New Roman",Times,serif;margin:0 0 5px 0;width:100%;table-layout:fixed;box-sizing:border-box;}
+.receipt-meta-table td{border:0!important;font-family:"Times New Roman",Times,serif;font-size:18px!important;line-height:1.3!important;padding:3px 3px!important;word-wrap:break-word;overflow-wrap:break-word;}
+.receipt-meta-table p{font-family:"Times New Roman",Times,serif;font-size:18px!important;line-height:1.3!important;margin:0!important;word-wrap:break-word;overflow-wrap:break-word;}
 .receipt-meta-table strong{font-family:"Times New Roman",Times,serif;font-size:18px!important;font-weight:900;}
 .receipt-date-row td{padding-top:8px!important;}
-.receipt-details-table{border:1px solid #111;margin-top:5px;table-layout:fixed;}
+.receipt-details-table{border:1px solid #111;margin-top:5px;table-layout:fixed;width:100%;box-sizing:border-box;}
 .receipt-details-table td{border:1px solid #777!important;font-family:"Times New Roman",Times,serif;font-size:18px!important;line-height:1.28!important;padding:4px 6px!important;vertical-align:top;}
 .receipt-details-table p{font-family:"Times New Roman",Times,serif;font-size:18px!important;line-height:1.28!important;margin:0!important;}
 .receipt-details-table strong{font-family:"Times New Roman",Times,serif;font-size:18px!important;font-weight:900;}
@@ -165,9 +194,10 @@ body{font-size:13px;line-height:1.35;}
 .receipt-detail-card .detail-value{display:inline;font-weight:400;}
 .receipt-details-table .receipt-detail-card p,.receipt-details-table .receipt-detail-card .detail-label,.receipt-details-table .receipt-detail-card .detail-value{font-size:16px!important;line-height:1.2!important;}
 .receipt-label{font-weight:900;}
-.receipt-notes-table{background:#fff;border:1px solid #111;margin-top:8px;padding:3px 0;}
-.receipt-notes-table td{border:0!important;padding:2px 9px!important;}
+.receipt-notes-table{background:#fff;border:1px solid #111;margin-top:8px;padding:3px 0;width:100%;table-layout:fixed;box-sizing:border-box;}
+.receipt-notes-table td{border:0!important;padding:2px 9px!important;word-wrap:break-word;overflow-wrap:break-word;}
 .receipt-original-note p{font-size:14px!important;line-height:1.3!important;margin:1px 0 2px 0!important;}
+.receipt-signature-table{width:100%;box-sizing:border-box;}
 .receipt-signature-table td{border:0!important;}
 .receipt-summary-wrap{margin:9px auto 7px auto;width:80%;max-width:760px;border:1px solid #7d8a99;border-radius:5px;background:#fff;}
 .receipt-summary-title{text-align:center;font-weight:800;font-size:13px;color:#000;padding:7px 8px 2px 8px;}
@@ -268,7 +298,8 @@ table, tr, td { page-break-inside: avoid !important; break-inside: avoid !import
 </head>
 <body>
 <div class="print-toolbar">
-    <button type="button" onclick="window.print();"><?php echo __('Print Receipt');?></button>
+    <button type="button" id="btnDownloadReceiptPdf" onclick="downloadReceiptPdf();" style="background:#dc2626;color:#fff;border-color:#b91c1c;margin-right:8px;"><i class="fa fa-file-pdf-o"></i> <?php echo __('Download PDF');?></button>
+    <button type="button" onclick="window.print();" style="background:#1d4ed8;color:#fff;border-color:#1e40af;"><i class="fa fa-print"></i> <?php echo __('Print Receipt');?></button>
 </div>
 <div class="wv-duplicate-watermark">
     DUPLICATE BY CLIENT PORTAL
@@ -278,7 +309,7 @@ table, tr, td { page-break-inside: avoid !important; break-inside: avoid !import
     <tr>
         <td class="receipt-header-logo-cell" width="145">
             <?php if(strlen(trim((string)$headerLogo))>0){?>
-                <?php echo $this->Html->image($headerLogo,array('alt'=>$agencyName,'class'=>'receipt-logo-image'));?>
+                <?php echo $this->Html->image($headerLogo,array('alt'=>$agencyName,'class'=>'receipt-logo-image','crossorigin'=>'anonymous'));?>
             <?php }?>
         </td>
         <td class="receipt-header-content-cell">
@@ -289,8 +320,8 @@ table, tr, td { page-break-inside: avoid !important; break-inside: avoid !import
             </table>
         </td>
         <td class="receipt-header-qr-cell" width="145">
-            <div class="receipt-qr-box">
-                <img src="<?php echo h($receiptQrUrl);?>" alt="<?php echo h(__('Receipt QR Code'));?>">
+            <div class="receipt-qr-box" id="receiptQrBox">
+                <img id="receiptQrImg" src="<?php echo h($receiptQrSrc);?>" data-qr-url="<?php echo h($receiptQrUrl);?>" data-qr-text="<?php echo h($receiptQrText);?>" crossorigin="anonymous" alt="<?php echo h(__('Receipt QR Code'));?>">
             </div>
         </td>
     </tr>
@@ -298,8 +329,8 @@ table, tr, td { page-break-inside: avoid !important; break-inside: avoid !import
 <table width="100%" class="table receipt-meta-table" style="max-height:960px;border-top: 0px">
     <tr><td colspan="2" class="receipt-title"><strong><?php echo __('PAYMENT RECEIPT');?></strong></td></tr>
     <tr class="receipt-date-row">
-        <td align="left" valign="top"><p><span class="receipt-label"><?php echo __('Payment Date');?>:</span> <?php echo $this->Time->format($sysDay.$dateSep.$sysMonth.$dateSep.$sysYear,h($post['DealsPayment']['payment_date']));?></p></td>
-        <td align="right" valign="top"><p><span class="receipt-label"><?php echo __('Next Due Date');?>:</span> <?php if(!empty($isNextDueOverdue) && $dueDate){echo $this->Time->format($sysDay.$dateSep.$sysMonth.$dateSep.$sysYear,h($dueDate));?> <strong style="color:#b30000;font-weight:900;">(<?php echo __('OVERDUE');?>)</strong><?php }elseif($dueDate){echo $this->Time->format($sysDay.$dateSep.$sysMonth.$dateSep.$sysYear,h($dueDate));}else{echo __('PAID');}?></p></td>
+        <td align="left" valign="top" style="width:48%;"><p><span class="receipt-label"><?php echo __('Payment Date');?>:</span> <?php echo $this->Time->format($sysDay.$dateSep.$sysMonth.$dateSep.$sysYear,h($post['DealsPayment']['payment_date']));?></p></td>
+        <td align="right" valign="top" style="width:52%;text-align:right;padding-right:4px;"><p><span class="receipt-label"><?php echo __('Next Due Date');?>:</span> <?php if(!empty($isNextDueOverdue) && $dueDate){echo $this->Time->format($sysDay.$dateSep.$sysMonth.$dateSep.$sysYear,h($dueDate));?> <strong style="color:#b30000;font-weight:900;">(<?php echo __('OVERDUE');?>)</strong><?php }elseif($dueDate){echo $this->Time->format($sysDay.$dateSep.$sysMonth.$dateSep.$sysYear,h($dueDate));}else{echo __('PAID');}?></p></td>
     </tr>
     <tr><td colspan="2" align="left" valign="top"><p><span class="receipt-label"><?php echo __('Receipt Number');?>:</span> <?php echo h($receiptNo);?></p></td></tr>
     <tr><td colspan="2" valign="top" align="left"><p><?php echo __('Dear Mr./Mrs./Ms ');?><strong><?php echo h($post['Client']['name']);?></strong><?php if(!empty($post['Client']['fathername'])){ ?> <span style="font-weight:normal;"><?php echo !empty($post['Client']['relation_type']) && $post['Client']['relation_type']==='Husband' ? 'W/O' : 'S/O'; ?></span> <strong><?php echo h($post['Client']['fathername']);?></strong><?php } ?></p></td></tr>
@@ -394,7 +425,162 @@ table, tr, td { page-break-inside: avoid !important; break-inside: avoid !import
 
 
 <script type="text/javascript">
-// Keep receipt visible. Print manually using the button above.
+function prepareQrImage(callback) {
+    var qrImg = document.getElementById('receiptQrImg');
+    if (!qrImg) {
+        if (typeof callback === 'function') callback();
+        return;
+    }
+    // 1. If already a base64 Data URI, ready immediately
+    if (qrImg.src && qrImg.src.indexOf('data:image') === 0) {
+        if (typeof callback === 'function') callback();
+        return;
+    }
+    
+    // 2. Try drawing to canvas and exporting as Data URI
+    var tryCanvasConvert = function() {
+        try {
+            var canvas = document.createElement('canvas');
+            canvas.width = qrImg.naturalWidth || 420;
+            canvas.height = qrImg.naturalHeight || 420;
+            var ctx = canvas.getContext('2d');
+            ctx.drawImage(qrImg, 0, 0, canvas.width, canvas.height);
+            var dataUri = canvas.toDataURL('image/png');
+            if (dataUri && dataUri.indexOf('data:image/png') === 0 && dataUri.length > 100) {
+                qrImg.src = dataUri;
+                return true;
+            }
+        } catch(e) {}
+        return false;
+    };
+    
+    if (qrImg.complete && qrImg.naturalWidth > 0) {
+        if (tryCanvasConvert()) {
+            if (typeof callback === 'function') callback();
+            return;
+        }
+    }
+    
+    // 3. Fallback to client-side QRCode generator if canvas export fails
+    var qrText = qrImg.getAttribute('data-qr-text');
+    if (typeof QRCode !== 'undefined' && qrText) {
+        try {
+            var tempDiv = document.createElement('div');
+            new QRCode(tempDiv, {
+                text: qrText,
+                width: 280,
+                height: 280,
+                correctLevel: QRCode.CorrectLevel.M
+            });
+            setTimeout(function() {
+                var genCanvas = tempDiv.querySelector('canvas');
+                var genImg = tempDiv.querySelector('img');
+                var dataUri = '';
+                if (genCanvas) {
+                    try { dataUri = genCanvas.toDataURL('image/png'); } catch(e) {}
+                }
+                if (!dataUri && genImg && genImg.src && genImg.src.indexOf('data:image') === 0) {
+                    dataUri = genImg.src;
+                }
+                if (dataUri) {
+                    qrImg.src = dataUri;
+                }
+                if (typeof callback === 'function') callback();
+            }, 80);
+            return;
+        } catch(e) {}
+    }
+
+    // 4. If image is currently loading, wait for onload
+    if (!qrImg.complete) {
+        var finished = false;
+        var done = function() {
+            if (finished) return;
+            finished = true;
+            tryCanvasConvert();
+            if (typeof callback === 'function') callback();
+        };
+        qrImg.onload = done;
+        qrImg.onerror = done;
+        setTimeout(done, 800);
+        return;
+    }
+
+    if (typeof callback === 'function') callback();
+}
+
+function downloadReceiptPdf() {
+    var element = document.querySelector('.receipt-page');
+    if (!element) return;
+    var btn = document.getElementById('btnDownloadReceiptPdf');
+    var origText = btn ? btn.innerHTML : '';
+    if (btn) {
+        btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> <?php echo __("Generating PDF...");?>';
+        btn.disabled = true;
+    }
+    
+    prepareQrImage(function() {
+        var origBoxShadow = element.style.boxShadow;
+        var origMargin = element.style.margin;
+        var origWidth = element.style.width;
+        var origMaxWidth = element.style.maxWidth;
+        
+        element.style.boxShadow = 'none';
+        element.style.margin = '0 auto';
+        element.style.width = '210mm';
+        element.style.maxWidth = '210mm';
+        
+        var filename = 'Receipt-<?php echo !empty($receiptNo) ? preg_replace("/[^A-Za-z0-9_-]/", "_", $receiptNo) : "Payment"; ?>.pdf';
+        var opt = {
+            margin: [0, 0, 0, 0],
+            filename: filename,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: {
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+                logging: false,
+                letterRendering: true,
+                scrollX: 0,
+                scrollY: 0,
+                windowWidth: 1024
+            },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        
+        var restoreElement = function() {
+            element.style.boxShadow = origBoxShadow;
+            element.style.margin = origMargin;
+            element.style.width = origWidth;
+            element.style.maxWidth = origMaxWidth;
+            if (btn) {
+                btn.innerHTML = origText;
+                btn.disabled = false;
+            }
+        };
+
+        if (typeof html2pdf !== 'undefined') {
+            html2pdf().set(opt).from(element).save().then(function() {
+                restoreElement();
+            }).catch(function(err) {
+                console.error('PDF generation error:', err);
+                restoreElement();
+            });
+        } else {
+            restoreElement();
+            window.print();
+        }
+    });
+}
+document.addEventListener('DOMContentLoaded', function() {
+    prepareQrImage(function() {});
+    var searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.get('download') === '1' || searchParams.get('pdf') === '1') {
+        setTimeout(function() {
+            downloadReceiptPdf();
+        }, 600);
+    }
+});
 </script>
 </body>
 </html>
