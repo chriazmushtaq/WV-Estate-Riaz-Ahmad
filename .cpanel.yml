@@ -5,4 +5,4 @@ deployment:
     - /bin/mkdir -p $DEPLOYPATH/app/tmp/cache/models $DEPLOYPATH/app/tmp/cache/persistent $DEPLOYPATH/app/tmp/cache/views $DEPLOYPATH/app/tmp/logs
     - /bin/chmod -R 0777 $DEPLOYPATH/app/tmp
     - /bin/touch $DEPLOYPATH/app/tmp/deployed.txt
-    - php $DEPLOYPATH/scripts/run_migrations.php 2>/dev/null || true
+    - php $DEPLOYPATH/scripts/run_migrations.php >> $DEPLOYPATH/app/tmp/logs/migration.log 2>&1 || true

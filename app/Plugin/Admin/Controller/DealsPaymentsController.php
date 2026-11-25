@@ -11,8 +11,9 @@ class DealsPaymentsController extends AdminAppController {
     public function beforeFilter()
     {
         parent::beforeFilter();
-        if($this->_shouldRunControllerBootstrap('dealspayments.schema', '2026-07-16.rent-adjustment.1'))
+        if($this->_shouldRunControllerBootstrap('dealspayments.schema', '2026-11-25.auto-increment.1'))
         {
+            $this->_ensureDealPaymentTablesAutoIncrement();
             $this->_ensureArdReceiptAccountingTables();
             $this->_ensureDealPaymentReceiptPrefixColumns();
             $this->_ensureBusinessAccountingSchema();
@@ -20,6 +21,37 @@ class DealsPaymentsController extends AdminAppController {
             $this->_ensureDealDocumentsTable();
             $this->_ensureDealsPaymentSlipColumns();
             $this->_ensureRentAdjustmentRentalSchema();
+        }
+    }
+
+    protected function _ensureDealPaymentTablesAutoIncrement()
+    {
+        $this->loadModel('DealsPayment');
+        foreach(array('deals_payments', 'plans_payments') as $tableName)
+        {
+            try
+            {
+                $cols = $this->DealsPayment->query("SHOW FULL COLUMNS FROM `{$tableName}` LIKE 'id'");
+                if(!empty($cols[0]['COLUMNS']))
+                {
+                    $col = $cols[0]['COLUMNS'];
+                    $extra = strtolower(isset($col['Extra']) ? $col['Extra'] : '');
+                    $key = strtoupper(isset($col['Key']) ? $col['Key'] : '');
+                    $type = isset($col['Type']) ? $col['Type'] : 'int(11)';
+                    if(strpos($extra, 'auto_increment') === false)
+                    {
+                        if($key === 'PRI')
+                        {
+                            $this->DealsPayment->query("ALTER TABLE `{$tableName}` MODIFY `id` {$type} NOT NULL AUTO_INCREMENT");
+                        }
+                        else
+                        {
+                            $this->DealsPayment->query("ALTER TABLE `{$tableName}` MODIFY `id` {$type} NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY (`id`)");
+                        }
+                    }
+                }
+            }
+            catch(Exception $e) {}
         }
     }
 
