@@ -446,31 +446,31 @@ table, tr, td { page-break-inside: avoid !important; break-inside: avoid !import
 
 
 <script type="text/javascript">
-function ensureLocalQrCode() {
+function renderReceiptQr() {
     var qrBox = document.getElementById('receiptQrBox');
-    if (!qrBox) return;
-    var qrImg = document.getElementById('receiptQrImg');
-    if (qrImg && qrImg.src && qrImg.src.indexOf('data:image') === 0 && qrImg.complete && qrImg.naturalWidth > 0) {
+    if (!qrBox || typeof QRCode === 'undefined') return;
+    var qrText = qrBox.getAttribute('data-qr-text') || '';
+    if (!qrText) return;
+
+    var existingCanvas = qrBox.querySelector('canvas');
+    if (existingCanvas && existingCanvas.width > 0) {
         return;
     }
-    var qrText = qrBox.getAttribute('data-qr-text') || (qrImg ? qrImg.getAttribute('data-qr-text') : '');
-    if (!qrText || typeof QRCode === 'undefined') return;
 
-    try {
-        var tempDiv = document.createElement('div');
-        new QRCode(tempDiv, {
-            text: qrText,
-            width: 256,
-            height: 256,
-            correctLevel: QRCode.CorrectLevel.M
-        });
-        var canvas = tempDiv.querySelector('canvas');
-        if (canvas) {
-            var dataUrl = canvas.toDataURL('image/png');
-            qrBox.innerHTML = '<img id="receiptQrImg" src="' + dataUrl + '" alt="<?php echo h(__('Receipt QR Code'));?>" style="display:block;width:112px;height:112px;margin:0 auto;" crossorigin="anonymous">';
-        }
-    } catch (e) {
-        console.error('QR code generation error:', e);
+    qrBox.innerHTML = '';
+    new QRCode(qrBox, {
+        text: qrText,
+        width: 112,
+        height: 112,
+        correctLevel: QRCode.CorrectLevel.M
+    });
+
+    var canvas = qrBox.querySelector('canvas');
+    if (canvas) {
+        canvas.style.display = 'block';
+        canvas.style.width = '112px';
+        canvas.style.height = '112px';
+        canvas.style.margin = '0 auto';
     }
 }
 
@@ -535,7 +535,7 @@ function downloadReceiptPdf() {
         btn.disabled = true;
     }
 
-    ensureLocalQrCode();
+    renderReceiptQr();
 
     var urduElements = element.querySelectorAll('.receipt-amount-words-urdu, .receipt-urdu-note');
     var swappedElements = [];
@@ -556,7 +556,24 @@ function downloadReceiptPdf() {
         html2canvas: {
             scale: 2,
             useCORS: true,
-            logging: false
+            logging: false,
+            onclone: function(clonedDoc) {
+                var origCanvas = element.querySelector('#receiptQrBox canvas');
+                var clonedBox = clonedDoc.querySelector('#receiptQrBox');
+                if (origCanvas && clonedBox) {
+                    clonedBox.innerHTML = '';
+                    var clonedCanvas = clonedDoc.createElement('canvas');
+                    clonedCanvas.width = origCanvas.width;
+                    clonedCanvas.height = origCanvas.height;
+                    clonedCanvas.style.display = 'block';
+                    clonedCanvas.style.width = '112px';
+                    clonedCanvas.style.height = '112px';
+                    clonedCanvas.style.margin = '0 auto';
+                    var ctx = clonedCanvas.getContext('2d');
+                    ctx.drawImage(origCanvas, 0, 0);
+                    clonedBox.appendChild(clonedCanvas);
+                }
+            }
         },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
@@ -588,12 +605,11 @@ function downloadReceiptPdf() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    renderReceiptQr();
     if (document.fonts && document.fonts.ready) {
         document.fonts.ready.then(function() {
-            ensureLocalQrCode();
+            renderReceiptQr();
         });
-    } else {
-        ensureLocalQrCode();
     }
     var searchParams = new URLSearchParams(window.location.search);
     if (searchParams.get('download') === '1' || searchParams.get('pdf') === '1') {
