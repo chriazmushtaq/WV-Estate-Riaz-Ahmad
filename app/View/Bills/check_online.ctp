@@ -200,32 +200,6 @@ $hasLoadedBill = !empty($bill) && !empty($renderedHtml);
     box-shadow: 0 5px 14px rgba(4, 120, 87, 0.35);
 }
 
-.wv-sample-chips {
-    margin-top: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-    font-size: 12px;
-    color: #64748b;
-}
-
-.wv-chip {
-    background: #e2e8f0;
-    color: #1e293b;
-    padding: 3px 10px;
-    border-radius: 14px;
-    cursor: pointer;
-    font-family: monospace;
-    font-weight: 700;
-    transition: all 0.2s;
-}
-
-.wv-chip:hover {
-    background: #047857;
-    color: #ffffff;
-}
-
 /* =========================================================================
    ACTIVE BILL TOP BAR (SHOWN WHEN BILL IS LOADED)
    ========================================================================= */
@@ -531,16 +505,6 @@ $hasLoadedBill = !empty($bill) && !empty($renderedHtml);
                     <span id="btnSearchIcon"><i class="fa fa-arrow-circle-right"></i></span>
                     <span id="btnSearchText">Check Bill / بل چیک کریں</span>
                 </button>
-            </div>
-
-            <!-- Quick Clickable Chips -->
-            <div class="wv-sample-chips">
-                <span>Quick Test Demo:</span>
-                <span class="wv-chip" onclick="quickFillSearch('WV7010', 'consumer_id')" title="Live DB Resident WV7010">WV7010 (Live DB)</span>
-                <span class="wv-chip" onclick="quickFillSearch('WB9170', 'bill_id')" title="Live DB Bill WB9170">WB9170 (Live DB)</span>
-                <span class="wv-chip" onclick="quickFillSearch('WV-CON-1024', 'consumer_id')" title="Demo Consumer ID">WV-CON-1024</span>
-                <span class="wv-chip" onclick="quickFillSearch('BILL-2026-0089', 'bill_id')" title="Demo Bill ID">BILL-2026-0089</span>
-                <span class="wv-chip" onclick="quickFillSearch('MTR-55412', 'meter_number')" title="Demo Meter No">MTR-55412</span>
             </div>
         </form>
     </div>

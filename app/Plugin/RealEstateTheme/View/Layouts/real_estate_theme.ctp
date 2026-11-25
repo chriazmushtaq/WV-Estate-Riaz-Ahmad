@@ -1285,11 +1285,6 @@ $siteFaviconFile = !empty($siteFavicon) ? $siteFavicon : '';
                     <a class="nav-link <?php echo $isNavHome ? 'active' : ''; ?>" href="<?php echo $this->Html->url('/'); ?>"><i class="fa fa-home"></i> Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo $isNavCheckBill ? 'active' : ''; ?>" href="<?php echo $this->Html->url('/bills/check_online'); ?>" style="<?php echo $isNavCheckBill ? 'color:#d11242;font-weight:800;' : ''; ?>">
-                        <i class="fa fa-file-text-o text-danger"></i> Check Bill / آن لائن بل
-                    </a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link <?php echo $isNavProperties ? 'active' : ''; ?>" href="<?php echo $this->Html->url('/Properties'); ?>"><i class="fa fa-building-o"></i> Properties for Sale</a>
                 </li>
                 <li class="nav-item">
