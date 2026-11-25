@@ -136,6 +136,9 @@ elseif($receiptAmountWordsLength > 82)
 <title>Payment Receipt</title>
 <?php echo $this->Html->css(array('print.css', 'font-awesome.min.css')); ?>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
 <script src="<?php echo $this->webroot;?>js/html2pdf.bundle.min.js"></script>
 <script>if(typeof html2pdf === 'undefined'){document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"><\/script>');}</script>
 <script src="<?php echo $this->webroot;?>js/qrcode.min.js"></script>
@@ -443,25 +446,83 @@ table, tr, td { page-break-inside: avoid !important; break-inside: avoid !import
 
 
 <script type="text/javascript">
-function renderLocalQrIfNeeded() {
-    var qrImg = document.getElementById('receiptQrImg');
+function ensureLocalQrCode() {
     var qrBox = document.getElementById('receiptQrBox');
-    if (!qrBox || typeof QRCode === 'undefined') return;
-    
-    // Check if the current image is missing or failed to load
-    var needsFallback = !qrImg || !qrImg.complete || qrImg.naturalWidth === 0 || !qrImg.src || qrImg.src.indexOf('data:image') !== 0;
-    if (needsFallback) {
-        var qrText = qrBox.getAttribute('data-qr-text') || (qrImg ? qrImg.getAttribute('data-qr-text') : '');
-        if (qrText) {
-            qrBox.innerHTML = '';
-            new QRCode(qrBox, {
-                text: qrText,
-                width: 112,
-                height: 112,
-                correctLevel: QRCode.CorrectLevel.M
-            });
-        }
+    if (!qrBox) return;
+    var qrImg = document.getElementById('receiptQrImg');
+    if (qrImg && qrImg.src && qrImg.src.indexOf('data:image') === 0 && qrImg.complete && qrImg.naturalWidth > 0) {
+        return;
     }
+    var qrText = qrBox.getAttribute('data-qr-text') || (qrImg ? qrImg.getAttribute('data-qr-text') : '');
+    if (!qrText || typeof QRCode === 'undefined') return;
+
+    try {
+        var tempDiv = document.createElement('div');
+        new QRCode(tempDiv, {
+            text: qrText,
+            width: 256,
+            height: 256,
+            correctLevel: QRCode.CorrectLevel.M
+        });
+        var canvas = tempDiv.querySelector('canvas');
+        if (canvas) {
+            var dataUrl = canvas.toDataURL('image/png');
+            qrBox.innerHTML = '<img id="receiptQrImg" src="' + dataUrl + '" alt="<?php echo h(__('Receipt QR Code'));?>" style="display:block;width:112px;height:112px;margin:0 auto;" crossorigin="anonymous">';
+        }
+    } catch (e) {
+        console.error('QR code generation error:', e);
+    }
+}
+
+function rasterizeUrduNode(el) {
+    if (!el) return false;
+    var text = (el.innerText || el.textContent || '').trim();
+    if (!text) return false;
+
+    var rect = el.getBoundingClientRect();
+    var style = window.getComputedStyle(el);
+    var scale = 2; // high resolution for crisp print
+    var width = Math.ceil(rect.width);
+    var height = Math.ceil(rect.height);
+    if (width <= 0 || height <= 0) return false;
+
+    var padX = 20;
+    var padY = 8;
+    var totalW = width + padX * 2;
+    var totalH = height + padY * 2;
+
+    var canvas = document.createElement('canvas');
+    canvas.width = totalW * scale;
+    canvas.height = totalH * scale;
+    var ctx = canvas.getContext('2d');
+    ctx.scale(scale, scale);
+
+    var fontWeight = style.fontWeight || '700';
+    var fontSize = style.fontSize || '20px';
+    var fontFamily = style.fontFamily || '"Noto Nastaliq Urdu", "Jameel Noori Nastaleeq", sans-serif';
+    ctx.font = fontWeight + ' ' + fontSize + ' ' + fontFamily;
+    ctx.fillStyle = style.color || '#000000';
+    ctx.direction = 'rtl';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+
+    ctx.fillText(text, totalW - padX, totalH / 2);
+
+    var img = document.createElement('img');
+    img.src = canvas.toDataURL('image/png');
+    img.style.width = totalW + 'px';
+    img.style.height = totalH + 'px';
+    img.style.maxWidth = 'none';
+    img.style.display = 'block';
+    img.style.marginLeft = 'auto';
+    img.style.marginRight = '-' + padX + 'px';
+    img.style.marginTop = '-' + padY + 'px';
+    img.style.marginBottom = '-' + padY + 'px';
+
+    el.setAttribute('data-orig-html', el.innerHTML);
+    el.innerHTML = '';
+    el.appendChild(img);
+    return true;
 }
 
 function downloadReceiptPdf() {
@@ -474,7 +535,15 @@ function downloadReceiptPdf() {
         btn.disabled = true;
     }
 
-    renderLocalQrIfNeeded();
+    ensureLocalQrCode();
+
+    var urduElements = element.querySelectorAll('.receipt-amount-words-urdu, .receipt-urdu-note');
+    var swappedElements = [];
+    urduElements.forEach(function(el) {
+        if (rasterizeUrduNode(el)) {
+            swappedElements.push(el);
+        }
+    });
 
     var origShadow = element.style.boxShadow;
     element.style.boxShadow = 'none';
@@ -493,6 +562,13 @@ function downloadReceiptPdf() {
     };
 
     var restore = function() {
+        swappedElements.forEach(function(el) {
+            var origHtml = el.getAttribute('data-orig-html');
+            if (origHtml !== null) {
+                el.innerHTML = origHtml;
+                el.removeAttribute('data-orig-html');
+            }
+        });
         element.style.boxShadow = origShadow;
         if (btn) {
             btn.innerHTML = origText;
@@ -512,12 +588,18 @@ function downloadReceiptPdf() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    renderLocalQrIfNeeded();
+    if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(function() {
+            ensureLocalQrCode();
+        });
+    } else {
+        ensureLocalQrCode();
+    }
     var searchParams = new URLSearchParams(window.location.search);
     if (searchParams.get('download') === '1' || searchParams.get('pdf') === '1') {
         setTimeout(function() {
             downloadReceiptPdf();
-        }, 600);
+        }, 800);
     }
 });
 </script>
