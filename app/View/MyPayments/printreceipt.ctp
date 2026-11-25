@@ -46,14 +46,31 @@ if (file_exists($qrCacheFile) && filesize($qrCacheFile) > 100) {
     }
 }
 if ($receiptQrDataUri === '') {
-    $ctx = stream_context_create(array(
-        'http' => array('timeout' => 2),
-        'ssl' => array('verify_peer' => false, 'verify_peer_name' => false)
-    ));
-    $qrBytes = @file_get_contents($receiptQrUrl, false, $ctx);
-    if ($qrBytes && strlen($qrBytes) > 100) {
-        @file_put_contents($qrCacheFile, $qrBytes);
-        $receiptQrDataUri = 'data:image/png;base64,' . base64_encode($qrBytes);
+    if (extension_loaded('curl')) {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $receiptQrUrl);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 3);
+        $qrBytes = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        if ($qrBytes && $httpCode == 200 && strlen($qrBytes) > 100) {
+            @file_put_contents($qrCacheFile, $qrBytes);
+            $receiptQrDataUri = 'data:image/png;base64,' . base64_encode($qrBytes);
+        }
+    }
+    if ($receiptQrDataUri === '') {
+        $ctx = stream_context_create(array(
+            'http' => array('timeout' => 3),
+            'ssl' => array('verify_peer' => false, 'verify_peer_name' => false)
+        ));
+        $qrBytes = @file_get_contents($receiptQrUrl, false, $ctx);
+        if ($qrBytes && strlen($qrBytes) > 100) {
+            @file_put_contents($qrCacheFile, $qrBytes);
+            $receiptQrDataUri = 'data:image/png;base64,' . base64_encode($qrBytes);
+        }
     }
 }
 $receiptQrSrc = ($receiptQrDataUri !== '') ? $receiptQrDataUri : $receiptQrUrl;
@@ -135,7 +152,7 @@ body{font-size:13px;line-height:1.35;}
 .receipt-page strong{font-weight:900;}
 .recipt_footer{position:relative;top: 180px;text-align: right;}
 .recipt{text-align: right;}
-.print-toolbar{box-sizing:border-box;margin:10px auto 8px auto;max-width:210mm;text-align:right;width:210mm;}
+.print-toolbar{box-sizing:border-box;margin:10px auto 8px auto;max-width:198mm;text-align:right;width:198mm;}
 .print-toolbar button{background:#fff;border:1px solid #111;border-radius:4px;color:#000;cursor:pointer;font-size:13px;font-weight:800;padding:7px 14px;}
 .wv-duplicate-watermark {
     position: fixed;
@@ -166,7 +183,7 @@ body{font-size:13px;line-height:1.35;}
         position: fixed !important;
     }
 }
-.receipt-page{background:#fff;box-shadow:0 12px 35px rgba(15,23,42,.18);box-sizing:border-box;margin:0 auto 22px auto;max-width:210mm;min-height:auto;overflow:hidden;padding:6mm 8mm 6mm 8mm;width:210mm;}
+.receipt-page{background:#fff;box-shadow:0 12px 35px rgba(15,23,42,.18);box-sizing:border-box;margin:0 auto 22px auto;max-width:198mm;min-height:auto;overflow:hidden;padding:5mm 6mm 5mm 6mm;width:198mm;}
 .receipt-header-table-main{width:100%;table-layout:fixed;margin:0 0 8px 0;border-bottom:2px solid #111;border-top:0 !important;box-sizing:border-box;}
 .receipt-header-logo-cell{width:145px;vertical-align:middle;text-align:left;}
 .receipt-header-content-cell{vertical-align:middle;text-align:center;}
@@ -174,6 +191,7 @@ body{font-size:13px;line-height:1.35;}
 .receipt-logo-image{display:block;height:112px;max-height:112px;max-width:112px;object-fit:contain;width:112px;}
 .receipt-qr-box{border:1px solid #1f2f40;display:inline-block;padding:3px;background:#fff;line-height:1;}
 .receipt-qr-box img{display:block;width:112px;height:112px;}
+.receipt-qr-box canvas{display:block!important;width:112px!important;height:112px!important;}
 .receipt-header-meta{display:inline-table;margin:0 auto;text-align:center;}
 .receipt-header-meta td{text-align:center!important;}
 .receipt-title{border-bottom:1px solid #111;border-top:1px solid #111;font-size:14px;letter-spacing:.2px;padding:4px 0!important;text-align:center;}
@@ -320,8 +338,8 @@ table, tr, td { page-break-inside: avoid !important; break-inside: avoid !import
             </table>
         </td>
         <td class="receipt-header-qr-cell" width="145">
-            <div class="receipt-qr-box" id="receiptQrBox">
-                <img id="receiptQrImg" src="<?php echo h($receiptQrSrc);?>" data-qr-url="<?php echo h($receiptQrUrl);?>" data-qr-text="<?php echo h($receiptQrText);?>" crossorigin="anonymous" alt="<?php echo h(__('Receipt QR Code'));?>">
+            <div class="receipt-qr-box" id="receiptQrBox" data-qr-text="<?php echo h($receiptQrText);?>">
+                <img id="receiptQrImg" src="<?php echo h($receiptQrSrc);?>" data-qr-url="<?php echo h($receiptQrUrl);?>" data-qr-text="<?php echo h($receiptQrText);?>" alt="<?php echo h(__('Receipt QR Code'));?>">
             </div>
         </td>
     </tr>
@@ -425,88 +443,25 @@ table, tr, td { page-break-inside: avoid !important; break-inside: avoid !import
 
 
 <script type="text/javascript">
-function prepareQrImage(callback) {
+function renderLocalQrIfNeeded() {
     var qrImg = document.getElementById('receiptQrImg');
-    if (!qrImg) {
-        if (typeof callback === 'function') callback();
-        return;
-    }
-    // 1. If already a base64 Data URI, ready immediately
-    if (qrImg.src && qrImg.src.indexOf('data:image') === 0) {
-        if (typeof callback === 'function') callback();
-        return;
-    }
+    var qrBox = document.getElementById('receiptQrBox');
+    if (!qrBox || typeof QRCode === 'undefined') return;
     
-    // 2. Try drawing to canvas and exporting as Data URI
-    var tryCanvasConvert = function() {
-        try {
-            var canvas = document.createElement('canvas');
-            canvas.width = qrImg.naturalWidth || 420;
-            canvas.height = qrImg.naturalHeight || 420;
-            var ctx = canvas.getContext('2d');
-            ctx.drawImage(qrImg, 0, 0, canvas.width, canvas.height);
-            var dataUri = canvas.toDataURL('image/png');
-            if (dataUri && dataUri.indexOf('data:image/png') === 0 && dataUri.length > 100) {
-                qrImg.src = dataUri;
-                return true;
-            }
-        } catch(e) {}
-        return false;
-    };
-    
-    if (qrImg.complete && qrImg.naturalWidth > 0) {
-        if (tryCanvasConvert()) {
-            if (typeof callback === 'function') callback();
-            return;
-        }
-    }
-    
-    // 3. Fallback to client-side QRCode generator if canvas export fails
-    var qrText = qrImg.getAttribute('data-qr-text');
-    if (typeof QRCode !== 'undefined' && qrText) {
-        try {
-            var tempDiv = document.createElement('div');
-            new QRCode(tempDiv, {
+    // Check if the current image is missing or failed to load
+    var needsFallback = !qrImg || !qrImg.complete || qrImg.naturalWidth === 0 || !qrImg.src || qrImg.src.indexOf('data:image') !== 0;
+    if (needsFallback) {
+        var qrText = qrBox.getAttribute('data-qr-text') || (qrImg ? qrImg.getAttribute('data-qr-text') : '');
+        if (qrText) {
+            qrBox.innerHTML = '';
+            new QRCode(qrBox, {
                 text: qrText,
-                width: 280,
-                height: 280,
+                width: 112,
+                height: 112,
                 correctLevel: QRCode.CorrectLevel.M
             });
-            setTimeout(function() {
-                var genCanvas = tempDiv.querySelector('canvas');
-                var genImg = tempDiv.querySelector('img');
-                var dataUri = '';
-                if (genCanvas) {
-                    try { dataUri = genCanvas.toDataURL('image/png'); } catch(e) {}
-                }
-                if (!dataUri && genImg && genImg.src && genImg.src.indexOf('data:image') === 0) {
-                    dataUri = genImg.src;
-                }
-                if (dataUri) {
-                    qrImg.src = dataUri;
-                }
-                if (typeof callback === 'function') callback();
-            }, 80);
-            return;
-        } catch(e) {}
+        }
     }
-
-    // 4. If image is currently loading, wait for onload
-    if (!qrImg.complete) {
-        var finished = false;
-        var done = function() {
-            if (finished) return;
-            finished = true;
-            tryCanvasConvert();
-            if (typeof callback === 'function') callback();
-        };
-        qrImg.onload = done;
-        qrImg.onerror = done;
-        setTimeout(done, 800);
-        return;
-    }
-
-    if (typeof callback === 'function') callback();
 }
 
 function downloadReceiptPdf() {
@@ -518,62 +473,46 @@ function downloadReceiptPdf() {
         btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> <?php echo __("Generating PDF...");?>';
         btn.disabled = true;
     }
-    
-    prepareQrImage(function() {
-        var origBoxShadow = element.style.boxShadow;
-        var origMargin = element.style.margin;
-        var origWidth = element.style.width;
-        var origMaxWidth = element.style.maxWidth;
-        
-        element.style.boxShadow = 'none';
-        element.style.margin = '0 auto';
-        element.style.width = '210mm';
-        element.style.maxWidth = '210mm';
-        
-        var filename = 'Receipt-<?php echo !empty($receiptNo) ? preg_replace("/[^A-Za-z0-9_-]/", "_", $receiptNo) : "Payment"; ?>.pdf';
-        var opt = {
-            margin: [0, 0, 0, 0],
-            filename: filename,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: {
-                scale: 2,
-                useCORS: true,
-                allowTaint: true,
-                logging: false,
-                letterRendering: true,
-                scrollX: 0,
-                scrollY: 0,
-                windowWidth: 1024
-            },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-        
-        var restoreElement = function() {
-            element.style.boxShadow = origBoxShadow;
-            element.style.margin = origMargin;
-            element.style.width = origWidth;
-            element.style.maxWidth = origMaxWidth;
-            if (btn) {
-                btn.innerHTML = origText;
-                btn.disabled = false;
-            }
-        };
 
-        if (typeof html2pdf !== 'undefined') {
-            html2pdf().set(opt).from(element).save().then(function() {
-                restoreElement();
-            }).catch(function(err) {
-                console.error('PDF generation error:', err);
-                restoreElement();
-            });
-        } else {
-            restoreElement();
-            window.print();
+    renderLocalQrIfNeeded();
+
+    var origShadow = element.style.boxShadow;
+    element.style.boxShadow = 'none';
+
+    var filename = 'Receipt-<?php echo !empty($receiptNo) ? preg_replace("/[^A-Za-z0-9_-]/", "_", $receiptNo) : "Payment"; ?>.pdf';
+    var opt = {
+        margin: [4, 6, 4, 6],
+        filename: filename,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: {
+            scale: 2,
+            useCORS: true,
+            logging: false
+        },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    var restore = function() {
+        element.style.boxShadow = origShadow;
+        if (btn) {
+            btn.innerHTML = origText;
+            btn.disabled = false;
         }
-    });
+    };
+
+    if (typeof html2pdf !== 'undefined') {
+        html2pdf().set(opt).from(element).save().then(restore).catch(function(err) {
+            console.error('PDF generation error:', err);
+            restore();
+        });
+    } else {
+        restore();
+        window.print();
+    }
 }
+
 document.addEventListener('DOMContentLoaded', function() {
-    prepareQrImage(function() {});
+    renderLocalQrIfNeeded();
     var searchParams = new URLSearchParams(window.location.search);
     if (searchParams.get('download') === '1' || searchParams.get('pdf') === '1') {
         setTimeout(function() {
