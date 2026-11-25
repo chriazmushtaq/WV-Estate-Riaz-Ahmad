@@ -163,9 +163,9 @@ body{font-size:13px;line-height:1.35;}
 .receipt-header-content-cell{vertical-align:middle;text-align:center;}
 .receipt-header-qr-cell{width:145px;vertical-align:middle;text-align:right;}
 .receipt-logo-image{display:block;height:112px;max-height:112px;max-width:112px;object-fit:contain;width:112px;}
-.receipt-qr-box{border:1px solid #1f2f40;display:inline-block;padding:3px;background:#fff;line-height:1;}
-.receipt-qr-box img{display:block;width:112px;height:112px;}
-.receipt-qr-box canvas{display:block!important;width:112px!important;height:112px!important;}
+.receipt-qr-box{border:1px solid #1f2f40;display:block;width:112px;height:112px;margin-left:auto;margin-right:0;background:#fff;box-sizing:border-box;padding:0;overflow:hidden;}
+.receipt-qr-box img{display:block;width:112px;height:112px;margin:0 auto;}
+.receipt-qr-box canvas{display:none!important;}
 .receipt-header-meta{display:inline-table;margin:0 auto;text-align:center;}
 .receipt-header-meta td{text-align:center!important;}
 .receipt-title{border-bottom:1px solid #111;border-top:1px solid #111;font-size:14px;letter-spacing:.2px;padding:4px 0!important;text-align:center;}
@@ -265,7 +265,9 @@ html,body{background:#fff !important; margin:0 !important; padding:0 !important;
 .receipt-page{box-shadow:none !important; margin:0 auto !important; max-width:100% !important; min-height:0 !important; height:auto !important; overflow:visible !important; padding:1mm 4mm 2mm 4mm !important; width:100% !important; page-break-after:avoid !important; page-break-inside:avoid !important; break-inside:avoid !important;}
 .receipt-header-table-main{margin:0 0 5px 0 !important;}
 .receipt-logo-image{height:100px;max-height:100px;max-width:100px;width:100px;}
-.receipt-qr-box img{width:100px;height:100px;}
+.receipt-qr-box{width:100px!important;height:100px!important;margin-left:auto!important;margin-right:0!important;}
+.receipt-qr-box img{display:block!important;width:100px!important;height:100px!important;margin:0 auto!important;}
+.receipt-qr-box canvas{display:none!important;}
 .receipt-meta-table{margin:0 0 4px 0 !important;}
 .receipt-meta-table td{font-size:16.5px !important; line-height:1.24 !important; padding:2px 3px !important;}
 .receipt-meta-table p{font-size:16.5px !important; line-height:1.24 !important;}
@@ -452,25 +454,45 @@ function renderReceiptQr() {
     var qrText = qrBox.getAttribute('data-qr-text') || '';
     if (!qrText) return;
 
-    var existingCanvas = qrBox.querySelector('canvas');
-    if (existingCanvas && existingCanvas.width > 0) {
+    var existingImg = qrBox.querySelector('img.receipt-qr-rendered');
+    if (existingImg && existingImg.src && existingImg.src.indexOf('data:image/png') === 0) {
         return;
     }
 
-    qrBox.innerHTML = '';
-    new QRCode(qrBox, {
-        text: qrText,
-        width: 112,
-        height: 112,
-        correctLevel: QRCode.CorrectLevel.M
-    });
+    try {
+        var tempDiv = document.createElement('div');
+        new QRCode(tempDiv, {
+            text: qrText,
+            width: 112,
+            height: 112,
+            correctLevel: QRCode.CorrectLevel.M
+        });
 
-    var canvas = qrBox.querySelector('canvas');
-    if (canvas) {
-        canvas.style.display = 'block';
-        canvas.style.width = '112px';
-        canvas.style.height = '112px';
-        canvas.style.margin = '0 auto';
+        var canvas = tempDiv.querySelector('canvas');
+        var generatedImg = tempDiv.querySelector('img');
+        var src = '';
+        if (canvas && typeof canvas.toDataURL === 'function') {
+            try { src = canvas.toDataURL('image/png'); } catch (e) {}
+        }
+        if (!src && generatedImg && generatedImg.src) {
+            src = generatedImg.src;
+        }
+
+        if (src) {
+            qrBox.innerHTML = '';
+            var qrImg = document.createElement('img');
+            qrImg.className = 'receipt-qr-rendered';
+            qrImg.id = 'receiptQrImg';
+            qrImg.src = src;
+            qrImg.alt = 'Receipt QR Code';
+            qrImg.style.width = '112px';
+            qrImg.style.height = '112px';
+            qrImg.style.display = 'block';
+            qrImg.style.margin = '0 auto';
+            qrBox.appendChild(qrImg);
+        }
+    } catch (e) {
+        console.error('QR code render error:', e);
     }
 }
 
@@ -556,24 +578,7 @@ function downloadReceiptPdf() {
         html2canvas: {
             scale: 2,
             useCORS: true,
-            logging: false,
-            onclone: function(clonedDoc) {
-                var origCanvas = element.querySelector('#receiptQrBox canvas');
-                var clonedBox = clonedDoc.querySelector('#receiptQrBox');
-                if (origCanvas && clonedBox) {
-                    clonedBox.innerHTML = '';
-                    var clonedCanvas = clonedDoc.createElement('canvas');
-                    clonedCanvas.width = origCanvas.width;
-                    clonedCanvas.height = origCanvas.height;
-                    clonedCanvas.style.display = 'block';
-                    clonedCanvas.style.width = '112px';
-                    clonedCanvas.style.height = '112px';
-                    clonedCanvas.style.margin = '0 auto';
-                    var ctx = clonedCanvas.getContext('2d');
-                    ctx.drawImage(origCanvas, 0, 0);
-                    clonedBox.appendChild(clonedCanvas);
-                }
-            }
+            logging: false
         },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
