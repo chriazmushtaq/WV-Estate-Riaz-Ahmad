@@ -3142,8 +3142,12 @@ $(window).on('resize', function() {
 <div class="panel-heading no-print">
     <div class="btn-group">
         <?php if($clientLedgerPreview){ ?>
-        <span class="ledger-preview-label"><span class="fa fa-eye"></span>&nbsp;<?php echo __('Client Preview'); ?></span>
+        <span class="ledger-preview-label"><span class="fa fa-shield"></span>&nbsp;<?php echo __('Verified Client Ledger'); ?></span>
+        <button type="button" class="btn btn-info" onclick="printLedgerView();"><span class="fa fa-print"></span>&nbsp;<?php echo __('Print Ledger'); ?></button>
         <button type="button" class="btn btn-success" onclick="exportLedgerPdf();"><span class="fa fa-file-pdf-o"></span>&nbsp;<?php echo __('Export as PDF'); ?></button>
+        <?php if(!empty($dealId)){ ?>
+        <?php echo $this->Html->link('<span class="fa fa-download"></span>&nbsp;' . __('Download PDF'), array('plugin' => false, 'admin' => false, 'controller' => 'MyDeals', 'action' => 'ledgerpdf', $dealId), array('target' => '_blank', 'rel' => 'noopener', 'escape' => false, 'class' => 'btn btn-primary')); ?>
+        <?php } ?>
         <?php }else{ ?>
         <?php echo $this->Html->link('<span class="fa fa-arrow-left"></span>&nbsp;' . __('Back To Deals'), array('controller' => 'Deals', 'action' => 'index'), array('escape' => false, 'class' => 'btn btn-info')); ?>
         <?php echo $this->Html->link('<span class="fa fa-dollar"></span>&nbsp;' . __('Add New Payment'), array('controller' => 'deals_payments', 'action' => 'add', $dealId), array('escape' => false, 'class' => 'btn btn-success')); ?>
@@ -3257,18 +3261,18 @@ $(window).on('resize', function() {
                 </div>
             </div>
 
-            <?php if(!$clientLedgerPreview){ ?>
             <ul class="nav nav-tabs ledger-nav-tabs no-print">
-                <li class="active"><a class="ledger-tab-link" data-tab="paid" data-url="" data-selector="" href="<?php echo $this->Html->url(array('controller'=>'deals_payments','action'=>'index',$dealId)); ?>"><?php echo __('Paid'); ?></a></li>
+                <li class="active"><a class="ledger-tab-link" data-tab="paid" data-url="" data-selector="" href="#ledger-tab-paid-pane"><?php echo __('Payment Receipts'); ?></a></li>
                 <li><a class="ledger-tab-link" data-tab="status_analysis" data-url="" data-selector="" href="#ledger-tab-status-pane"><i class="fa fa-line-chart" style="color:#0284c7;margin-right:4px;"></i> <?php echo __('Status Analysis'); ?></a></li>
+                <?php if(!$clientLedgerPreview){ ?>
                 <li><a class="ledger-tab-link" data-tab="plan" data-url="<?php echo h($paymentPlanTabUrl); ?>" data-selector="#printable_content" href="<?php echo $paymentPlanTabUrl; ?>"><?php echo __('Payment Plan'); ?></a></li>
                 <?php if(!empty($dealVaultEnabled) && !empty($canManageDocs)){ ?>
                 <li><a class="ledger-tab-link" data-tab="document" data-url="<?php echo h($documentTabUrl); ?>" data-selector="#deal-documents-content" href="<?php echo $documentTabUrl; ?>"><i class="fa fa-folder-open" style="color:#d97706;margin-right:4px;"></i> <?php echo __('Document Vault'); ?><?php if(!empty($dealDocuments)){ echo ' <span class="badge" style="background:#9f002d;color:#fff;font-size:10px;padding:2px 6px;border-radius:10px;margin-left:3px;">'.count($dealDocuments).'</span>'; } ?></a></li>
                 <?php } ?>
                 <li><a class="ledger-tab-link" data-tab="letters" data-url="<?php echo h($lettersTabUrl); ?>" data-selector="#deal-letters-content" href="<?php echo $lettersTabUrl; ?>"><?php echo __('Letters'); ?></a></li>
                 <li><a class="ledger-tab-link" data-tab="communication" data-url="<?php echo h($communicationTabUrl); ?>" data-selector=".deal-comm-content" href="<?php echo $communicationTabUrl; ?>"><?php echo __('Communication'); ?></a></li>
+                <?php } ?>
             </ul>
-            <?php } ?>
 
             <div id="ledger-tab-paid-pane" class="ledger-tab-pane active">
             <div class="ledger-metrics <?php echo h($metricCardsClass); ?>">
@@ -3333,7 +3337,7 @@ $(window).on('resize', function() {
                             <th class="ledger-paid-date-col"><?php echo __('Paid Date'); ?></th>
                             <th class="ledger-transaction-col"><?php echo __('Transaction Reference'); ?></th>
                             <th class="ledger-payment-type-col"><?php echo __('Payment Type'); ?></th>
-                            <?php if(!$clientLedgerPreview){ ?><th class="pbutton"><?php echo __('Action'); ?></th><?php } ?>
+                            <th class="pbutton"><?php echo __('Action'); ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -3392,28 +3396,40 @@ $(window).on('resize', function() {
                                 <td class="ledger-paid-date-col"><?php echo !empty($row['DealsPayment']['payment_date']) ? $this->Time->format($sysDay . $dateSep . $sysMonth . $dateSep . $sysYear, $row['DealsPayment']['payment_date']) : '-'; ?></td>
                                 <td class="ledger-transaction-col"><?php echo !empty($row['DealsPayment']['remarks']) ? h($row['DealsPayment']['remarks']) : '-'; ?></td>
                                 <td class="ledger-payment-type-col"><?php echo !empty($row['Paymenttype']['name']) ? h($row['Paymenttype']['name']) : '-'; ?></td>
-                                <?php if(!$clientLedgerPreview){ ?><td class="pbutton">
+                                <td class="pbutton">
                                     <div class="history-action-buttons">
-                                        <?php echo $this->Html->link('<span class="fa fa-print"></span>', array('controller' => 'deals_payments', 'action' => 'printreceipt', $id), array('target' => '_blank', 'escape' => false, 'class' => 'history-action-btn history-action-btn-print', 'title' => __('Print Receipt'))); ?>
-                                        <?php echo $this->Html->link('<span class="fa fa-paperclip"></span>', array('controller'=>'deals_payments','action'=>'viewpaymentslip',isset($groupRow['slip_row_id']) ? $groupRow['slip_row_id'] : $primaryId), array('onclick' => "window.open(this.href,'paymentSlipPopup','width=1100,height=800,scrollbars=yes,resizable=yes'); return false;", 'escape' => false, 'class' => 'history-action-btn history-action-btn-slip', 'title' => __('Payment Slip'))); ?>
-                                        <?php echo $this->Html->link('<span class="fa fa-edit"></span>', '#', array('name' => 'editallfrm', 'onclick' => "check_perform_sedit('$url','$id');", 'escape' => false, 'class' => 'history-action-btn history-action-btn-edit', 'title' => __('Edit'))); ?>
-                                        <?php if ($totalRecord == $serialNo) { ?>
-                                            <?php echo $this->Html->link('<span class="fa fa-trash"></span>', '#', array('onclick' => "check_perform_sdelete('".$primaryId."');", 'escape' => false, 'class' => 'history-action-btn history-action-btn-delete', 'title' => __('Delete'))); ?>
+                                        <?php 
+                                        $printReceiptUrl = !empty($clientLedgerPreview) || !empty($isClientPortal) 
+                                            ? array('plugin' => false, 'admin' => false, 'controller' => 'MyPayments', 'action' => 'printreceipt', $id) 
+                                            : array('controller' => 'deals_payments', 'action' => 'printreceipt', $id);
+                                        echo $this->Html->link('<span class="fa fa-print"></span>', $printReceiptUrl, array('target' => '_blank', 'escape' => false, 'class' => 'history-action-btn history-action-btn-print', 'title' => __('Print Receipt'))); 
+                                        ?>
+                                        <?php if(!empty($groupRow['slip_file'])){ 
+                                            $slipUrl = !empty($clientLedgerPreview) || !empty($isClientPortal)
+                                                ? array('plugin' => false, 'admin' => false, 'controller' => 'MyPayments', 'action' => 'viewpaymentslip', isset($groupRow['slip_row_id']) ? $groupRow['slip_row_id'] : $primaryId)
+                                                : array('controller'=>'deals_payments','action'=>'viewpaymentslip',isset($groupRow['slip_row_id']) ? $groupRow['slip_row_id'] : $primaryId);
+                                            echo $this->Html->link('<span class="fa fa-paperclip"></span>', $slipUrl, array('onclick' => "window.open(this.href,'paymentSlipPopup','width=1100,height=800,scrollbars=yes,resizable=yes'); return false;", 'escape' => false, 'class' => 'history-action-btn history-action-btn-slip', 'title' => __('Payment Slip'))); 
+                                        } ?>
+                                        <?php if(!$clientLedgerPreview){ ?>
+                                            <?php echo $this->Html->link('<span class="fa fa-edit"></span>', '#', array('name' => 'editallfrm', 'onclick' => "check_perform_sedit('$url','$id');", 'escape' => false, 'class' => 'history-action-btn history-action-btn-edit', 'title' => __('Edit'))); ?>
+                                            <?php if ($totalRecord == $serialNo) { ?>
+                                                <?php echo $this->Html->link('<span class="fa fa-trash"></span>', '#', array('onclick' => "check_perform_sdelete('".$primaryId."');", 'escape' => false, 'class' => 'history-action-btn history-action-btn-delete', 'title' => __('Delete'))); ?>
+                                            <?php } ?>
                                         <?php } ?>
                                     </div>
-                                </td><?php } ?>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                         <tr class="summary-row">
                             <td colspan="<?php echo $clientLedgerPreview ? 1 : 2; ?>" align="left"><strong><?php echo __('Paid'); ?></strong></td>
                             <td class="ledger-installment-col"><strong><span class="currency-ltr"><span class="currency-symbol"><?php echo $currency; ?></span><?php echo $this->Number->format($totalInstallmentWithLate); ?></span></strong></td>
-                            <td colspan="<?php echo $clientLedgerPreview ? 4 : 5; ?>">
+                            <td colspan="5">
                                 <strong><?php echo __('Total Applied Late Fees (Paid)'); ?>: <span class="currency-ltr"><span class="currency-symbol"><?php echo $currency; ?></span><?php echo $this->Number->format($totalLateFeesPaid); ?></span></strong>
                             </td>
                         </tr>
                         <tr class="summary-row">
                             <td colspan="<?php echo $clientLedgerPreview ? 1 : 2; ?>" align="left"><strong><?php echo __('Balance'); ?></strong></td>
-                            <td colspan="<?php echo $clientLedgerPreview ? 5 : 6; ?>">
+                            <td colspan="6">
                                 <strong>
                                     <?php
                                     $propertyPrice = isset($firstRow['Deal']['total_amount']) ? (float)$firstRow['Deal']['total_amount'] : 0;

@@ -269,14 +269,18 @@ $visibleContacts = count((array)$Contact);
                                 <th><?php echo $this->Paginator->sort('district', __('District'), array('direction' => 'asc'));?></th>
                                 <th><?php echo $this->Paginator->sort('email', __('Email'), array('direction' => 'asc'));?></th>
                                 <th class="text-center" style="min-width:130px;"><?php echo $this->Paginator->sort('status', __('Login Access'), array('direction' => 'asc'));?></th>
-                                <th class="pbutton"><?php echo __('Action');?></th>
+                                <th class="pbutton actions-col"><?php echo __('Action');?></th>
                             </tr>
                         </thead>
                         <tbody>
                         <?php if(empty($Contact)){ ?>
                             <tr class="wv-empty-row"><td colspan="12"><?php echo __('No contacts found.');?></td></tr>
                         <?php } ?>
-                        <?php foreach ($Contact as $post):
+                        <?php 
+                        $totalContacts = !empty($Contact) ? count($Contact) : 0;
+                        $contactIndex = 0;
+                        foreach ($Contact as $post):
+                            $contactIndex++;
                             $id = $post['Contact']['id'];
                             $cStatus = !empty($post['Contact']['status']) ? trim((string)$post['Contact']['status']) : 'Active';
                             $isBlocked = (strcasecmp($cStatus, 'Block') === 0 || strcasecmp($cStatus, 'Blocked') === 0);
@@ -417,12 +421,12 @@ $visibleContacts = count((array)$Contact);
                                         </button>
                                     </div>
                                 </td>
-                                <td class="pbutton wv-contacts-action">
+                                <td class="pbutton wv-contacts-action actions-col">
                                     <div class="btn-group">
-                                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                            <?php echo __('Action').' ';?><span class="caret"></span>
+                                        <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="<?php echo h(__('Actions'));?>">
+                                            <i class="fa fa-cog"></i> <?php echo __('Action');?> <span class="caret"></span>
                                         </button>
-                                        <ul class="dropdown-menu" role="menu">
+                                        <ul class="dropdown-menu dropdown-menu-right" role="menu">
                                             <li><?php echo $this->Html->link('<span class="fa fa-arrows-alt"></span>&nbsp;'.__('View'),'#',array('onclick'=>"show_modal('$url/View/$id');",'escape'=>false));?></li>
                                             <li><?php echo $this->Html->link('<span class="fa fa-print"></span>&nbsp;'.__('Print'),array('controller'=>'Contacts','action'=>'printclient',$id),array('target'=>'_blank','escape'=>false));?></li>
                                             <li><?php echo $this->Html->link('<span class="fa fa-paper-plane" style="color:#25D366;"></span>&nbsp;'.__('Send Login Credentials'),array('controller'=>'Contacts','action'=>'sendcredentials',$id),array('escape'=>false,'onclick'=>"return confirm('".__('Send portal login credentials to this contact via WhatsApp, SMS, and Email?')."');"));?></li>

@@ -503,7 +503,45 @@ body.wv-admin-theme .wv-admin-topbar #navbarNav {
     min-width: 220px !important;
     padding: 6px !important;
     right: 0 !important;
-    z-index: 1060 !important;
+    z-index: 1075 !important;
+}
+
+.table .dropdown-menu,
+.table-responsive .dropdown-menu {
+    margin: 0 !important;
+    z-index: 99999 !important;
+}
+
+/* Explicit Dropup overrides for upside rendering */
+.dropup .dropdown-menu,
+.table .dropup .dropdown-menu,
+.btn-group.dropup .dropdown-menu,
+.table-responsive .dropup .dropdown-menu {
+    top: auto !important;
+    bottom: 100% !important;
+    margin-top: 0 !important;
+    margin-bottom: 6px !important;
+}
+
+.dropup .dropdown-toggle .caret,
+.btn-group.dropup .dropdown-toggle .caret {
+    border-bottom: 4px solid !important;
+    border-top: 0 !important;
+    content: "" !important;
+}
+
+.table tr.dropdown-open,
+.table tr.dropdown-open > td,
+.table tr.dropdown-open > th,
+td.dropdown-open,
+.table .btn-group.open,
+.table .btn-group.dropup.open {
+    position: relative !important;
+    z-index: 1070 !important;
+}
+
+.table-responsive.dropdown-active {
+    overflow-y: visible !important;
 }
 
 .dropdown-menu .dropdown-item-text {
@@ -1079,6 +1117,7 @@ body.wv-admin-theme #sidebar-main.sidebar.sidebar-collapsed {
                 echo $this->Html->css('admin/admin-components.css?v=20261123-pro-ui');
                 echo $this->Html->css('admin/admin-themes.css?v=20261123-pro-ui');
                 echo $this->Html->css('admin/admin-responsive.css?v=20261123-search-v3');
+                echo $this->Html->css('/design2000/assets/css/admin-pro-upgrade.css?v=20261126-pro-v2');
                 if(!empty($themeDynamicCss)){ echo '<style type="text/css" id="wv-dynamic-theme">'.$themeDynamicCss.'</style>'; }
                 echo $this->Html->script('/design800/js/plugins/jquery-1.11.2.min');
 		 // echo $this->Html->script('/design2000/lib/js/jquery.min');
@@ -1501,6 +1540,271 @@ jQuery(function($){
     setTimeout(triggerFacebookAutoSync, 15000);
     setInterval(triggerFacebookAutoSync, 60000);
 })();
+</script>
+
+<!-- Table Action Dropdown Body-Portal Delegated Fixed Positioning & Direction Handler (Zoom-Proof & Overflow-Proof) -->
+<script type="text/javascript">
+(function($) {
+    if (typeof $ === 'undefined') return;
+
+    var actionDropdownSelector = '.table .btn-group, .table .dropdown, .table-responsive .btn-group, .table-responsive .dropdown, .deal-action-cell .btn-group, .deal-control-cell .btn-group, .wv-contacts-action .btn-group, .wv-rental-actions .btn-group, .actions-col .btn-group';
+
+    // Helper: Restore any portaled menu back to its original parent .btn-group
+    function restorePortaledMenu($btnGroup) {
+        var $placeholders = $btnGroup ? $btnGroup.find('.wv-portal-placeholder') : $('.wv-portal-placeholder');
+        $placeholders.each(function() {
+            var $ph = $(this);
+            var $menu = $ph.data('wv-menu');
+            var $bg = $ph.data('wv-btn-group');
+            if ($menu && $menu.length) {
+                $menu.css({
+                    position: '',
+                    top: '',
+                    left: '',
+                    right: '',
+                    bottom: '',
+                    display: '',
+                    visibility: '',
+                    'z-index': '',
+                    'max-height': '',
+                    'overflow-y': '',
+                    margin: ''
+                }).removeClass('wv-portal-active-menu dropup-menu-up');
+
+                $ph.before($menu);
+                $ph.remove();
+            }
+            if ($bg && $bg.length) {
+                $bg.removeClass('dropup');
+            }
+        });
+
+        // Safety fallback: any active portal menu on body without matching placeholder
+        $('body > .dropdown-menu.wv-portal-active-menu').each(function() {
+            var $m = $(this);
+            var $ph = $m.data('wv-placeholder');
+            if ($ph && $ph.length && $ph.parent().length) {
+                $ph.before($m);
+                $ph.remove();
+            }
+            $m.css({
+                position: '',
+                top: '',
+                left: '',
+                right: '',
+                bottom: '',
+                display: '',
+                visibility: '',
+                'z-index': '',
+                'max-height': '',
+                'overflow-y': '',
+                margin: ''
+            }).removeClass('wv-portal-active-menu dropup-menu-up');
+        });
+    }
+
+    // Helper: Detach menu, append to body, and position dynamically relative to viewport
+    function portalAndPositionMenu($btnGroup) {
+        var $toggle = $btnGroup.children('[data-toggle="dropdown"]');
+        var $menu = $btnGroup.children('.dropdown-menu');
+
+        // Check if menu is already in body and we have a placeholder
+        if (!$menu.length) {
+            var $existingPh = $btnGroup.find('.wv-portal-placeholder');
+            if ($existingPh.length) {
+                $menu = $existingPh.data('wv-menu');
+            }
+        }
+        if (!$toggle.length || !$menu.length) return;
+
+        var btn = $toggle[0];
+        var btnRect = btn.getBoundingClientRect();
+
+        // 1. Create a placeholder right after menu in original parent if not already created
+        var $placeholder = $btnGroup.find('.wv-portal-placeholder');
+        if (!$placeholder.length) {
+            $placeholder = $('<span class="wv-portal-placeholder" style="display:none !important;"></span>');
+            $placeholder.data('wv-menu', $menu);
+            $placeholder.data('wv-btn-group', $btnGroup);
+            $menu.after($placeholder);
+            $menu.data('wv-placeholder', $placeholder);
+        }
+
+        // 2. Detach and append menu to document.body
+        if ($menu.parent()[0] !== document.body) {
+            $('body').append($menu);
+        }
+        $menu.addClass('wv-portal-active-menu');
+
+        // 3. Set initial fixed coordinates to measure menu accurately
+        $menu.css({
+            position: 'fixed',
+            display: 'block',
+            visibility: 'hidden',
+            top: 0,
+            left: 0,
+            right: 'auto',
+            bottom: 'auto',
+            'z-index': 99999,
+            margin: 0
+        });
+
+        var menuWidth = $menu.outerWidth() || 220;
+        var menuHeight = $menu.outerHeight() || 380;
+
+        var clientHeight = document.documentElement.clientHeight || window.innerHeight;
+        var clientWidth = document.documentElement.clientWidth || window.innerWidth;
+
+        var spaceBelow = clientHeight - btnRect.bottom;
+        var spaceAbove = btnRect.top;
+
+        var topPos;
+        var isDropup = false;
+
+        // Auto-Direction:
+        // If spaceBelow < menuHeight + 10 AND spaceAbove > spaceBelow -> Position UPWARD directly above button
+        if (spaceBelow < (menuHeight + 10) && spaceAbove > spaceBelow) {
+            isDropup = true;
+            topPos = btnRect.top - menuHeight - 4;
+            if (topPos < 8) {
+                topPos = 8;
+                $menu.css({
+                    'max-height': Math.max(160, (btnRect.top - 14)) + 'px',
+                    'overflow-y': 'auto'
+                });
+            } else {
+                $menu.css({ 'max-height': '', 'overflow-y': '' });
+            }
+        } else {
+            // Position DOWNWARD directly below button
+            isDropup = false;
+            topPos = btnRect.bottom + 4;
+            if (topPos + menuHeight > clientHeight - 8) {
+                $menu.css({
+                    'max-height': Math.max(160, (clientHeight - topPos - 10)) + 'px',
+                    'overflow-y': 'auto'
+                });
+            } else {
+                $menu.css({ 'max-height': '', 'overflow-y': '' });
+            }
+        }
+
+        // Smart horizontal alignment:
+        // For far-right action columns, align menu's right edge with button's right edge.
+        // For middle columns (e.g. Deal Control), center the menu directly over the button so it opens in its column area!
+        var isFarRight = ($btnGroup.closest('.actions-col, .deal-action-cell, .wv-contacts-action, .wv-rental-actions').length > 0) || (btnRect.right > clientWidth - 250);
+        var leftPos;
+        if (isFarRight) {
+            leftPos = Math.max(8, btnRect.right - menuWidth);
+        } else {
+            leftPos = Math.round(btnRect.left + (btnRect.width / 2) - (menuWidth / 2));
+        }
+        if (leftPos < 8) {
+            leftPos = 8;
+        }
+        if (leftPos + menuWidth > clientWidth - 8) {
+            leftPos = Math.max(8, clientWidth - menuWidth - 8);
+        }
+
+        if (isDropup) {
+            $btnGroup.addClass('dropup');
+            $menu.addClass('dropup-menu-up');
+        } else {
+            $btnGroup.removeClass('dropup');
+            $menu.removeClass('dropup-menu-up');
+        }
+
+        $menu.css({
+            position: 'fixed',
+            top: Math.round(topPos) + 'px',
+            left: Math.round(leftPos) + 'px',
+            right: 'auto',
+            bottom: 'auto',
+            display: 'block',
+            visibility: 'visible',
+            'z-index': 99999
+        });
+    }
+
+    // Delegated click handler on all table dropdown toggles
+    $(document).on('click', '.table [data-toggle="dropdown"], .table-responsive [data-toggle="dropdown"], .deal-action-cell [data-toggle="dropdown"], .deal-control-cell [data-toggle="dropdown"], .wv-contacts-action [data-toggle="dropdown"], .wv-rental-actions [data-toggle="dropdown"], .actions-col [data-toggle="dropdown"]', function(e) {
+        var $toggle = $(this);
+        var $btnGroup = $toggle.closest('.btn-group, .dropdown');
+        if (!$btnGroup.length) return;
+
+        setTimeout(function() {
+            if ($btnGroup.hasClass('open')) {
+                portalAndPositionMenu($btnGroup);
+            } else {
+                restorePortaledMenu($btnGroup);
+            }
+        }, 10);
+    });
+
+    $(document).on('show.bs.dropdown', actionDropdownSelector, function(e) {
+        var $btnGroup = $(this);
+        portalAndPositionMenu($btnGroup);
+    });
+
+    $(document).on('shown.bs.dropdown', actionDropdownSelector, function(e) {
+        var $btnGroup = $(this);
+        portalAndPositionMenu($btnGroup);
+    });
+
+    $(document).on('hidden.bs.dropdown', actionDropdownSelector, function(e) {
+        var $btnGroup = $(this);
+        restorePortaledMenu($btnGroup);
+    });
+
+    // Handle clicks inside portaled menu links/items: allow action, then restore
+    $(document).on('click', '.wv-portal-active-menu a, .wv-portal-active-menu button, .wv-portal-active-menu input[type="submit"]', function(e) {
+        var $item = $(this);
+        var $menu = $item.closest('.wv-portal-active-menu');
+        var $ph = $menu.data('wv-placeholder');
+        var $bg = $ph ? $ph.data('wv-btn-group') : null;
+        if ($bg && $bg.length) {
+            $bg.removeClass('open');
+        }
+        setTimeout(function() {
+            restorePortaledMenu($bg);
+        }, 50);
+    });
+
+    // Dismiss portaled menu when clicking outside
+    $(document).on('click.wvPortalDismiss', function(e) {
+        var $target = $(e.target);
+        if ($target.closest('.wv-portal-active-menu').length || $target.closest('[data-toggle="dropdown"]').length) {
+            return;
+        }
+        var $openGroups = $(actionDropdownSelector).filter('.open');
+        if ($openGroups.length) {
+            $openGroups.removeClass('open');
+        }
+        restorePortaledMenu();
+    });
+
+    // Window scroll, resize (zoom level changes): close/restore portaled menus cleanly
+    $(window).on('scroll.wvTableDropdown resize.wvTableDropdown', function(e) {
+        var $openGroups = $(actionDropdownSelector).filter('.open');
+        if ($openGroups.length) {
+            $openGroups.each(function() {
+                var $bg = $(this);
+                $bg.removeClass('open');
+                restorePortaledMenu($bg);
+            });
+        } else {
+            restorePortaledMenu();
+        }
+    });
+
+    $(document).on('scroll', '.table-responsive, .deals-table-wrap, .wv-contacts-table-responsive', function(e) {
+        var $openGroups = $(actionDropdownSelector).filter('.open');
+        if ($openGroups.length) {
+            $openGroups.removeClass('open');
+            restorePortaledMenu();
+        }
+    });
+})(jQuery);
 </script>
 </body>
 </html>

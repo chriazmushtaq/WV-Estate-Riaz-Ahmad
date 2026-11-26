@@ -28,22 +28,28 @@ if (!empty($fProperty)) {
 ?>
 <style type="text/css">
 .wv-fav-page {
-    background: #f4f7fb;
-    margin: -10px -5px 0;
-    padding: 14px;
-    min-height: 85vh;
+    background: transparent;
+    margin: 0;
+    padding: 0;
+    touch-action: auto;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    min-height: auto;
 }
 .wv-fav-page * {
     box-sizing: border-box;
 }
 .wv-fav-hero {
-    background: linear-gradient(135deg, #07152a 0%, #102746 70%, #ff0a46 160%);
-    border-radius: 12px;
-    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.12);
-    color: #ffffff;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-top: 4px solid #0284c7;
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+    color: #0f172a;
     margin-bottom: 16px;
     overflow: hidden;
-    padding: 22px 26px;
+    padding: 22px 24px;
     position: relative;
 }
 .wv-fav-hero-inner {
@@ -56,7 +62,7 @@ if (!empty($fProperty)) {
     z-index: 2;
 }
 .wv-fav-kicker {
-    color: #7cf9ff;
+    color: #0284c7;
     font-size: 11px;
     font-weight: 900;
     letter-spacing: 0.5px;
@@ -67,16 +73,16 @@ if (!empty($fProperty)) {
     gap: 6px;
 }
 .wv-fav-hero h1 {
-    color: #ffffff !important;
+    color: #0f172a !important;
     font-size: 26px;
     font-weight: 900;
     line-height: 1.15;
     margin: 0 0 6px;
 }
 .wv-fav-hero p {
-    color: #e2e8f0 !important;
+    color: #475569 !important;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     line-height: 1.45;
     margin: 0;
     max-width: 650px;

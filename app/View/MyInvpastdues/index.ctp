@@ -1,36 +1,36 @@
 <style type="text/css">
-.wv-overdue-page{background:#f4f7fb;margin:-10px -5px 0;padding:14px;}
+.wv-overdue-page{background:#f8fafc;margin:-10px -5px 0;padding:16px;touch-action:auto;overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%;}
 .wv-overdue-page *{box-sizing:border-box;}
-.wv-overdue-hero{background:linear-gradient(135deg,#07152a 0%,#1e293b 72%,#dc2626 165%);border-radius:10px;box-shadow:0 14px 30px rgba(15,23,42,.13);color:#fff;margin-bottom:14px;padding:18px;position:relative;}
+.wv-overdue-hero{background:#ffffff;border:1px solid #e2e8f0;border-top:4px solid #dc2626;border-radius:14px;box-shadow:0 4px 18px rgba(15,23,42,.05);color:#0f172a;margin-bottom:18px;padding:22px 24px;position:relative;}
 .wv-overdue-hero-inner{align-items:center;display:flex;gap:18px;justify-content:space-between;}
-.wv-overdue-kicker{color:#fca5a5;font-size:11px;font-weight:900;letter-spacing:0;margin-bottom:4px;text-transform:uppercase;}
-.wv-overdue-hero h1{color:#fff!important;font-size:26px;font-weight:900;line-height:1.15;margin:0 0 5px;}
-.wv-overdue-hero p{color:#f1f5f9!important;font-size:12px;font-weight:700;line-height:1.45;margin:0;}
+.wv-overdue-kicker{color:#dc2626;font-size:11px;font-weight:900;letter-spacing:0.5px;margin-bottom:4px;text-transform:uppercase;}
+.wv-overdue-hero h1{color:#0f172a!important;font-size:24px;font-weight:900;line-height:1.2;margin:0 0 6px;}
+.wv-overdue-hero p{color:#475569!important;font-size:13.5px;font-weight:600;line-height:1.5;margin:0;}
 .wv-overdue-hero-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;}
-.wv-overdue-hero-actions .btn{align-items:center;border:0;border-radius:10px;display:flex;font-size:11px;font-weight:900;gap:6px;padding:9px 14px;text-transform:uppercase;color:#fff!important;box-shadow:0 2px 6px rgba(0,0,0,.15);text-decoration:none!important;}
+.wv-overdue-hero-actions .btn{align-items:center;border:1px solid #e2e8f0;border-radius:8px;display:flex;font-size:11px;font-weight:800;gap:6px;padding:9px 15px;text-transform:uppercase;color:#fff!important;box-shadow:0 2px 6px rgba(0,0,0,.1);text-decoration:none!important;min-height:38px;}
 .wv-overdue-hero-actions .btn *{color:#fff!important;}
-.wv-overdue-hero-actions .btn-deal{background:linear-gradient(135deg,#0284c7,#0369a1)!important;}
-.wv-overdue-hero-actions .btn-pay{background:linear-gradient(135deg,#10b981,#059669)!important;}
+.wv-overdue-hero-actions .btn-deal{background:#0f172a!important;border-color:#0f172a!important;}
+.wv-overdue-hero-actions .btn-pay{background:#059669!important;border-color:#059669!important;}
 
-.wv-overdue-stats{display:grid;gap:10px;grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:14px;}
-.wv-overdue-stat{background:#fff;border:1px solid #dfe9f5;border-radius:10px;box-shadow:0 6px 16px rgba(15,23,42,.05);padding:12px 14px;position:relative;overflow:hidden;}
+.wv-overdue-stats{display:grid;gap:12px;grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:18px;}
+.wv-overdue-stat{background:#fff;border:1px solid #dfe9f5;border-radius:12px;box-shadow:0 4px 14px rgba(15,23,42,.04);padding:14px 16px;position:relative;overflow:hidden;}
 .wv-overdue-stat:before{background:#dc2626;border-radius:999px;content:"";height:44px;opacity:.08;position:absolute;right:-13px;top:-13px;width:44px;}
-.wv-overdue-stat span{color:#64748b;display:block;font-size:10px;font-weight:900;letter-spacing:0;margin-bottom:4px;text-transform:uppercase;}
+.wv-overdue-stat span{color:#64748b;display:block;font-size:11px;font-weight:800;letter-spacing:0.3px;margin-bottom:4px;text-transform:uppercase;}
 .wv-overdue-stat strong{color:#07152a;display:block;font-size:20px;font-weight:900;line-height:1.15;}
 .wv-overdue-stat strong.text-danger{color:#dc2626!important;}
 .wv-overdue-stat small{color:#64748b;display:block;font-size:11px;font-weight:700;margin-top:4px;}
 
-.wv-overdue-card{background:#fff;border:1px solid #dfe9f5;border-radius:10px;box-shadow:0 8px 20px rgba(15,23,42,.06);overflow:hidden;}
-.wv-overdue-card-header{align-items:center;background:#07152a;color:#fff;display:flex;justify-content:space-between;padding:12px 16px;}
-.wv-overdue-card-header h3{color:#fff!important;font-size:14px;font-weight:900;letter-spacing:0;margin:0;text-transform:uppercase;}
-.wv-overdue-card-header span{background:#dc2626;border-radius:6px;color:#fff;font-size:11px;font-weight:900;padding:4px 8px;}
+.wv-overdue-card{background:#fff;border:1px solid #dfe9f5;border-radius:14px;box-shadow:0 6px 18px rgba(15,23,42,.05);overflow:hidden;}
+.wv-overdue-card-header{align-items:center;background:#f8fafc;border-bottom:1px solid #e2e8f0;color:#0f172a;display:flex;justify-content:space-between;padding:14px 18px;}
+.wv-overdue-card-header h3{color:#0f172a!important;font-size:15px;font-weight:900;letter-spacing:0;margin:0;text-transform:uppercase;}
+.wv-overdue-card-header span{background:#fee2e2;border:1px solid #fecaca;border-radius:6px;color:#dc2626;font-size:11px;font-weight:900;padding:4px 10px;}
 
-.wv-table-wrap{overflow-x:auto;}
-.wv-table-wrap .table{margin-bottom:0;width:100%;}
-.wv-table-wrap .table thead th{background:#f8fafc;border-bottom:2px solid #e2e8f0;color:#475569;font-size:11px;font-weight:900;padding:11px 12px;text-transform:uppercase;white-space:nowrap;}
-.wv-table-wrap .table tbody td{border-top:1px solid #edf2f7;color:#1e293b;font-size:12px;font-weight:700;padding:11px 12px;vertical-align:middle;}
+.wv-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;width:100%;}
+.wv-table-wrap .table{margin-bottom:0;width:100%;min-width:720px;border-collapse:collapse;}
+.wv-table-wrap .table thead th{background:#f8fafc;border:1px solid #e2e8f0!important;border-bottom:2px solid #cbd5e1!important;color:#475569;font-size:11px;font-weight:900;padding:11px 12px;text-transform:uppercase;white-space:nowrap;}
+.wv-table-wrap .table tbody td{border:1px solid #edf2f7!important;color:#1e293b;font-size:12px;font-weight:700;padding:11px 12px;vertical-align:middle;}
 .wv-table-wrap .table tbody tr:hover{background:#fef2f2;}
-.wv-table-wrap .table tfoot td{background:#f8fafc;border-top:2px solid #cbd5e1;color:#07152a;font-size:13px;font-weight:900;padding:12px;}
+.wv-table-wrap .table tfoot td{background:#f8fafc;border:1px solid #e2e8f0!important;border-top:2px solid #cbd5e1!important;color:#07152a;font-size:13px;font-weight:900;padding:12px;}
 
 .wv-overdue-badge{background:linear-gradient(135deg,#dc2626,#b91c1c)!important;border-radius:6px;box-shadow:0 2px 5px rgba(220,38,38,.35);color:#ffffff!important;display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:900;letter-spacing:0.3px;padding:5px 9px;text-transform:uppercase;white-space:nowrap;}
 .wv-overdue-badge i,.wv-overdue-badge span{color:#ffffff!important;}

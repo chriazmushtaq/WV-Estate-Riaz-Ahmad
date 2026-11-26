@@ -28,6 +28,10 @@ $rawClientId = !empty($c['id']) ? (int)$c['id'] : 0;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     color: var(--wv-text-main) !important;
     padding: 6px 0 40px 0;
+    touch-action: auto;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
 }
 
 /* 1. TOP 50/50 HALF & HALF SPLIT GRID */
@@ -233,6 +237,8 @@ $rawClientId = !empty($c['id']) ? (int)$c['id'] : 0;
     border-bottom: 2px solid #cbd5e1;
     margin-bottom: 20px;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y;
     white-space: nowrap;
 }
 .wv-tab-btn {
@@ -306,11 +312,15 @@ $rawClientId = !empty($c['id']) ? (int)$c['id'] : 0;
     background: #ffffff !important;
     border: 1px solid #cbd5e1 !important;
     border-radius: 14px !important;
-    overflow: hidden !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-x pan-y !important;
     box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04) !important;
+    width: 100% !important;
 }
 .wv-ledger-table {
     width: 100% !important;
+    min-width: 820px !important;
     border-collapse: separate !important;
     border-spacing: 0 !important;
     font-size: 13px !important;

@@ -69,6 +69,7 @@ Router::connect('/my_utility_bills', array('controller' => 'utility_bills', 'act
 Router::connect('/my_utility_bills/:action/*', array('controller' => 'utility_bills'));
 
 // Letter Public Verification Routes
+Router::connect('/verify/cnic/:id/:token', array('controller' => 'letterverifications', 'action' => 'verify_cnic'), array('pass' => array('id', 'token')));
 Router::connect('/verify/letter/:id/:token', array('controller' => 'letterverifications', 'action' => 'verify'), array('pass' => array('id', 'token')));
 Router::connect('/verify/letter/:id', array('controller' => 'letterverifications', 'action' => 'verify'), array('pass' => array('id')));
 Router::connect('/verify/letter/*', array('controller' => 'letterverifications', 'action' => 'verify'));

@@ -13,31 +13,108 @@ jQuery(document).ready(function(){
     }
 });
 var dealsHtml2PdfLoader = null;
-function updateDealControlStatus(changeUrl,statusLabel,needReason)
+var pendingDealControlUrl = '';
+var pendingDealControlLabel = '';
+var pendingNeedReason = false;
+
+function updateDealControlStatus(changeUrl, statusLabel, needReason)
 {
-    var reason = '';
-    if(needReason)
-    {
-        reason = prompt('Please enter reason for "'+statusLabel+'" status:','');
-        if(reason===null)
-        {
-            return false;
-        }
-        reason = jQuery.trim(reason);
-        if(reason.length===0)
-        {
-            alert('Reason is required for this status.');
-            return false;
-        }
-        changeUrl += (changeUrl.indexOf('?')===-1 ? '?' : '&') + 'reason=' + encodeURIComponent(reason);
+    pendingDealControlUrl = changeUrl;
+    pendingDealControlLabel = statusLabel;
+    pendingNeedReason = !!needReason;
+
+    var statusColors = {
+        'Active': '#10b981',
+        'Blocked': '#2563eb',
+        'Transferd': '#e83e8c',
+        'Transferred': '#e83e8c',
+        'Permanent Blocked': '#9c1b64',
+        'Pemanent Blocked': '#9c1b64',
+        'Refund': '#dc2626',
+        'Refund-Running': '#f59e0b'
+    };
+    var statusIcons = {
+        'Active': 'fa-check-circle',
+        'Blocked': 'fa-lock',
+        'Transferd': 'fa-exchange',
+        'Transferred': 'fa-exchange',
+        'Permanent Blocked': 'fa-ban',
+        'Pemanent Blocked': 'fa-ban',
+        'Refund': 'fa-reply',
+        'Refund-Running': 'fa-hourglass-half'
+    };
+
+    var color = statusColors[statusLabel] || '#2563eb';
+    var icon = statusIcons[statusLabel] || 'fa-shield';
+
+    jQuery('#dealControlReasonModalTitle').text('<?php echo __("Change Deal Status: ");?>' + statusLabel);
+    jQuery('#modalTargetStatusBadge').text(statusLabel).css({
+        'background-color': color,
+        'color': '#ffffff'
+    });
+    jQuery('#modalStatusIconBox').css('background-color', color);
+    jQuery('#modalStatusIcon').attr('class', 'fa ' + icon);
+    jQuery('#dealControlReasonInput').val('').css('border-color', '#cbd5e1');
+    jQuery('#modalReasonError').hide();
+
+    if (needReason) {
+        jQuery('#modalReasonGroup').show();
+        jQuery('#modalReasonRequiredMark').show();
+        jQuery('#modalReasonHint').text('<?php echo __("Required for this status");?>');
+        jQuery('#modalConfirmBtnText').text('<?php echo __("Confirm & Update to ");?>' + statusLabel);
+        jQuery('#btnConfirmDealControlChange').css({'background-color': color, 'border-color': color});
+    } else {
+        jQuery('#modalReasonGroup').show();
+        jQuery('#modalReasonRequiredMark').hide();
+        jQuery('#modalReasonHint').text('<?php echo __("Optional reason note");?>');
+        jQuery('#modalConfirmBtnText').text('<?php echo __("Confirm: ");?>' + statusLabel);
+        jQuery('#btnConfirmDealControlChange').css({'background-color': color, 'border-color': color});
     }
-    if(!confirm('Change deal status to "'+statusLabel+'"?'))
-    {
-        return false;
-    }
-    window.location.href = changeUrl;
+
+    jQuery('#dealControlReasonModal').modal('show');
+    setTimeout(function() {
+        if (needReason) {
+            jQuery('#dealControlReasonInput').focus();
+        }
+    }, 400);
+
     return false;
 }
+
+jQuery(document).on('click', '#btnConfirmDealControlChange', function(e) {
+    e.preventDefault();
+    var reason = jQuery.trim(jQuery('#dealControlReasonInput').val());
+
+    if (pendingNeedReason && reason.length === 0) {
+        jQuery('#dealControlReasonInput').css('border-color', '#dc2626').focus();
+        jQuery('#modalReasonError').css('display', 'flex').show();
+        return false;
+    }
+
+    var finalUrl = pendingDealControlUrl;
+    if (reason.length > 0) {
+        finalUrl += (finalUrl.indexOf('?') === -1 ? '?' : '&') + 'reason=' + encodeURIComponent(reason);
+    }
+
+    var $btn = jQuery(this);
+    $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> <?php echo __("Updating...");?>');
+
+    window.location.href = finalUrl;
+});
+
+jQuery(document).on('input propertychange', '#dealControlReasonInput', function() {
+    if (jQuery.trim(jQuery(this).val()).length > 0) {
+        jQuery(this).css('border-color', '#cbd5e1');
+        jQuery('#modalReasonError').hide();
+    }
+});
+
+jQuery(document).on('keydown', '#dealControlReasonInput', function(e) {
+    if ((e.ctrlKey || e.metaKey) && (e.keyCode === 13 || e.keyCode === 10)) {
+        e.preventDefault();
+        jQuery('#btnConfirmDealControlChange').trigger('click');
+    }
+});
 function ensureDealsHtml2Pdf()
 {
     if(typeof html2pdf!=='undefined')
@@ -357,12 +434,23 @@ body.wv-admin-theme .panel-heading .deals-actions-group .btn-default:hover {
     border-color: #d97706 !important;
 }
 .deal-control-cell {
-    min-width: 0;
-    max-width: none;
-    width: 1%;
-    align-items: center;
-    gap: 6px;
-    white-space: nowrap;
+    min-width: 185px !important;
+    width: 185px !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+}
+.deal-control-flex-wrap {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    vertical-align: middle !important;
+    width: auto !important;
+    min-width: max-content !important;
+    max-width: none !important;
+    white-space: nowrap !important;
 }
 .deals-data-table {
     table-layout: auto;
@@ -373,30 +461,37 @@ body.wv-admin-theme .panel-heading .deals-actions-group .btn-default:hover {
 .deals-data-table td {
     vertical-align: middle;
 }
-.deals-data-table th:not(.pbutton):not(.deal-status-col):not(.deal-control-col),
-.deals-data-table td:not(.pbutton):not(.deal-status-col):not(.deal-control-cell) {
+.deals-data-table th:not(.pbutton):not(.deal-status-col),
+.deals-data-table td:not(.pbutton):not(.deal-status-col) {
     white-space: nowrap;
 }
 .deals-data-table .pbutton,
-.deals-data-table .deal-status-col,
-.deals-data-table .deal-control-col,
-.deals-data-table .deal-control-cell {
+.deals-data-table .deal-status-col {
     width: auto;
     white-space: nowrap;
 }
-.deals-data-table .deal-control-col {
-    min-width: 0;
-    width: 1%;
-    text-align: center;
+.deals-data-table .deal-control-col,
+.deals-data-table .deal-control-cell,
+.deals-data-table th.deal-control-col,
+.deals-data-table td.deal-control-cell {
+    min-width: 185px !important;
+    width: 185px !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
 }
 .deals-data-table .deal-status-col {
     min-width: 0;
     text-align: center;
 }
-.deals-data-table .pbutton,
+.deals-data-table th.pbutton:first-child,
+.deals-data-table td.pbutton:first-child {
+    width: 40px !important;
+    min-width: 40px !important;
+}
 .deals-data-table .deal-action-cell {
-    width: 1%;
-    min-width: 0;
+    width: auto !important;
+    min-width: 110px !important;
 }
 .deal-control-toggle {
     font-size: 11px;
@@ -540,35 +635,183 @@ body.wv-admin-theme .panel-heading .deals-actions-group .btn-default:hover {
     padding-right: 10px;
     white-space: nowrap;
 }
-.deal-control-cell .btn-group {
-    display: inline-block;
-    margin-left: 6px;
-    margin-top: 0 !important;
-    vertical-align: middle;
+/* Unified Deal Control Status Button & Dropdown in Table Cell */
+.deal-control-status-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 7px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    width: auto !important;
+    min-width: max-content !important;
+    max-width: none !important;
+    padding: 0 14px !important;
+    border-radius: 999px !important;
+    border: 1px solid rgba(255, 255, 255, 0.35) !important;
+    color: #ffffff !important;
+    font-size: 11.5px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.35px !important;
+    text-transform: uppercase !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.16) !important;
+    cursor: pointer !important;
+    transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    word-break: normal !important;
+    line-height: 1 !important;
+    text-decoration: none !important;
+    flex-shrink: 0 !important;
 }
-.deals-data-table > tbody > tr > td.deal-control-cell {
-    display: flex;
+.deal-control-status-btn:hover,
+.deal-control-status-btn:focus,
+.deal-control-btn-group.open .deal-control-status-btn,
+.btn-group.open .deal-control-status-btn {
+    filter: brightness(1.1) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.22) !important;
+    color: #ffffff !important;
+    outline: none !important;
+    text-decoration: none !important;
 }
-.deal-control-cell .btn {
+.deal-control-status-btn .caret {
+    margin-left: 5px !important;
+    border-top: 4px solid #ffffff !important;
+    border-right: 4px solid transparent !important;
+    border-left: 4px solid transparent !important;
+    border-bottom: 0 !important;
+    display: inline-block !important;
+    vertical-align: middle !important;
+    transition: transform 0.15s ease !important;
+    flex-shrink: 0 !important;
+}
+.btn-group.open .deal-control-status-btn .caret {
+    transform: rotate(180deg) !important;
+}
+.btn-group.dropup .deal-control-status-btn .caret,
+.btn-group.dropup.open .deal-control-status-btn .caret {
+    transform: none !important;
+    border-top: 0 !important;
+    border-bottom: 4px solid #ffffff !important;
+}
+.deal-control-badge-dot {
+    width: 7px !important;
+    height: 7px !important;
+    border-radius: 50% !important;
+    background-color: #ffffff !important;
+    display: inline-block !important;
+    box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.5) !important;
+    flex-shrink: 0 !important;
+}
+.deal-control-badge-text {
+    display: inline-block !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    max-width: none !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
+    font-size: 11.5px !important;
+    letter-spacing: 0.3px !important;
+    line-height: 1 !important;
+    text-transform: uppercase !important;
+    flex-shrink: 0 !important;
+}
+.deal-control-reason-icon {
+    font-size: 11.5px !important;
+    color: rgba(255, 255, 255, 0.95) !important;
+    margin-left: 2px !important;
+    flex-shrink: 0 !important;
+}
+.deal-control-btn-group {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: auto !important;
+    max-width: none !important;
+    min-width: max-content !important;
+    margin: 0 !important;
+    vertical-align: middle !important;
+    white-space: nowrap !important;
+}
+.deal-control-dropdown-menu,
+body > .dropdown-menu.deal-control-dropdown-menu {
+    min-width: 220px !important;
+    border-radius: 10px !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: 0 16px 36px -4px rgba(15, 23, 42, 0.22), 0 4px 10px -2px rgba(15, 23, 42, 0.08) !important;
+    padding: 6px !important;
+    background: #ffffff !important;
+}
+.deal-control-menu-reason {
+    padding: 4px 8px 6px !important;
+}
+.deal-control-menu-reason-box {
+    background: #f8fafc;
+    border: 1px solid #d8e2ee;
     border-radius: 6px;
-    line-height: 1;
-    min-width: 26px;
-    padding: 4px 8px;
+    padding: 7px 9px;
+    font-size: 11px;
+    color: #334155;
+    box-shadow: inset 3px 0 0 #2563eb;
+    max-width: 250px;
+    white-space: normal;
+    word-break: break-word;
+    text-align: left;
 }
-.deal-action-cell .dropdown-menu,
-.deal-control-cell .dropdown-menu {
+.deal-control-menu-reason-box strong {
+    color: #0f172a;
+    display: block;
+    margin-bottom: 2px;
+}
+.deal-control-menu-reason-box .deal-control-reason-text {
+    line-height: 1.35;
+    color: #475569;
+}
+.deal-control-dropdown-menu .dropdown-header,
+body > .dropdown-menu.deal-control-dropdown-menu .dropdown-header {
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    color: #64748b !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    padding: 6px 12px 4px !important;
+}
+.deal-control-dropdown-menu > li > a,
+body > .dropdown-menu.deal-control-dropdown-menu > li > a {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 8px 12px !important;
+    font-size: 12.5px !important;
+    font-weight: 600 !important;
+    color: #334155 !important;
+    border-radius: 6px !important;
+    transition: all 0.15s ease !important;
+}
+.deal-control-dropdown-menu > li > a:hover,
+body > .dropdown-menu.deal-control-dropdown-menu > li > a:hover {
+    background: #f1f5f9 !important;
+    color: #0f172a !important;
+}
+.deal-control-dropdown-menu > li.active-status > a,
+body > .dropdown-menu.deal-control-dropdown-menu > li.active-status > a {
+    background: #eff6ff !important;
+    color: #1d4ed8 !important;
+    font-weight: 700 !important;
+}
+.deal-action-cell .dropdown-menu {
     border-color: #d8e2ee;
     border-radius: 8px;
     box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
 }
-.deal-action-cell .dropdown-menu > li > a,
-.deal-control-cell .dropdown-menu > li > a {
+.deal-action-cell .dropdown-menu > li > a {
     color: #334155;
     font-weight: 600;
     padding: 8px 14px;
 }
-.deal-action-cell .dropdown-menu > li > a:hover,
-.deal-control-cell .dropdown-menu > li > a:hover {
+.deal-action-cell .dropdown-menu > li > a:hover {
     background: #eef3f8;
     color: #0f172a;
 }
@@ -817,6 +1060,20 @@ $this->Paginator->options(array(
  ));
 ?>
 <div id="resultDiv">
+<div class="page-header-content wv-page-header" style="margin-bottom:16px;">
+    <div class="page-title wv-page-title-box">
+        <h4 class="wv-page-title"><i class="fa fa-handshake-o text-primary"></i> <?php echo __('Booked Properties & Deals Management');?></h4>
+        <small class="wv-page-subtitle"><?php echo __('Comprehensive property sales records, installment schedules, client agreements and cash flow tracking');?></small>
+    </div>
+    <div class="heading-elements wv-page-header-actions">
+        <?php $url=$this->Html->url(array('controller'=>'Deals'));echo $this->Html->link('<span class="fa fa-plus"></span>&nbsp;'.__('Add New Deal'),array('controller'=>'Deals','action'=>'add'),array('escape'=>false,'class'=>'btn btn-success'));?>
+        <?php echo $this->Html->link('<span class="fa fa-print"></span>&nbsp;'.__('Print'),'#',array('id'=>'printme','escape'=>false,'class'=>'btn btn-default'));?>
+        <?php echo $this->Html->link('<span class="fa fa-file-excel-o"></span>&nbsp;'.__('Export CSV'),$exportCsvUrl,array('escape'=>false,'class'=>'btn btn-info'));?>
+        <?php echo $this->Html->link('<span class="fa fa-file-pdf-o"></span>&nbsp;'.__('Export PDF'),'#',array('onclick'=>"return exportDealRecordsPdf();",'escape'=>false,'class'=>'btn btn-success'));?>
+        <?php if(!empty($canAccessForecast)){ echo $this->Html->link('<span class="fa fa-line-chart"></span>&nbsp;'.__('Cash Flow Forecast'),array('controller'=>'Deals','action'=>'cashflow'),array('escape'=>false,'class'=>'btn btn-primary')); }?>
+        <?php echo $this->Html->link('<span class="fa fa-trash"></span>&nbsp;'.__('Delete'),'#',array('name'=>'deleteallfrm','id'=>'deleteallfrm','onclick'=>'check_perform_delete();','escape'=>false,'class'=>'btn btn-danger'));?>
+    </div>
+</div>
 <div class="deals-page-shell">
 <div class="panel deals-page-panel"><?php echo $this->Session->flash();?>
     <div class="panel-heading deals-toolbar-card">
@@ -952,13 +1209,19 @@ $this->Paginator->options(array(
                         <th class="deal-status-col"><?php echo __('Status');?></th>
                         <th class="deal-control-col"><?php echo __('Deal Control');?></th>
                         <?php if($canShowDealAction){?>
-                        <th class="pbutton"><?php echo __('Action');?></th>
+                        <th class="pbutton actions-col"><?php echo __('Action');?></th>
                         <?php }?>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php $totalInvoice=0;$totalPaidBeforeBalance=0;$totalBalance=0;
+                    <?php 
+                    $totalInvoice = 0;
+                    $totalPaidBeforeBalance = 0;
+                    $totalBalance = 0;
+                    $totalDeals = !empty($Deal) ? count($Deal) : 0;
+                    $dealIndex = 0;
                     foreach ($Deal as $post):
+                    $dealIndex++;
                     $id=$post['Deal']['id'];
                     $storedTotalAmount = isset($post['Deal']['total_amount']) ? (float)$post['Deal']['total_amount'] : 0;
                     $dealBaseAmount = isset($post['Deal']['amount']) ? (float)$post['Deal']['amount'] : 0;
@@ -1062,36 +1325,71 @@ $this->Paginator->options(array(
                         <?php } ?>
                         <td class="deal-status-col"><span class="label label-<?php if($status=="Paid")echo"success";else echo"danger";?>"><?php echo __($status);?></span></td>
                         <td class="deal-control-cell">
-                            <?php if(strlen($dealControlReason)>0){?>
-                            <a class="label deal-control-toggle deal-control-status-badge" style="background-color:<?php echo $dealControlColor;?>;color:#fff;" data-toggle="collapse" href="#<?php echo $dealControlReasonId;?>" aria-expanded="false" aria-controls="<?php echo $dealControlReasonId;?>" title="<?php echo __('Click to view reason');?>"><?php echo h($dealControlStatus);?></a>
-                            <div id="<?php echo $dealControlReasonId;?>" class="collapse deal-control-reason-full"><strong><?php echo __('Reason');?>:</strong> <?php echo nl2br(h($dealControlReason));?></div>
-                            <?php }else{?>
-                            <span class="label deal-control-status-badge" style="background-color:<?php echo $dealControlColor;?>;color:#fff;"><?php echo h($dealControlStatus);?></span>
-                            <?php }?>
-                            <?php if($canChangeDealControlStatus){?>
-                            <div class="btn-group pbutton" style="margin-top:4px;">
-                                <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false" title="<?php echo __('Change Deal Control');?>" aria-label="<?php echo __('Change Deal Control');?>">
-                                  +
-                                </button>
-                                <ul class="dropdown-menu" role="menu">
-                                <?php foreach($dealControlStatuses as $controlStatus){?>
-                                    <?php
-                                    $changeUrl = $this->Html->url(array('controller'=>'Deals','action'=>'changestatus',$id,$controlStatus));
-                                    $requireReason = in_array($controlStatus,$dealPaymentBlockedStatuses) ? 'true' : 'false';
-                                    ?>
-                                    <li><?php echo $this->Html->link(h($controlStatus),'#',array('escape'=>false,'onclick'=>"return updateDealControlStatus('".$changeUrl."','".addslashes($controlStatus)."',".$requireReason.");"));?></li>
+                            <div class="deal-control-flex-wrap">
+                                <?php if($canChangeDealControlStatus){?>
+                                <div class="btn-group deal-control-btn-group">
+                                    <button type="button" class="btn btn-xs dropdown-toggle deal-control-status-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background-color:<?php echo $dealControlColor;?>;" title="<?php echo __('Current Deal Control: ').h($dealControlStatus).'. '.__('Click to change status');?><?php echo strlen($dealControlReason)>0 ? ' | '.__('Reason: ').h($dealControlReason) : '';?>">
+                                        <span class="deal-control-badge-dot"></span>
+                                        <span class="deal-control-badge-text"><?php echo h($dealControlStatus);?></span>
+                                        <?php if(strlen($dealControlReason)>0){?>
+                                        <i class="fa fa-info-circle deal-control-reason-icon" title="<?php echo __('Has reason: ').h($dealControlReason);?>"></i>
+                                        <?php }?>
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu deal-control-dropdown-menu" role="menu">
+                                        <li class="dropdown-header"><i class="fa fa-sliders"></i> <?php echo __('Change Deal Control');?></li>
+                                        <?php if(strlen($dealControlReason)>0){?>
+                                        <li class="deal-control-menu-reason">
+                                            <div class="deal-control-menu-reason-box">
+                                                <strong><i class="fa fa-info-circle text-primary"></i> <?php echo __('Current Reason');?>:</strong>
+                                                <div class="deal-control-reason-text"><?php echo nl2br(h($dealControlReason));?></div>
+                                            </div>
+                                        </li>
+                                        <li class="divider"></li>
+                                        <?php }?>
+                                        <?php foreach($dealControlStatuses as $controlStatus){
+                                            $changeUrl = $this->Html->url(array('controller'=>'Deals','action'=>'changestatus',$id,$controlStatus));
+                                            $requireReason = in_array($controlStatus,$dealPaymentBlockedStatuses) ? 'true' : 'false';
+                                            $isCurrent = ($dealControlStatus === $controlStatus);
+                                            $statusIcon = 'fa-circle-o';
+                                            $statusColor = '#28a745';
+                                            if($controlStatus==='Active') { $statusIcon = 'fa-check-circle'; $statusColor = '#10b981'; }
+                                            elseif($controlStatus==='Blocked') { $statusIcon = 'fa-lock'; $statusColor = '#2563eb'; }
+                                            elseif($controlStatus==='Transferd' || $controlStatus==='Transferred') { $statusIcon = 'fa-exchange'; $statusColor = '#e83e8c'; }
+                                            elseif($controlStatus==='Permanent Blocked' || $controlStatus==='Pemanent Blocked') { $statusIcon = 'fa-ban'; $statusColor = '#9c1b64'; }
+                                            elseif($controlStatus==='Refund') { $statusIcon = 'fa-reply'; $statusColor = '#dc2626'; }
+                                            elseif($controlStatus==='Refund-Running') { $statusIcon = 'fa-hourglass-half'; $statusColor = '#f59e0b'; }
+                                        ?>
+                                            <li class="<?php echo $isCurrent ? 'active-status' : '';?>">
+                                                <?php 
+                                                $statusLinkHtml = '<i class="fa '.$statusIcon.'" style="color:'.$statusColor.'; font-size:12px; width:16px;"></i> ' . h($controlStatus);
+                                                if ($isCurrent) {
+                                                    $statusLinkHtml .= ' <span class="label label-default" style="font-size:9px; padding:1px 5px; margin-left:auto;">' . __('Current') . '</span>';
+                                                }
+                                                echo $this->Html->link($statusLinkHtml, '#', array('escape'=>false, 'onclick'=>"return updateDealControlStatus('".$changeUrl."','".addslashes($controlStatus)."',".$requireReason.");"));
+                                                ?>
+                                            </li>
+                                        <?php }?>
+                                    </ul>
+                                </div>
+                                <?php }else{?>
+                                <span class="deal-control-status-btn deal-control-status-static" style="background-color:<?php echo $dealControlColor;?>; cursor:default;" title="<?php echo h($dealControlStatus);?><?php echo strlen($dealControlReason)>0 ? ' | '.__('Reason: ').h($dealControlReason) : '';?>">
+                                    <span class="deal-control-badge-dot"></span>
+                                    <span class="deal-control-badge-text"><?php echo h($dealControlStatus);?></span>
+                                    <?php if(strlen($dealControlReason)>0){?>
+                                    <i class="fa fa-info-circle deal-control-reason-icon" title="<?php echo __('Reason: ').h($dealControlReason);?>"></i>
+                                    <?php }?>
+                                </span>
                                 <?php }?>
-                                </ul>
                             </div>
-                            <?php }?>
                         </td>
                         <?php if($canShowDealAction){?>
-                        <td class="pbutton deal-action-cell">
+                        <td class="pbutton deal-action-cell actions-col">
                             <div class="btn-group">
-                                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                  <?php echo __('Action');?> <span class="caret"></span>
+                                <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false" title="<?php echo h(__('Actions'));?>">
+                                  <i class="fa fa-cog"></i> <?php echo __('Action');?> <span class="caret"></span>
                                 </button>
-                                <ul class="dropdown-menu" role="menu">
+                                <ul class="dropdown-menu dropdown-menu-right" role="menu">
                                 <li><?php echo $this->Html->link('<span class="fa fa-briefcase"></span>&nbsp;'.__('Show Payment Plan'),array('controller'=>'plans_payments','action'=>'index',$id),array('escape'=>false));?></li>
                                 <?php if(!$isPaymentBlocked){?>
                                 <li><?php echo $this->Html->link('<span class="fa fa-dollar"></span>&nbsp;'.__('Make Payment'),array('controller'=>'deals_payments','action'=>'add',$id),array('escape'=>false));?></li>
@@ -1128,7 +1426,7 @@ $this->Paginator->options(array(
                         <td></td>
                         <td></td>
                         <?php if($canShowDealAction){?>
-                        <td class="pbutton"></td>
+                        <td class="pbutton actions-col"></td>
                         <?php }?>
                     </tr>
                 </tbody>
@@ -1141,6 +1439,63 @@ $this->Paginator->options(array(
 </div>
 <?php echo $this->Form->end();?>
 <?php echo $this->element('pagination',array('UseNamedLimit'=>true,'NamedLimitBaseUrl'=>$dealsLimitUrl));?>
+
+<!-- Modal: Change Deal Control Status & Reason -->
+<div class="modal fade" id="dealControlReasonModal" tabindex="-1" role="dialog" aria-labelledby="dealControlReasonModalTitle" aria-hidden="true" style="z-index: 10500;">
+    <div class="modal-dialog" role="document" style="max-width: 520px; margin: 60px auto;">
+        <div class="modal-content" style="border-radius: 12px; border: 1px solid #cbd5e1; box-shadow: 0 20px 45px -5px rgba(15, 23, 42, 0.35); overflow: hidden;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #ffffff; padding: 18px 24px; border-bottom: 1px solid #334155; display: flex; align-items: center; justify-content: space-between;">
+                <h4 class="modal-title" id="dealControlReasonModalTitle" style="font-size: 16px; font-weight: 700; color: #ffffff; margin: 0; display: flex; align-items: center; gap: 9px;">
+                    <i class="fa fa-sliders" style="color: #38bdf8;"></i> <?php echo __('Change Deal Status');?>
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #94a3b8; opacity: 1; font-size: 22px; font-weight: 400; text-shadow: none; margin-top: -2px; transition: color 0.15s ease;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 24px; background: #ffffff;">
+                <!-- Status Preview Card -->
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; margin-bottom: 20px; display: flex; align-items: center; gap: 14px;">
+                    <div id="modalStatusIconBox" style="width: 44px; height: 44px; border-radius: 50%; background: #28a745; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
+                        <i id="modalStatusIcon" class="fa fa-shield"></i>
+                    </div>
+                    <div>
+                        <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px;">
+                            <?php echo __('Target Deal Status');?>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span id="modalTargetStatusBadge" style="display: inline-block; padding: 4px 14px; border-radius: 999px; background: #28a745; color: #ffffff; font-size: 12px; font-weight: 800; letter-spacing: 0.35px; text-transform: uppercase; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+                                Active
+                            </span>
+                            <span style="font-size: 12.5px; color: #475569; font-weight: 500;">
+                                <?php echo __('Will be updated immediately.');?>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reason Input Group -->
+                <div id="modalReasonGroup" class="form-group" style="margin-bottom: 0;">
+                    <label for="dealControlReasonInput" style="font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 6px; display: block;">
+                        <?php echo __('Reason / Remarks');?> <span id="modalReasonRequiredMark" class="text-danger" style="display:none;">*</span>
+                        <span id="modalReasonHint" style="font-size: 11.5px; font-weight: 500; color: #64748b; float: right; margin-top: 2px;"></span>
+                    </label>
+                    <textarea id="dealControlReasonInput" class="form-control" rows="3" placeholder="<?php echo __('Enter administrative reason note (e.g. client cancellation, payment dispute, bounced cheque, bank loan issue)...');?>" style="border-radius: 8px; border: 1.5px solid #cbd5e1; font-size: 13px; color: #0f172a; resize: vertical; padding: 10px 12px; min-height: 85px; box-shadow: inset 0 1px 2px rgba(0,0,0,0.04); transition: border-color 0.15s ease, box-shadow 0.15s ease;"></textarea>
+                    <div id="modalReasonError" style="display: none; margin-top: 8px; font-size: 12px; font-weight: 600; color: #dc2626; align-items: center; gap: 6px;">
+                        <i class="fa fa-exclamation-triangle"></i> <?php echo __('A reason note is strictly required before changing this status.');?>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 14px 24px; display: flex; align-items: center; justify-content: flex-end; gap: 10px;">
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius: 7px; font-weight: 600; font-size: 13px; padding: 8px 18px; color: #475569; background: #ffffff; border: 1px solid #cbd5e1;">
+                    <i class="fa fa-times"></i> <?php echo __('Cancel');?>
+                </button>
+                <button type="button" id="btnConfirmDealControlChange" class="btn btn-primary" style="border-radius: 7px; font-weight: 700; font-size: 13px; padding: 8px 20px; background-color: #2563eb; border-color: #2563eb; color: #ffffff; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);">
+                    <i class="fa fa-check"></i> <span id="modalConfirmBtnText"><?php echo __('Confirm & Update Status');?></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 </div>
 </div>
 </div>

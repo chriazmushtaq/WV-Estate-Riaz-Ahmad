@@ -42,14 +42,20 @@
                         <th><?php echo __('Subject');?></th>
                         <th><?php echo __('Message');?></th>
                         <th><?php echo __('Status');?></th>
-                        <th><?php echo __('Action');?></th>
+                        <th class="actions-col"><?php echo __('Action');?></th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if(empty($contacts)){ ?>
                     <tr><td colspan="8" class="text-center"><?php echo __('No website contact messages found.');?></td></tr>
-                    <?php } else { foreach($contacts as $row){ $status=strtolower((string)$row['WebsiteContact']['status']); ?>
-                    <?php $contactId = (int)$row['WebsiteContact']['id']; ?>
+                    <?php } else { 
+                        $totalWebContacts = count($contacts);
+                        $webContactIndex = 0;
+                        foreach($contacts as $row){ 
+                            $webContactIndex++;
+                            $status = strtolower((string)$row['WebsiteContact']['status']);
+                            $contactId = (int)$row['WebsiteContact']['id']; 
+                    ?>
                     <tr>
                         <td><?php echo !empty($row['WebsiteContact']['created']) ? h(date('d-M-Y H:i',strtotime($row['WebsiteContact']['created']))) : '-';?></td>
                         <td><strong><?php echo h($row['WebsiteContact']['name']);?></strong></td>
@@ -58,15 +64,21 @@
                         <td><?php echo h($row['WebsiteContact']['subject']);?></td>
                         <td class="wv-message-cell"><?php echo nl2br(h($row['WebsiteContact']['message']));?></td>
                         <td><span class="wv-status <?php echo $status==='read' ? 'wv-status-read' : 'wv-status-new';?>"><?php echo h($row['WebsiteContact']['status']);?></span></td>
-                        <td>
-                            <div class="wv-action-row">
-                                <button type="button" class="btn btn-xs btn-primary" data-toggle="modal" data-target="#ReplyWebsiteContact<?php echo $contactId;?>"><i class="fa fa-reply"></i> <?php echo __('Reply');?></button>
-                                <?php echo $this->Html->link(__('Mark Read'),array('action'=>'mark',$contactId,'Read'),array('class'=>'btn btn-xs btn-success'));?>
-                                <?php echo $this->Html->link(__('New'),array('action'=>'mark',$contactId,'New'),array('class'=>'btn btn-xs btn-default'));?>
-                                <?php if(!empty($isSuperAdmin)){ ?>
-                                    <?php echo $this->Html->link('<i class="fa fa-pencil"></i> '.__('Edit'),array('action'=>'edit',$contactId),array('class'=>'btn btn-xs btn-warning','escape'=>false));?>
-                                    <?php echo $this->Form->postLink('<i class="fa fa-trash"></i> '.__('Delete'),array('action'=>'delete',$contactId),array('class'=>'btn btn-xs btn-danger','escape'=>false,'confirm'=>__('Are you sure you want to delete this website contact?')));?>
-                                <?php } ?>
+                        <td class="text-center actions-col">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="<?php echo h(__('Actions'));?>">
+                                    <i class="fa fa-cog"></i> <?php echo __('Action');?> <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                                    <li><a href="#" data-toggle="modal" data-target="#ReplyWebsiteContact<?php echo $contactId;?>"><i class="fa fa-reply"></i> <?php echo __('Reply');?></a></li>
+                                    <li><?php echo $this->Html->link('<i class="fa fa-check text-success"></i> '.__('Mark Read'),array('action'=>'mark',$contactId,'Read'),array('escape'=>false));?></li>
+                                    <li><?php echo $this->Html->link('<i class="fa fa-envelope-o text-info"></i> '.__('New'),array('action'=>'mark',$contactId,'New'),array('escape'=>false));?></li>
+                                    <?php if(!empty($isSuperAdmin)){ ?>
+                                    <li class="divider"></li>
+                                    <li><?php echo $this->Html->link('<i class="fa fa-pencil text-warning"></i> '.__('Edit'),array('action'=>'edit',$contactId),array('escape'=>false));?></li>
+                                    <li><?php echo $this->Form->postLink('<i class="fa fa-trash text-danger"></i> '.__('Delete'),array('action'=>'delete',$contactId),array('escape'=>false,'confirm'=>__('Are you sure you want to delete this website contact?')));?></li>
+                                    <?php } ?>
+                                </ul>
                             </div>
                         </td>
                     </tr>

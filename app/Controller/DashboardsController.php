@@ -337,6 +337,8 @@ class DashboardsController extends AppController
         }
         $this->set('dealsPayment',$dealsPayment);
         $this->set('dealsPaymentSections',$dealsPaymentSections);
+        $this->set('title_for_layout', __('Dashboard'));
+        $this->set('isClientPortal', true);
     }
 
     protected function _rentalDashboardForClient($clientId, $currentDate)

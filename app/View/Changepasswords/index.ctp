@@ -2,22 +2,25 @@
 .wv-chpass-wrap {
   margin: 0;
   padding: 0;
+  touch-action: auto;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
 }
 .wv-chpass-hero {
-  background: linear-gradient(135deg, #07152a 0%, #102746 72%, #ff0a46 170%);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-top: 4px solid #0284c7;
   border-radius: 16px;
-  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.14);
-  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+  color: #0f172a;
   margin-bottom: 20px;
   overflow: hidden;
-  padding: 24px;
+  padding: 22px 24px;
   position: relative;
 }
 .wv-chpass-hero:after {
-  background: radial-gradient(circle at 85% 15%, rgba(124, 249, 255, 0.22), rgba(124, 249, 255, 0) 40%);
-  content: "";
-  inset: 0;
-  position: absolute;
+  display: none;
 }
 .wv-chpass-hero-inner {
   align-items: center;
@@ -29,7 +32,7 @@
   z-index: 2;
 }
 .wv-chpass-kicker {
-  color: #7cf9ff;
+  color: #0284c7;
   font-size: 11px;
   font-weight: 900;
   letter-spacing: 0.8px;
@@ -37,16 +40,16 @@
   text-transform: uppercase;
 }
 .wv-chpass-title {
-  color: #ffffff !important;
+  color: #0f172a !important;
   font-size: 26px;
   font-weight: 900;
   line-height: 1.2;
   margin: 0 0 6px;
 }
 .wv-chpass-desc {
-  color: #e2e8f0;
+  color: #475569;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
   margin: 0;
 }
 .wv-chpass-grid {
@@ -63,19 +66,20 @@
 }
 .wv-chpass-card-head {
   align-items: center;
-  background: #07152a;
-  border-bottom: 1px solid #102746;
-  color: #ffffff;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  border-top: 3px solid #0284c7;
+  color: #0f172a;
   display: flex;
   gap: 10px;
   padding: 14px 18px;
 }
 .wv-chpass-card-head i {
-  color: #7cf9ff;
+  color: #0284c7;
   font-size: 16px;
 }
 .wv-chpass-card-head h3 {
-  color: #ffffff !important;
+  color: #0f172a !important;
   font-size: 15px;
   font-weight: 900;
   margin: 0;

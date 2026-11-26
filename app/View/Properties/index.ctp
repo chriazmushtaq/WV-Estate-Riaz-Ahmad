@@ -40,7 +40,7 @@ $frontUserForSearch=(array)$this->Session->read('frontUser');
 $savedSearchEmail=!empty($frontUserForSearch['Client']['email']) ? $frontUserForSearch['Client']['email'] : '';
 ?>
 <style>
-.wv-list-page{background:linear-gradient(180deg,#f6f9fd 0%,#eef3f9 100%);padding-bottom:42px;}
+.wv-list-page{background:linear-gradient(180deg,#f6f9fd 0%,#eef3f9 100%);padding-bottom:42px;touch-action:auto;overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%;}
 .wv-list-page .wv-wide-container{max-width:1420px;width:calc(100% - 40px);}
 .wv-list-hero{background:linear-gradient(135deg,#07152a 0%,#102746 68%,#ff0a46 155%);color:#fff;margin-bottom:0;overflow:hidden;padding:34px 0 86px;position:relative;}
 .wv-list-hero:after{background:rgba(255,255,255,.08);border-radius:999px;content:"";height:170px;position:absolute;right:-60px;top:-70px;width:360px;}

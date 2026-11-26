@@ -3045,6 +3045,9 @@ class DealsPaymentsController extends AdminAppController {
             $this->Session->setFlash(__('Invalid Post'),'flash',array('alert'=>'danger'));
             return $this->redirect(array('controller'=>'Deals','action' => 'index'));            
         }
+        if ($this->Session->check('frontUser') && !$this->Session->check('User')) {
+            return $this->redirect(array('plugin' => false, 'admin' => false, 'controller' => 'MyPayments', 'action' => 'index', $id));
+        }
         if(!$this->_canAccessDeal($id))
         {
             $this->Session->setFlash(__('Access Denied. You do not have permission to view payments for this deal.'),'flash',array('alert'=>'danger'));

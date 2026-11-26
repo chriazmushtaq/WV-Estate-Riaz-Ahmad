@@ -49,11 +49,11 @@ $refundOnlyDate = function($dateValue) {
 };
 ?>
 <style type="text/css">
-.wv-refund-view{background:#f4f7fb;margin:-10px -5px 0;padding:14px;}
+.wv-refund-view{background:transparent;margin:0;padding:0;touch-action:auto;overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%;}
 .wv-refund-view *{box-sizing:border-box;}
-.wv-refund-view-head{align-items:center;background:linear-gradient(135deg,#07152a 0%,#123252 72%,#047857 150%);border-radius:10px;color:#fff;display:flex;gap:12px;justify-content:space-between;margin-bottom:12px;padding:17px 18px;}
-.wv-refund-view-head h1{color:#fff!important;font-size:24px;font-weight:900;margin:0 0 4px;}
-.wv-refund-view-head p{color:#e6f2ff!important;font-size:12px;font-weight:800;margin:0;}
+.wv-refund-view-head{align-items:center;background:#ffffff;border:1px solid #e2e8f0;border-top:4px solid #0284c7;border-radius:14px;box-shadow:0 4px 16px rgba(15,23,42,.04);color:#0f172a;display:flex;gap:12px;justify-content:space-between;margin-bottom:14px;padding:20px 22px;}
+.wv-refund-view-head h1{color:#0f172a!important;font-size:24px;font-weight:900;margin:0 0 4px;}
+.wv-refund-view-head p{color:#475569!important;font-size:13px;font-weight:600;margin:0;}
 .wv-refund-status{border-radius:999px;display:inline-block;font-size:11px;font-weight:900;padding:7px 10px;text-transform:uppercase;white-space:nowrap;}
 .wv-refund-status-pending{background:#fff1c2;color:#8a6100;}
 .wv-refund-status-under-review{background:#e7f0ff;color:#174ea6;}
@@ -84,10 +84,11 @@ $refundOnlyDate = function($dateValue) {
 .wv-refund-step.done:before{background:#059669;}
 .wv-refund-step.active{background:#eff6ff;border-color:#93c5fd;box-shadow:0 8px 18px rgba(37,99,235,.12);}
 .wv-refund-step.active:before{background:#2563eb;}
-.wv-refund-schedule-table{margin:0;}
-.wv-refund-schedule-table th{background:#07152a;color:#fff!important;font-size:11px;text-transform:uppercase;white-space:nowrap;}
+.table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;width:100%;border:1px solid #e2e8f0;border-radius:8px;}
+.wv-refund-schedule-table{margin:0;min-width:680px;}
+.wv-refund-schedule-table th{background:#f8fafc!important;border-bottom:2px solid #e2e8f0!important;color:#475569!important;font-size:11px;text-transform:uppercase;white-space:nowrap;}
 .wv-refund-schedule-table td{vertical-align:middle!important;}
-.wv-refund-money{color:#0b3a75;font-weight:900;white-space:nowrap;}
+.wv-refund-money{color:#0284c7;font-weight:900;white-space:nowrap;}
 .wv-refund-pay-status{border-radius:999px;display:inline-block;font-size:10px;font-weight:900;padding:5px 8px;text-transform:uppercase;white-space:nowrap;}
 .wv-refund-pay-status-paid{background:#dff7e8;color:#08753b;}
 .wv-refund-pay-status-unpaid{background:#fff3cd;color:#8a6200;}

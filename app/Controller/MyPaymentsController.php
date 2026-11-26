@@ -1,7 +1,7 @@
 <?php
 class MyPaymentsController extends AppController
 {
-    public $helpers = array('Html', 'Form', 'Session', 'Time', 'Number', 'NumToWord');
+    public $helpers = array('Html', 'Form', 'Session', 'Time', 'Number', 'NumToWord', 'Js', 'Paginator');
     public $uses = array('MyPayment', 'Admin.DealsPayment', 'Admin.PlansPayment');
     protected $_portalVisibleDealStatuses = array('Active','Blocked');
     public function beforeFilter()
@@ -96,198 +96,547 @@ class MyPaymentsController extends AppController
     }
     public function index($dealId = null)
     {
-        $this->loadModel('PlansPayment');
+        $this->loadModel('Deal');
+        $this->loadModel('Admin.PlansPayment');
+        $this->loadModel('Admin.DealsPayment');
+
         $selectedDealId = (int)$dealId;
-        $paymentConditions = array('Deal.client_id'=>$this->userId,$this->_dealVisibilityCondition('Deal'));
-        if($selectedDealId > 0)
-        {
-            $paymentConditions['Deal.id'] = $selectedDealId;
-        }
-        $postArr=$this->MyPayment->find('all',array(
-            'joins'=>array(
-                array('table'=>'deals','alias'=>'Deal','type'=>'LEFT','conditions'=>array('MyPayment.deal_id=Deal.id')),
-                array('table'=>'properties','alias'=>'Property','type'=>'LEFT','conditions'=>array('Deal.property_id=Property.id')),
-                array('table'=>'units','alias'=>'Unit','type'=>'LEFT','conditions'=>array('Property.unit_id=Unit.id')),
-                array('table'=>'paymenttypes','alias'=>'Paymenttype','type'=>'LEFT','conditions'=>array('MyPayment.paymenttype_id=Paymenttype.id')),
-                array('table'=>'plans_payments','alias'=>'PlansPayment','type'=>'LEFT','conditions'=>array('MyPayment.plans_payment_id=PlansPayment.id'))
+
+        // 1. Fetch all deals for this authenticated client
+        $clientDeals = $this->Deal->find('all', array(
+            'joins' => array(
+                array('table' => 'properties', 'alias' => 'Property', 'type' => 'LEFT', 'conditions' => array('Deal.property_id=Property.id')),
+                array('table' => 'units', 'alias' => 'Unit', 'type' => 'LEFT', 'conditions' => array('Property.unit_id=Unit.id')),
+                array('table' => 'plans', 'alias' => 'Plan', 'type' => 'LEFT', 'conditions' => array('Deal.plan_id=Plan.id')),
+                array('table' => 'projects', 'alias' => 'Project', 'type' => 'LEFT', 'conditions' => array('Property.project_id=Project.id'))
             ),
-            'fields'=>array('MyPayment.*','Paymenttype.*','Deal.*','Property.*','Unit.*','PlansPayment.*'),
-            'conditions'=>$paymentConditions,
-            'order'=>array('Deal.id'=>'desc','MyPayment.id'=>'desc'),
-            'recursive'=>-1
+            'fields' => array(
+                'Deal.*',
+                'Property.id', 'Property.name', 'Property.area', 'Property.price',
+                'Unit.id', 'Unit.name',
+                'Plan.id', 'Plan.name',
+                'Project.id', 'Project.name'
+            ),
+            'conditions' => array(
+                'Deal.client_id' => $this->userId,
+                $this->_dealVisibilityCondition('Deal')
+            ),
+            'order' => array('Deal.id' => 'desc'),
+            'recursive' => -1
         ));
 
-        $paymentsByDeal = array();
-        $overallStats = array(
-            'total_paid' => 0,
-            'receipts_count' => 0,
-            'early_count' => 0,
-            'ontime_count' => 0,
-            'late_count' => 0,
-            'advance_count' => 0
-        );
+        $dealMap = array();
+        $dealIds = array();
+        foreach ((array)$clientDeals as $cd) {
+            if (!empty($cd['Deal']['id'])) {
+                $dId = (int)$cd['Deal']['id'];
+                $dealIds[] = $dId;
+                $dealMap[$dId] = $cd;
+            }
+        }
 
-        foreach((array)$postArr as $row)
-        {
-            if(empty($row['Deal']['id']))
-            {
+        if (empty($dealIds)) {
+            $this->set('clientDeals', array());
+            $this->set('dealsWithPayments', array());
+            $this->set('allPaymentsList', array());
+            $this->set('selectedDealId', 0);
+            $this->set('overallStats', array(
+                'total_paid' => 0,
+                'receipts_count' => 0,
+                'deals_count' => 0,
+                'total_due' => 0
+            ));
+            $this->set('isClientPortal', true);
+            $this->set('title_for_layout', __('My Payment Receipts'));
+            return;
+        }
+
+        // 2. Fetch all payment receipts for all client deals from deals_payments
+        // Order by DealsPayment.payment_date ASC, DealsPayment.id ASC (by their paid date)
+        $paymentRows = $this->DealsPayment->find('all', array(
+            'joins' => array(
+                array('table' => 'deals', 'alias' => 'Deal', 'type' => 'LEFT', 'conditions' => array('DealsPayment.deal_id=Deal.id')),
+                array('table' => 'properties', 'alias' => 'Property', 'type' => 'LEFT', 'conditions' => array('Deal.property_id=Property.id')),
+                array('table' => 'units', 'alias' => 'Unit', 'type' => 'LEFT', 'conditions' => array('Property.unit_id=Unit.id')),
+                array('table' => 'plans_payments', 'alias' => 'PlansPayment', 'type' => 'LEFT', 'conditions' => array('DealsPayment.plans_payment_id=PlansPayment.id')),
+                array('table' => 'paymenttypes', 'alias' => 'Paymenttype', 'type' => 'LEFT', 'conditions' => array('DealsPayment.paymenttype_id=Paymenttype.id'))
+            ),
+            'fields' => array(
+                'DealsPayment.*',
+                'Deal.id', 'Deal.invoice_no', 'Deal.total_amount', 'Deal.date', 'Deal.deal_status',
+                'Property.id', 'Property.name', 'Property.area',
+                'Unit.id', 'Unit.name',
+                'PlansPayment.id', 'PlansPayment.name', 'PlansPayment.date',
+                'Paymenttype.id', 'Paymenttype.name'
+            ),
+            'conditions' => array(
+                'DealsPayment.deal_id' => $dealIds
+            ),
+            'order' => array('DealsPayment.payment_date' => 'asc', 'DealsPayment.id' => 'asc'),
+            'recursive' => -1
+        ));
+
+        // 3. Group payments by deal_id and group individual payments by receipt_no
+        $dealReceiptGroups = array();
+        $allPaymentsList = array();
+        $totalPaidAllDeals = 0;
+        $totalReceiptsCount = 0;
+
+        foreach ($paymentRows as $paymentRow) {
+            $dId = (int)$paymentRow['DealsPayment']['deal_id'];
+            $rowId = (int)$paymentRow['DealsPayment']['id'];
+            if ($dId <= 0 || $rowId <= 0) {
                 continue;
             }
-            $dealId = (int)$row['Deal']['id'];
-            if(!isset($paymentsByDeal[$dealId]))
-            {
-                $paymentsByDeal[$dealId] = array(
-                    'Deal' => isset($row['Deal']) ? $row['Deal'] : array(),
-                    'Property' => isset($row['Property']) ? $row['Property'] : array(),
-                    'Unit' => isset($row['Unit']) ? $row['Unit'] : array(),
-                    'rows' => array(),
-                    'total_paid' => 0,
-                    'receipt_count' => 0,
-                    'early_count' => 0,
-                    'ontime_count' => 0,
-                    'late_count' => 0,
-                    'advance_count' => 0
+
+            if (!isset($dealReceiptGroups[$dId])) {
+                $dealReceiptGroups[$dId] = array();
+            }
+
+            $receiptNoKey = isset($paymentRow['DealsPayment']['receipt_no']) ? trim((string)$paymentRow['DealsPayment']['receipt_no']) : '';
+            if ($receiptNoKey === '') {
+                $receiptNoKey = 'ROW-' . $rowId;
+            }
+
+            if (!isset($dealReceiptGroups[$dId][$receiptNoKey])) {
+                $slipFile = !empty($paymentRow['DealsPayment']['file']) ? trim((string)$paymentRow['DealsPayment']['file']) : '';
+                $slipDir = !empty($paymentRow['DealsPayment']['dir']) ? trim((string)$paymentRow['DealsPayment']['dir']) : 'paymentslips';
+
+                $dealReceiptGroups[$dId][$receiptNoKey] = array(
+                    'receipt_key' => $receiptNoKey,
+                    'receipt_no' => !empty($paymentRow['DealsPayment']['receipt_no']) ? $paymentRow['DealsPayment']['receipt_no'] : ('RCP-' . $rowId),
+                    'deal_id' => $dId,
+                    'first_row' => $paymentRow,
+                    'first_id' => $rowId,
+                    'ids' => array(),
+                    'paid_amount' => 0,
+                    'late_fees' => 0,
+                    'installment_late_amount' => 0,
+                    'payment_names' => array(),
+                    'payment_date' => !empty($paymentRow['DealsPayment']['payment_date']) ? $paymentRow['DealsPayment']['payment_date'] : '',
+                    'remarks' => !empty($paymentRow['DealsPayment']['remarks']) ? $paymentRow['DealsPayment']['remarks'] : '',
+                    'payment_type' => !empty($paymentRow['Paymenttype']['name']) ? $paymentRow['Paymenttype']['name'] : '-',
+                    'slip_row_id' => $rowId,
+                    'slip_file' => $slipFile,
+                    'slip_dir' => $slipDir,
+                    'slip_is_image' => 0
                 );
             }
 
-            $payDate = !empty($row['MyPayment']['payment_date']) ? date('Y-m-d', strtotime($row['MyPayment']['payment_date'])) : (!empty($row['MyPayment']['date']) ? date('Y-m-d', strtotime($row['MyPayment']['date'])) : '');
-            $dueDate = !empty($row['PlansPayment']['date']) ? date('Y-m-d', strtotime($row['PlansPayment']['date'])) : '';
+            $dealReceiptGroups[$dId][$receiptNoKey]['ids'][] = $rowId;
+            $rowPaidAmount = isset($paymentRow['DealsPayment']['emi']) ? (float)$paymentRow['DealsPayment']['emi'] : (isset($paymentRow['DealsPayment']['amount']) ? (float)$paymentRow['DealsPayment']['amount'] : 0);
+            $rowLateFees = isset($paymentRow['DealsPayment']['extra_payment']) ? (float)$paymentRow['DealsPayment']['extra_payment'] : 0;
 
-            $timingStatus = 'advance';
-            $diffDays = 0;
+            $dealReceiptGroups[$dId][$receiptNoKey]['paid_amount'] += $rowPaidAmount;
+            $dealReceiptGroups[$dId][$receiptNoKey]['late_fees'] += $rowLateFees;
+            $dealReceiptGroups[$dId][$receiptNoKey]['installment_late_amount'] += ($rowPaidAmount + $rowLateFees);
 
-            if(!empty($payDate) && !empty($dueDate))
+            $rowPaymentName = !empty($paymentRow['PlansPayment']['name']) ? trim((string)$paymentRow['PlansPayment']['name']) : '';
+            if ($rowPaymentName === '' && !empty($paymentRow['DealsPayment']['name'])) {
+                $rowPaymentName = trim((string)$paymentRow['DealsPayment']['name']);
+            }
+            if ($rowPaymentName !== '' && !in_array($rowPaymentName, $dealReceiptGroups[$dId][$receiptNoKey]['payment_names'], true)) {
+                $dealReceiptGroups[$dId][$receiptNoKey]['payment_names'][] = $rowPaymentName;
+            }
+
+            if (empty($dealReceiptGroups[$dId][$receiptNoKey]['slip_file']) && !empty($paymentRow['DealsPayment']['file'])) {
+                $dealReceiptGroups[$dId][$receiptNoKey]['slip_file'] = trim((string)$paymentRow['DealsPayment']['file']);
+                $dealReceiptGroups[$dId][$receiptNoKey]['slip_row_id'] = $rowId;
+                if (!empty($paymentRow['DealsPayment']['dir'])) {
+                    $dealReceiptGroups[$dId][$receiptNoKey]['slip_dir'] = trim((string)$paymentRow['DealsPayment']['dir']);
+                }
+            }
+        }
+
+        // 4. Build final structure for each deal
+        $dealsWithPayments = array();
+        $totalBalanceAllDeals = 0;
+
+        foreach ($dealMap as $dId => $cd) {
+            $receipts = isset($dealReceiptGroups[$dId]) ? array_values($dealReceiptGroups[$dId]) : array();
+
+            $dealPaidTotal = 0;
+            $dealLateFeesTotal = 0;
+            foreach ($receipts as &$rcp) {
+                $rcp['id_list'] = implode(',', $rcp['ids']);
+                if (!empty($rcp['slip_file'])) {
+                    $ext = strtolower(pathinfo($rcp['slip_file'], PATHINFO_EXTENSION));
+                    $rcp['slip_is_image'] = in_array($ext, array('jpg', 'jpeg', 'png', 'gif', 'webp'), true);
+                }
+                $dealPaidTotal += $rcp['paid_amount'];
+                $dealLateFeesTotal += $rcp['late_fees'];
+
+                $rcpWithDeal = $rcp;
+                $rcpWithDeal['deal_invoice'] = !empty($cd['Deal']['invoice_no']) ? $cd['Deal']['invoice_no'] : ('#' . $dId);
+                $rcpWithDeal['property_name'] = !empty($cd['Property']['name']) ? $cd['Property']['name'] : __('Property');
+                $rcpWithDeal['unit_name'] = !empty($cd['Unit']['name']) ? $cd['Unit']['name'] : '';
+                $allPaymentsList[] = $rcpWithDeal;
+            }
+            unset($rcp);
+
+            $dealTotalAmount = isset($cd['Deal']['total_amount']) ? (float)$cd['Deal']['total_amount'] : 0;
+            $dealBalanceDue = round(max(0, $dealTotalAmount - $dealPaidTotal), 2);
+
+            $totalPaidAllDeals += $dealPaidTotal;
+            $totalBalanceAllDeals += $dealBalanceDue;
+            $totalReceiptsCount += count($receipts);
+
+            $dealsWithPayments[$dId] = array(
+                'deal' => $cd['Deal'],
+                'property' => isset($cd['Property']) ? $cd['Property'] : array(),
+                'unit' => isset($cd['Unit']) ? $cd['Unit'] : array(),
+                'plan' => isset($cd['Plan']) ? $cd['Plan'] : array(),
+                'project' => isset($cd['Project']) ? $cd['Project'] : array(),
+                'receipts' => $receipts,
+                'total_paid' => round($dealPaidTotal, 2),
+                'total_late_fees' => round($dealLateFeesTotal, 2),
+                'total_amount' => round($dealTotalAmount, 2),
+                'balance_due' => $dealBalanceDue,
+                'receipt_count' => count($receipts)
+            );
+        }
+
+        // Sort allPaymentsList by payment_date DESC, first_id DESC (by paid date)
+        usort($allPaymentsList, function($a, $b) {
+            $tA = !empty($a['payment_date']) ? strtotime($a['payment_date']) : 0;
+            $tB = !empty($b['payment_date']) ? strtotime($b['payment_date']) : 0;
+            if ($tA === $tB) {
+                return ($a['first_id'] > $b['first_id']) ? -1 : 1;
+            }
+            return ($tA > $tB) ? -1 : 1;
+        });
+
+        $filteredPaymentsList = $allPaymentsList;
+        if ($selectedDealId > 0) {
+            $filteredPaymentsList = array_values(array_filter($allPaymentsList, function($item) use ($selectedDealId) {
+                return ((int)$item['deal_id'] === $selectedDealId);
+            }));
+        }
+
+        $overallStats = array(
+            'total_paid' => round($totalPaidAllDeals, 2),
+            'receipts_count' => $totalReceiptsCount,
+            'deals_count' => count($dealMap),
+            'total_due' => round($totalBalanceAllDeals, 2)
+        );
+
+        $this->set('clientDeals', $clientDeals);
+        $this->set('dealsWithPayments', $dealsWithPayments);
+        $this->set('allPaymentsList', $allPaymentsList);
+        $this->set('filteredPaymentsList', $filteredPaymentsList);
+        $this->set('selectedDealId', $selectedDealId);
+        $this->set('overallStats', $overallStats);
+        $this->set('isClientPortal', true);
+        $this->set('title_for_layout', __('My Payment Receipts'));
+    }
+
+    protected function _dealChargeSummaryForDeal($dealId, $dealRow = array())
+    {
+        $summary = array(
+            'charge_count' => 0,
+            'charge_total' => 0,
+            'base_amount' => 0,
+            'grand_total' => 0,
+            'charge_names' => ''
+        );
+        $dealData = isset($dealRow['Deal']) ? (array)$dealRow['Deal'] : array();
+        $dealAmount = isset($dealData['amount']) ? (float)$dealData['amount'] : 0;
+        $dealDiscount = isset($dealData['discount']) ? (float)$dealData['discount'] : 0;
+        $dealGrandTotal = isset($dealData['total_amount']) ? (float)$dealData['total_amount'] : 0;
+        if($dealAmount > 0)
+        {
+            $summary['base_amount'] = round($dealAmount - $dealDiscount, 2);
+            if($summary['base_amount'] < 0)
             {
-                $diff = (int)round((strtotime($payDate) - strtotime($dueDate)) / 86400);
-                if($diff < 0)
+                $summary['base_amount'] = 0;
+            }
+        }
+        $this->loadModel('Admin.DealsPayment');
+        try
+        {
+            $sumRows = $this->DealsPayment->query(
+                "SELECT
+                    COUNT(*) AS charge_count,
+                    COALESCE(SUM(`total_amount`),0) AS charge_total,
+                    GROUP_CONCAT(DISTINCT TRIM(`charge_name`) ORDER BY TRIM(`charge_name`) SEPARATOR ', ') AS charge_names
+                 FROM `deal_charges`
+                 WHERE `deal_id`=".(int)$dealId." AND `status`=1"
+            );
+            if(!empty($sumRows[0][0]))
+            {
+                if(isset($sumRows[0][0]['charge_count']))
                 {
-                    $timingStatus = 'early';
-                    $diffDays = abs($diff);
-                    $paymentsByDeal[$dealId]['early_count']++;
-                    $overallStats['early_count']++;
+                    $summary['charge_count'] = (int)$sumRows[0][0]['charge_count'];
                 }
-                elseif($diff == 0)
+                if(isset($sumRows[0][0]['charge_total']) && $sumRows[0][0]['charge_total'] !== null)
                 {
-                    $timingStatus = 'ontime';
-                    $diffDays = 0;
-                    $paymentsByDeal[$dealId]['ontime_count']++;
-                    $overallStats['ontime_count']++;
+                    $summary['charge_total'] = round((float)$sumRows[0][0]['charge_total'], 2);
                 }
-                else
+                if(isset($sumRows[0][0]['charge_names']) && $sumRows[0][0]['charge_names'] !== null)
                 {
-                    $timingStatus = 'late';
-                    $diffDays = $diff;
-                    $paymentsByDeal[$dealId]['late_count']++;
-                    $overallStats['late_count']++;
+                    $summary['charge_names'] = trim((string)$sumRows[0][0]['charge_names']);
                 }
+            }
+        }
+        catch(Exception $e) {}
+        if($summary['base_amount'] <= 0 && $dealGrandTotal > 0)
+        {
+            $summary['base_amount'] = round($dealGrandTotal - (float)$summary['charge_total'], 2);
+            if($summary['base_amount'] < 0)
+            {
+                $summary['base_amount'] = $dealGrandTotal;
+            }
+        }
+        $summary['grand_total'] = $dealGrandTotal > 0 ? round($dealGrandTotal, 2) : round((float)$summary['base_amount'] + (float)$summary['charge_total'], 2);
+        return $summary;
+    }
+
+    protected function _computeDealStatusAnalysisData($dealId)
+    {
+        $this->loadModel('Admin.PlansPayment');
+        $this->loadModel('Admin.DealsPayment');
+
+        $planRows = $this->PlansPayment->find('all', array(
+            'fields' => array('PlansPayment.id', 'PlansPayment.deal_id', 'PlansPayment.name', 'PlansPayment.amount', 'PlansPayment.date'),
+            'conditions' => array('PlansPayment.deal_id' => $dealId),
+            'order' => array('PlansPayment.date' => 'asc', 'PlansPayment.id' => 'asc'),
+            'recursive' => -1
+        ));
+
+        $paymentRows = $this->DealsPayment->find('all', array(
+            'joins' => array(
+                array('table' => 'paymenttypes', 'alias' => 'Paymenttype', 'type' => 'LEFT', 'conditions' => array('DealsPayment.paymenttype_id=Paymenttype.id'))
+            ),
+            'fields' => array('DealsPayment.*', 'Paymenttype.name'),
+            'conditions' => array('DealsPayment.deal_id' => $dealId),
+            'order' => array('DealsPayment.payment_date' => 'asc', 'DealsPayment.id' => 'asc'),
+            'recursive' => -1
+        ));
+
+        $paymentsByPlan = array();
+        $unlinkedPayments = array();
+        $totalPaidSum = 0;
+        $earlyCount = 0;
+        $ontimeCount = 0;
+        $lateCount = 0;
+        $advanceCount = 0;
+
+        foreach($paymentRows as $pRow)
+        {
+            $p = $pRow['DealsPayment'];
+            $pTypeName = !empty($pRow['Paymenttype']['name']) ? $pRow['Paymenttype']['name'] : '';
+            $p['payment_type_name'] = $pTypeName;
+            $planId = !empty($p['plans_payment_id']) ? (int)$p['plans_payment_id'] : 0;
+            $amt = isset($p['emi']) && (float)$p['emi'] > 0 ? (float)$p['emi'] : (isset($p['amount']) ? (float)$p['amount'] : 0);
+            $totalPaidSum += $amt;
+
+            if($planId > 0)
+            {
+                if(!isset($paymentsByPlan[$planId]))
+                {
+                    $paymentsByPlan[$planId] = array();
+                }
+                $paymentsByPlan[$planId][] = $p;
             }
             else
             {
-                $paymentsByDeal[$dealId]['advance_count']++;
-                $overallStats['advance_count']++;
+                $unlinkedPayments[] = $p;
+            }
+        }
+
+        $nowDate = date('Y-m-d');
+        $nowTs = strtotime($nowDate);
+
+        $schedules = array();
+        $totalPlanAmount = 0;
+        $totalOverdueBalance = 0;
+        $overdueCount = 0;
+        $maxDelayDays = 0;
+
+        foreach($planRows as $idx => $plRow)
+        {
+            $pl = $plRow['PlansPayment'];
+            $planId = (int)$pl['id'];
+            $planAmount = isset($pl['amount']) ? (float)$pl['amount'] : 0;
+            $totalPlanAmount += $planAmount;
+            $dueDate = !empty($pl['date']) ? date('Y-m-d', strtotime($pl['date'])) : '';
+            $dueTs = !empty($dueDate) ? strtotime($dueDate) : 0;
+
+            $linked = isset($paymentsByPlan[$planId]) ? $paymentsByPlan[$planId] : array();
+            $planPaidAmount = 0;
+            $linkedReceipts = array();
+
+            foreach($linked as $lp)
+            {
+                $pAmt = isset($lp['emi']) && (float)$lp['emi'] > 0 ? (float)$lp['emi'] : (isset($lp['amount']) ? (float)$lp['amount'] : 0);
+                $planPaidAmount += $pAmt;
+                $pDate = !empty($lp['payment_date']) ? date('Y-m-d', strtotime($lp['payment_date'])) : '';
+                $pTs = !empty($pDate) ? strtotime($pDate) : 0;
+
+                $timingStatus = 'advance';
+                $timingDiffDays = 0;
+
+                if($pTs > 0 && $dueTs > 0)
+                {
+                    $diff = (int)round(($pTs - $dueTs) / 86400);
+                    if($diff < 0)
+                    {
+                        $timingStatus = 'early';
+                        $timingDiffDays = abs($diff);
+                        $earlyCount++;
+                    }
+                    elseif($diff == 0)
+                    {
+                        $timingStatus = 'ontime';
+                        $timingDiffDays = 0;
+                        $ontimeCount++;
+                    }
+                    else
+                    {
+                        $timingStatus = 'late';
+                        $timingDiffDays = $diff;
+                        $lateCount++;
+                    }
+                }
+                else
+                {
+                    $advanceCount++;
+                }
+
+                $linkedReceipts[] = array(
+                    'id' => (int)$lp['id'],
+                    'receipt_no' => !empty($lp['receipt_no']) ? $lp['receipt_no'] : '',
+                    'payment_date' => $pDate,
+                    'amount' => $pAmt,
+                    'payment_type' => !empty($lp['payment_type_name']) ? $lp['payment_type_name'] : '',
+                    'timing_status' => $timingStatus,
+                    'timing_diff_days' => $timingDiffDays
+                );
             }
 
-            $row['TimingAnalysis'] = array(
-                'status' => $timingStatus,
-                'diff_days' => $diffDays,
+            $balance = round($planAmount - $planPaidAmount, 2);
+            $isPaid = ($balance <= 0);
+            $isPartial = ($planPaidAmount > 0 && $balance > 0);
+            $isOverdue = (!$isPaid && $dueTs > 0 && $dueTs < $nowTs);
+
+            if($isOverdue)
+            {
+                $totalOverdueBalance += $balance;
+                $overdueCount++;
+                $delayDays = (int)round(($nowTs - $dueTs) / 86400);
+                if($delayDays > $maxDelayDays)
+                {
+                    $maxDelayDays = $delayDays;
+                }
+            }
+
+            $schedules[] = array(
+                'index' => $idx + 1,
+                'plan_id' => $planId,
+                'name' => !empty($pl['name']) ? $pl['name'] : __('Installment') . ' ' . ($idx + 1),
+                'amount' => $planAmount,
                 'due_date' => $dueDate,
-                'payment_date' => $payDate,
-                'installment_name' => !empty($row['PlansPayment']['name']) ? $row['PlansPayment']['name'] : ''
+                'paid_amount' => $planPaidAmount,
+                'balance' => $balance > 0 ? $balance : 0,
+                'is_paid' => $isPaid,
+                'is_partial' => $isPartial,
+                'is_overdue' => $isOverdue,
+                'receipts' => $linkedReceipts
             );
-
-            $amt = isset($row['MyPayment']['amount']) ? (float)$row['MyPayment']['amount'] : 0;
-            $paymentsByDeal[$dealId]['rows'][] = $row;
-            $paymentsByDeal[$dealId]['total_paid'] += $amt;
-            $paymentsByDeal[$dealId]['receipt_count']++;
-            $overallStats['total_paid'] += $amt;
-            $overallStats['receipts_count']++;
         }
 
-        foreach($paymentsByDeal as $dealId => $dealData)
+        $totalEvaluated = $earlyCount + $ontimeCount + $lateCount;
+        $compliancePercent = 100;
+        if($totalEvaluated > 0)
         {
-            $paymentsByDeal[$dealId]['total_paid'] = round((float)$dealData['total_paid'],2);
+            $compliancePercent = round((($earlyCount + $ontimeCount) / $totalEvaluated) * 100);
         }
 
-        $dealIds = array_keys($paymentsByDeal);
-        $planPaidById = array();
-        if(!empty($dealIds))
+        return array(
+            'total_plan_amount' => $totalPlanAmount,
+            'total_paid_amount' => $totalPaidSum,
+            'total_overdue_balance' => $totalOverdueBalance,
+            'overdue_count' => $overdueCount,
+            'max_delay_days' => $maxDelayDays,
+            'early_count' => $earlyCount,
+            'ontime_count' => $ontimeCount,
+            'late_count' => $lateCount,
+            'advance_count' => $advanceCount,
+            'compliance_percent' => $compliancePercent,
+            'schedules' => $schedules,
+            'unlinked_payments' => $unlinkedPayments
+        );
+    }
+
+    public function viewpaymentslip($id = null)
+    {
+        $this->layout = null;
+        if(!$id)
         {
-            $planPaidRows = $this->MyPayment->find('all', array(
-                'fields' => array('MyPayment.plans_payment_id', 'SUM(MyPayment.emi) AS paid_total'),
-                'conditions' => array(
-                    'MyPayment.deal_id' => $dealIds,
-                    'MyPayment.plans_payment_id >' => 0
-                ),
-                'group' => array('MyPayment.plans_payment_id'),
-                'recursive' => -1
-            ));
-            foreach((array)$planPaidRows as $planPaidRow)
+            $this->Session->setFlash(__('Invalid Post.'),'flash',array('alert'=>'danger'));
+            return $this->redirect(array('action' => 'index'));
+        }
+
+        $joins = array(
+            array('table'=>'deals','alias'=>'Deal','type'=>'LEFT','conditions'=>array('DealsPayment.deal_id=Deal.id')),
+            array('table'=>'clients','alias'=>'Client','type'=>'LEFT','conditions'=>array('Deal.client_id=Client.id')),
+            array('table'=>'properties','alias'=>'Property','type'=>'LEFT','conditions'=>array('Deal.property_id=Property.id')),
+            array('table'=>'plans_payments','alias'=>'PlansPayment','type'=>'LEFT','conditions'=>array('DealsPayment.plans_payment_id=PlansPayment.id')),
+            array('table'=>'paymenttypes','alias'=>'Paymenttype','type'=>'LEFT','conditions'=>array('DealsPayment.paymenttype_id=Paymenttype.id'))
+        );
+        $fields = array('DealsPayment.*','Deal.*','Client.*','Property.*','PlansPayment.*','Paymenttype.*');
+
+        $this->loadModel('Admin.DealsPayment');
+        $post = $this->DealsPayment->find('first', array(
+            'joins' => $joins,
+            'fields' => $fields,
+            'conditions' => array(
+                'DealsPayment.id' => (int)$id,
+                'Deal.client_id' => $this->userId
+            ),
+            'recursive' => -1
+        ));
+
+        if(!$post)
+        {
+            $this->Session->setFlash(__('Payment slip not found or access denied.'),'flash',array('alert'=>'danger'));
+            return $this->redirect(array('action' => 'index'));
+        }
+
+        $slipFile = !empty($post['DealsPayment']['payment_slip']) ? trim((string)$post['DealsPayment']['payment_slip']) : '';
+        $slipDir = !empty($post['DealsPayment']['payment_slip_dir']) ? trim((string)$post['DealsPayment']['payment_slip_dir']) : 'paymentslips';
+        $slipRelPath = '';
+        $slipMime = !empty($post['DealsPayment']['payment_slip_mime']) ? trim((string)$post['DealsPayment']['payment_slip_mime']) : '';
+        $slipIsImage = !empty($post['DealsPayment']['payment_slip_is_image']) ? true : false;
+        $slipMessage = __('Payment slip not uploaded.');
+
+        if($slipFile !== '')
+        {
+            $slipMessage = __('Payment slip file was not found.');
+            $safeSlipDir = trim(str_replace('\\', '/', $slipDir), '/');
+            if($safeSlipDir === '')
             {
-                $planId = isset($planPaidRow['MyPayment']['plans_payment_id']) ? (int)$planPaidRow['MyPayment']['plans_payment_id'] : 0;
-                if($planId <= 0)
+                $safeSlipDir = 'paymentslips';
+            }
+            $slipAbsPath = WWW_ROOT . 'img' . DS . str_replace('/', DS, $safeSlipDir) . DS . $slipFile;
+            if(file_exists($slipAbsPath))
+            {
+                $slipRelPath = $safeSlipDir . '/' . $slipFile;
+                $slipMessage = '';
+                if(!$slipIsImage)
                 {
-                    continue;
+                    $ext = strtolower(pathinfo($slipFile, PATHINFO_EXTENSION));
+                    $slipIsImage = in_array($ext, array('jpg','jpeg','png','gif','webp'));
                 }
-                $planPaidById[$planId] = isset($planPaidRow[0]['paid_total']) ? (float)$planPaidRow[0]['paid_total'] : 0;
             }
         }
 
-        $overdueByDeal = array();
-        $overdueInstallmentsByDeal = array();
-        if(!empty($dealIds))
-        {
-            $planRows = $this->PlansPayment->find('all', array(
-                'fields' => array('PlansPayment.id', 'PlansPayment.deal_id', 'PlansPayment.amount', 'PlansPayment.date'),
-                'conditions' => array('PlansPayment.deal_id' => $dealIds),
-                'order' => array('PlansPayment.id' => 'asc'),
-                'recursive' => -1
-            ));
-            foreach((array)$planRows as $planRow)
-            {
-                if(empty($planRow['PlansPayment']['id']) || empty($planRow['PlansPayment']['deal_id']))
-                {
-                    continue;
-                }
-                $planId = (int)$planRow['PlansPayment']['id'];
-                $dealId = (int)$planRow['PlansPayment']['deal_id'];
-                $planAmount = isset($planRow['PlansPayment']['amount']) ? (float)$planRow['PlansPayment']['amount'] : 0;
-                $planPaid = isset($planPaidById[$planId]) ? (float)$planPaidById[$planId] : 0;
-                $pending = round($planAmount - $planPaid, 2);
-                $dueDate = !empty($planRow['PlansPayment']['date']) ? $planRow['PlansPayment']['date'] : null;
-                if($pending > 0 && $dueDate && $dueDate <= $this->currentDate)
-                {
-                    if(!isset($overdueByDeal[$dealId]))
-                    {
-                        $overdueByDeal[$dealId] = 0;
-                    }
-                    if(!isset($overdueInstallmentsByDeal[$dealId]))
-                    {
-                        $overdueInstallmentsByDeal[$dealId] = 0;
-                    }
-                    $overdueByDeal[$dealId] += $pending;
-                    $overdueInstallmentsByDeal[$dealId]++;
-                }
-            }
-        }
-
-        foreach($paymentsByDeal as $dealId => $dealData)
-        {
-            $dealTotal = isset($dealData['Deal']['total_amount']) ? (float)$dealData['Deal']['total_amount'] : 0;
-            $dealPaid = isset($dealData['total_paid']) ? (float)$dealData['total_paid'] : 0;
-            $dueAmount = round($dealTotal - $dealPaid, 2);
-            if($dueAmount < 0)
-            {
-                $dueAmount = 0;
-            }
-            $paymentsByDeal[$dealId]['due_amount'] = $dueAmount;
-            $paymentsByDeal[$dealId]['overdue_amount'] = round(isset($overdueByDeal[$dealId]) ? (float)$overdueByDeal[$dealId] : 0, 2);
-            $paymentsByDeal[$dealId]['overdue_installments'] = isset($overdueInstallmentsByDeal[$dealId]) ? (int)$overdueInstallmentsByDeal[$dealId] : 0;
-        }
-
-        $this->set('postArr',$postArr);
-        $this->set('paymentsByDeal',$paymentsByDeal);
-        $this->set('selectedDealId',$selectedDealId);
-        $this->set('overallStats',$overallStats);
+        $this->set('post', $post);
+        $this->set('slipRelPath', $slipRelPath);
+        $this->set('slipMime', $slipMime);
+        $this->set('slipIsImage', $slipIsImage);
+        $this->set('slipMessage', $slipMessage);
+        $this->render('/../Plugin/Admin/View/DealsPayments/viewpaymentslip');
     }
 
     protected function _getDealScheduleContext($dealId)

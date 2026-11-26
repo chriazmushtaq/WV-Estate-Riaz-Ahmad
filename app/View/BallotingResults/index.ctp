@@ -1,61 +1,91 @@
 <style type="text/css">
+/* ==========================================================================
+   BALLOTING RESULTS & ALLOTMENT PORTAL - PROFESSIONAL LIGHT THEME
+   ========================================================================== */
 .wv-ballot-page {
-    background: #f4f7fb;
+    background: #f8fafc;
     margin: -10px -5px 0;
-    padding: 14px;
-    min-height: 85vh;
+    padding: 18px;
+    min-height: 88vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #0f172a;
+    -webkit-overflow-scrolling: touch;
+    overflow-x: auto;
 }
+
+/* Page Header / Executive Hero Card */
 .wv-ballot-hero {
-    background: linear-gradient(135deg, #07152a 0%, #0e294b 60%, #ff0a46 160%);
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-top: 4px solid #0284c7;
     border-radius: 16px;
-    padding: 28px 32px;
-    color: #ffffff;
+    padding: 26px 30px;
     margin-bottom: 24px;
-    box-shadow: 0 16px 36px rgba(7, 21, 42, 0.14);
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
     position: relative;
     overflow: hidden;
 }
+.wv-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #eff6ff;
+    color: #0284c7;
+    border: 1px solid #bfdbfe;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 12px;
+}
 .wv-ballot-hero h1 {
-    font-size: 26px;
+    font-size: 24px;
     font-weight: 900;
     margin: 0 0 8px;
-    color: #ffffff !important;
+    color: #0f172a !important;
     display: flex;
     align-items: center;
     gap: 12px;
+    letter-spacing: -0.3px;
 }
 .wv-ballot-hero p {
-    font-size: 13.5px;
-    color: #cbd5e1;
+    font-size: 14px;
+    color: #475569;
     margin: 0;
-    max-width: 720px;
-    line-height: 1.5;
+    max-width: 760px;
+    line-height: 1.6;
 }
 .wv-announcement-box {
-    background: rgba(124, 249, 255, 0.1);
-    border: 1px solid rgba(124, 249, 255, 0.25);
+    background: #fffbeb;
+    border: 1px solid #fef3c7;
+    border-left: 4px solid #f59e0b;
     border-radius: 10px;
     padding: 12px 16px;
-    margin-top: 16px;
-    font-size: 13px;
-    color: #e0f2fe;
+    margin-top: 18px;
+    font-size: 13.5px;
+    color: #92400e;
     display: flex;
     align-items: center;
     gap: 10px;
+    font-weight: 600;
 }
+
+/* Search Card */
 .wv-search-card {
     background: #ffffff;
-    border: 1px solid #dfe9f5;
-    border-radius: 14px;
-    padding: 22px 24px;
-    margin-bottom: 24px;
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px 26px;
+    margin-bottom: 28px;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
 }
 .wv-search-title {
     font-size: 16px;
     font-weight: 800;
-    color: #07152a;
-    margin: 0 0 12px;
+    color: #0f172a;
+    margin: 0 0 8px;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -64,24 +94,27 @@
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
+    margin-top: 14px;
 }
 .wv-search-input {
     flex: 1 1 280px;
     height: 48px;
     border-radius: 10px;
-    border: 2px solid #e2e8f0;
+    border: 1.5px solid #cbd5e1;
+    background: #ffffff;
     padding: 0 16px;
     font-size: 14px;
     font-weight: 600;
-    transition: all 0.2s;
+    color: #0f172a;
+    transition: all 0.2s ease;
 }
 .wv-search-input:focus {
-    border-color: #ff0a46;
+    border-color: #0284c7;
     outline: none;
-    box-shadow: 0 0 0 3px rgba(255, 10, 70, 0.1);
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
 }
 .wv-search-btn {
-    background: #ff0a46;
+    background: #0f172a;
     color: #ffffff !important;
     border: none;
     border-radius: 10px;
@@ -92,85 +125,152 @@
     cursor: pointer;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
-    box-shadow: 0 4px 14px rgba(255, 10, 70, 0.25);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
     transition: all 0.2s ease;
 }
 .wv-search-btn:hover {
-    background: #e0003c;
+    background: #0284c7;
     transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(2, 132, 199, 0.25);
+}
+
+/* Search Result Boxes */
+.wv-search-result-box {
+    margin-top: 20px;
+    padding: 20px 22px;
+    border-radius: 14px;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+}
+.wv-result-allotted {
+    background: #ecfdf5;
+    border: 1.5px solid #a7f3d0;
+}
+.wv-result-pending {
+    background: #eff6ff;
+    border: 1.5px solid #bfdbfe;
+}
+.wv-result-none {
+    background: #fff1f2;
+    border: 1.5px solid #fecdd3;
+}
+
+/* Balloted Cards Grid & Professional Card Design */
+.wv-section-heading {
+    font-size: 18px;
+    font-weight: 900;
+    color: #0f172a;
+    margin: 28px 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 .wv-allotment-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 20px;
-    margin-bottom: 28px;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
 }
 .wv-allotment-card {
     background: #ffffff;
-    border: 1px solid #dfe9f5;
-    border-radius: 16px;
-    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.05);
     overflow: hidden;
     position: relative;
-    transition: all 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .wv-allotment-card:hover {
-    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.12);
-    transform: translateY(-2px);
+    box-shadow: 0 14px 34px rgba(15, 23, 42, 0.1);
+    transform: translateY(-3px);
+    border-color: #cbd5e1;
 }
 .wv-allotment-header {
-    background: linear-gradient(135deg, #07152a 0%, #102746 100%);
-    padding: 18px 20px;
-    color: #ffffff;
+    background: #f8fafc;
+    border-bottom: 1px solid #f1f5f9;
+    padding: 16px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 12px;
 }
 .wv-allotment-title {
     font-size: 15px;
     font-weight: 800;
     margin: 0;
-    color: #ffffff !important;
+    color: #0f172a !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 .wv-allotment-badge {
-    background: #10b981;
-    color: #ffffff;
+    background: #ecfdf5;
+    color: #059669;
+    border: 1px solid #a7f3d0;
     font-size: 11px;
     font-weight: 900;
     padding: 4px 10px;
     border-radius: 999px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
 }
 .wv-allotment-body {
     padding: 20px;
+    flex: 1 1 auto;
 }
+
+/* Plot Highlight Box */
 .wv-allotment-highlight {
-    background: #f8fafc;
-    border: 1px dashed #cbd5e1;
-    border-radius: 12px;
-    padding: 14px 16px;
+    background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+    border: 1.5px dashed #86efac;
+    border-radius: 14px;
+    padding: 16px 18px;
     text-align: center;
-    margin-bottom: 16px;
+    margin-bottom: 18px;
 }
 .wv-plot-label {
     font-size: 11px;
     font-weight: 800;
     text-transform: uppercase;
-    color: #64748b;
+    letter-spacing: 0.6px;
+    color: #059669;
     margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
 }
 .wv-plot-value {
-    font-size: 26px;
+    font-size: 28px;
     font-weight: 900;
-    color: #07152a;
-    line-height: 1.1;
+    color: #064e3b;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+}
+.wv-plot-subline {
+    font-size: 12.5px;
+    color: #047857;
+    font-weight: 700;
+    margin-top: 4px;
+}
+
+/* Specification Rows */
+.wv-spec-table {
+    margin-bottom: 18px;
 }
 .wv-spec-row {
     display: flex;
     justify-content: space-between;
-    padding: 8px 0;
+    align-items: center;
+    padding: 9px 0;
     border-bottom: 1px solid #f1f5f9;
     font-size: 13px;
 }
@@ -179,62 +279,133 @@
 }
 .wv-spec-label {
     color: #64748b;
-    font-weight: 700;
+    font-weight: 600;
 }
 .wv-spec-val {
     color: #0f172a;
     font-weight: 800;
+    text-align: right;
 }
-.wv-cert-btn {
-    background: #07152a;
+
+/* Card Action Buttons */
+.wv-card-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 18px;
+}
+.wv-btn-print-letter {
+    background: #0f172a;
     color: #ffffff !important;
-    display: block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     width: 100%;
     text-align: center;
     border-radius: 10px;
-    padding: 12px;
+    padding: 11px 16px;
     font-size: 13px;
     font-weight: 800;
     text-decoration: none !important;
-    margin-top: 16px;
     transition: all 0.2s ease;
-    box-shadow: 0 4px 12px rgba(7, 21, 42, 0.2);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+    border: none;
 }
-.wv-cert-btn:hover {
-    background: #ff0a46;
+.wv-btn-print-letter:hover {
+    background: #0284c7;
     color: #ffffff !important;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(2, 132, 199, 0.25);
 }
-.wv-search-result-box {
-    margin-top: 18px;
-    padding: 18px;
-    border-radius: 12px;
+.wv-btn-cert-qr {
+    background: #ffffff;
+    color: #059669 !important;
+    border: 1.5px solid #10b981;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    text-align: center;
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none !important;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.08);
 }
-.wv-result-allotted {
+.wv-btn-cert-qr:hover {
     background: #ecfdf5;
-    border: 1px solid #a7f3d0;
+    border-color: #059669;
+    color: #047857 !important;
+    transform: translateY(-1px);
 }
-.wv-result-pending {
-    background: #eff6ff;
-    border: 1px solid #bfdbfe;
+.wv-card-stamp-note {
+    font-size: 11.5px;
+    color: #64748b;
+    text-align: center;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-weight: 600;
 }
-.wv-result-none {
-    background: #fff1f2;
-    border: 1px solid #fecdd3;
+
+/* Queued Bookings Cards */
+.wv-queued-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+    height: 100%;
+    transition: all 0.2s ease;
+}
+.wv-queued-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 768px) {
+    .wv-ballot-page {
+        padding: 12px;
+    }
+    .wv-ballot-hero {
+        padding: 20px 18px;
+    }
+    .wv-ballot-hero h1 {
+        font-size: 20px;
+    }
+    .wv-search-card {
+        padding: 18px;
+    }
+    .wv-allotment-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    .wv-plot-value {
+        font-size: 24px;
+    }
 }
 </style>
 
 <div class="wv-ballot-page">
     <?php echo $this->Session->flash(); ?>
 
-    <!-- Hero Banner -->
+    <!-- Executive Header Card -->
     <div class="wv-ballot-hero">
-        <h1><i class="fa fa-cube text-info"></i> <?php echo __('e-Balloting Results & Digital Plot Allocation'); ?></h1>
-        <p><?php echo __('Official digital allocation portal for White Villas. Verify your allotted plot coordinates, block and street dimensions, and download your official QR-verified allocation certificate.'); ?></p>
+        <span class="wv-hero-badge"><i class="fa fa-shield"></i> <?php echo __('Official Verification Portal'); ?></span>
+        <h1><i class="fa fa-cube text-primary"></i> <?php echo __('e-Balloting Results & Digital Plot Allocation'); ?></h1>
+        <p><?php echo __('Official digital allocation portal for White Villas. Verify your allotted plot coordinates, block and street dimensions, and download or print your official allotment letters with duplicate copy watermark and QR authentication.'); ?></p>
 
         <?php if(!empty($announcements)): ?>
         <?php foreach($announcements as $ann): ?>
         <div class="wv-announcement-box">
-            <i class="fa fa-bullhorn text-warning"></i>
+            <i class="fa fa-bullhorn"></i>
             <span><?php echo h($ann); ?></span>
         </div>
         <?php endforeach; ?>
@@ -243,56 +414,73 @@
 
     <!-- Live Allotment Search Bar -->
     <div class="wv-search-card">
-        <h3 class="wv-search-title"><i class="fa fa-search text-danger"></i> <?php echo __('Live Balloting Allotment Status Search'); ?></h3>
-        <p style="font-size:12.5px; color:#64748b; margin:0 0 14px;"><?php echo __('Enter your Deal / Invoice Number, Registration No, or 13-digit CNIC to check your real-time balloting allotment status:'); ?></p>
+        <h3 class="wv-search-title"><i class="fa fa-search text-primary"></i> <?php echo __('Live Balloting Allotment Status Search'); ?></h3>
+        <p style="font-size:13px; color:#64748b; margin:0 0 12px;"><?php echo __('Enter your Deal / Invoice Number, Registration No, or 13-digit CNIC to check your real-time balloting allotment status:'); ?></p>
         <form method="get" action="<?php echo $this->Html->url(array('action' => 'index')); ?>">
             <div class="wv-search-input-group">
-                <input type="text" name="q" class="wv-search-input" placeholder="<?php echo __('e.g. WV-155, 35201-XXXXXXX-X, or Plot No'); ?>" value="<?php echo h($searchQuery); ?>" required="required">
+                <input type="text" name="q" class="wv-search-input" placeholder="<?php echo __('e.g. WV-L/SC/2025-3033, 38101-XXXXXXX-X, or Plot No'); ?>" value="<?php echo h($searchQuery); ?>" required="required">
                 <button type="submit" class="wv-search-btn">
                     <i class="fa fa-search"></i> <?php echo __('Check Balloting Result'); ?>
                 </button>
             </div>
         </form>
 
-        <!-- Search Results Card -->
+        <!-- Search Results Box -->
         <?php if($searchPerformed && !empty($searchResult)): ?>
             <?php if($searchResult['status'] === 'ALLOTTED'): ?>
             <div class="wv-search-result-box wv-result-allotted">
-                <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px; margin-bottom:14px;">
                     <div>
-                        <h4 style="margin:0 0 4px; font-weight:900; color:#065f46;">
+                        <h4 style="margin:0 0 4px; font-weight:900; color:#065f46; font-size:17px;">
                             <i class="fa fa-check-circle"></i> <?php echo __('Plot Allotted Successfully!'); ?>
                         </h4>
                         <p style="margin:0; font-size:13px; color:#047857;">
                             <?php echo __('Allottee:'); ?> <strong><?php echo h($searchResult['client_name']); ?></strong> | <?php echo __('Project:'); ?> <strong><?php echo h($searchResult['project_name']); ?></strong>
                         </p>
                     </div>
-                    <div>
-                        <a href="<?php echo h($searchResult['certificate_url']); ?>" target="_blank" class="btn btn-success" style="font-weight:800; border-radius:8px;">
-                            <i class="fa fa-file-text-o"></i> <?php echo __('Download QR Certificate'); ?>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <?php if(!empty($searchResult['allotment_letter_url'])): ?>
+                        <a href="<?php echo h($searchResult['allotment_letter_url']); ?>" target="_blank" class="btn" style="background:#0f172a; color:#ffffff !important; font-weight:800; border-radius:8px; padding:8px 16px; font-size:13px;">
+                            <i class="fa fa-print"></i> <?php echo __('Print Allotment Letter (Duplicate)'); ?>
+                        </a>
+                        <?php endif; ?>
+                        <a href="<?php echo h($searchResult['certificate_url']); ?>" target="_blank" class="btn" style="background:#059669; color:#ffffff !important; font-weight:800; border-radius:8px; padding:8px 16px; font-size:13px;">
+                            <i class="fa fa-qrcode"></i> <?php echo __('Download QR Certificate'); ?>
                         </a>
                     </div>
                 </div>
-                <div class="row" style="margin-top:14px;">
-                    <div class="col-sm-3 col-xs-6"><strong>Plot / Unit:</strong> <?php echo h($searchResult['property_no']); ?></div>
-                    <div class="col-sm-3 col-xs-6"><strong>Block / Sector:</strong> <?php echo h($searchResult['block_name']); ?></div>
-                    <div class="col-sm-3 col-xs-6"><strong>Street No:</strong> <?php echo h($searchResult['street_no']); ?></div>
-                    <div class="col-sm-3 col-xs-6"><strong>Size / Area:</strong> <?php echo h($searchResult['unit_area']); ?></div>
+                <div class="row" style="background:#ffffff; border:1px solid #a7f3d0; border-radius:10px; padding:12px; margin:0;">
+                    <div class="col-sm-3 col-xs-6" style="padding:6px 10px;">
+                        <span style="font-size:11px; text-transform:uppercase; color:#64748b; font-weight:700; display:block;"><?php echo __('Plot / Unit'); ?></span>
+                        <strong style="font-size:15px; color:#065f46;"><?php echo h($searchResult['property_no']); ?></strong>
+                    </div>
+                    <div class="col-sm-3 col-xs-6" style="padding:6px 10px;">
+                        <span style="font-size:11px; text-transform:uppercase; color:#64748b; font-weight:700; display:block;"><?php echo __('Block / Sector'); ?></span>
+                        <strong style="font-size:15px; color:#0f172a;"><?php echo h($searchResult['block_name']); ?></strong>
+                    </div>
+                    <div class="col-sm-3 col-xs-6" style="padding:6px 10px;">
+                        <span style="font-size:11px; text-transform:uppercase; color:#64748b; font-weight:700; display:block;"><?php echo __('Street No'); ?></span>
+                        <strong style="font-size:15px; color:#0f172a;"><?php echo h($searchResult['street_no']); ?></strong>
+                    </div>
+                    <div class="col-sm-3 col-xs-6" style="padding:6px 10px;">
+                        <span style="font-size:11px; text-transform:uppercase; color:#64748b; font-weight:700; display:block;"><?php echo __('Size / Area'); ?></span>
+                        <strong style="font-size:15px; color:#0f172a;"><?php echo h($searchResult['unit_area']); ?></strong>
+                    </div>
                 </div>
             </div>
             <?php elseif($searchResult['status'] === 'PENDING_BALLOTING'): ?>
             <div class="wv-search-result-box wv-result-pending">
-                <h4 style="margin:0 0 6px; font-weight:800; color:#1e40af;">
+                <h4 style="margin:0 0 6px; font-weight:800; color:#1e40af; font-size:16px;">
                     <i class="fa fa-info-circle"></i> <?php echo __('Deal Verified - Queued for Next Balloting'); ?>
                 </h4>
-                <p style="margin:0; font-size:13px; color:#1d4ed8;"><?php echo h($searchResult['message']); ?></p>
+                <p style="margin:0; font-size:13.5px; color:#1d4ed8; line-height:1.5;"><?php echo h($searchResult['message']); ?></p>
             </div>
             <?php else: ?>
             <div class="wv-search-result-box wv-result-none">
-                <h4 style="margin:0 0 6px; font-weight:800; color:#9f1239;">
+                <h4 style="margin:0 0 6px; font-weight:800; color:#9f1239; font-size:16px;">
                     <i class="fa fa-exclamation-circle"></i> <?php echo __('No Allotment Record Found'); ?>
                 </h4>
-                <p style="margin:0; font-size:13px; color:#be123c;"><?php echo h($searchResult['message']); ?></p>
+                <p style="margin:0; font-size:13.5px; color:#be123c; line-height:1.5;"><?php echo h($searchResult['message']); ?></p>
             </div>
             <?php endif; ?>
         <?php endif; ?>
@@ -300,7 +488,7 @@
 
     <!-- Client's Allotted Units Section (Logged in View) -->
     <?php if(!empty($clientId)): ?>
-    <h3 style="font-size:18px; font-weight:900; color:#07152a; margin:28px 0 16px;">
+    <h3 class="wv-section-heading">
         <i class="fa fa-key text-warning"></i> <?php echo __('My Allotted Properties & Plots'); ?>
     </h3>
 
@@ -315,57 +503,84 @@
             $size = $allot['unit_area'] . ' ' . (!empty($allot['area_unit']) ? $allot['area_unit'] : 'Marla');
             $category = !empty($allot['permanent_type']) ? $allot['permanent_type'] : 'Standard';
             $allotDate = !empty($allot['allotment_date']) ? date('d-M-Y', strtotime($allot['allotment_date'])) : date('d-M-Y');
+            $allotRef = !empty($allot['allotment_no']) ? ('WV-ALLOT-' . $allot['allotment_no']) : ('WV-' . $allot['id']);
         ?>
         <div class="wv-allotment-card">
-            <div class="wv-allotment-header">
-                <h4 class="wv-allotment-title"><?php echo h($projName); ?></h4>
-                <span class="wv-allotment-badge"><?php echo __('Allotted'); ?></span>
-            </div>
-            <div class="wv-allotment-body">
-                <div class="wv-allotment-highlight">
-                    <div class="wv-plot-label"><?php echo __('Allotted Plot / Unit Number'); ?></div>
-                    <div class="wv-plot-value"><?php echo h($propNo); ?></div>
+            <div>
+                <div class="wv-allotment-header">
+                    <h4 class="wv-allotment-title">
+                        <i class="fa fa-building-o text-primary"></i> <?php echo h($projName); ?>
+                    </h4>
+                    <span class="wv-allotment-badge"><i class="fa fa-check-circle"></i> <?php echo __('Allotted'); ?></span>
                 </div>
-                <div class="wv-spec-row">
-                    <span class="wv-spec-label"><?php echo __('Block / Sector:'); ?></span>
-                    <span class="wv-spec-val"><?php echo h($block); ?></span>
-                </div>
-                <div class="wv-spec-row">
-                    <span class="wv-spec-label"><?php echo __('Street:'); ?></span>
-                    <span class="wv-spec-val"><?php echo h($street); ?></span>
-                </div>
-                <div class="wv-spec-row">
-                    <span class="wv-spec-label"><?php echo __('Plot Size:'); ?></span>
-                    <span class="wv-spec-val"><?php echo h($size); ?></span>
-                </div>
-                <div class="wv-spec-row">
-                    <span class="wv-spec-label"><?php echo __('Category:'); ?></span>
-                    <span class="wv-spec-val"><span class="badge" style="background:#07152a;"><?php echo h($category); ?></span></span>
-                </div>
-                <div class="wv-spec-row">
-                    <span class="wv-spec-label"><?php echo __('Allotment Date:'); ?></span>
-                    <span class="wv-spec-val"><?php echo h($allotDate); ?></span>
-                </div>
+                <div class="wv-allotment-body">
+                    <!-- Plot Highlight Box -->
+                    <div class="wv-allotment-highlight">
+                        <div class="wv-plot-label">
+                            <i class="fa fa-map-marker"></i> <?php echo __('Officially Allotted Plot / Unit'); ?>
+                        </div>
+                        <div class="wv-plot-value"><?php echo h($propNo); ?></div>
+                        <div class="wv-plot-subline"><?php echo h($block); ?> &bull; <?php echo h($size); ?></div>
+                    </div>
 
-                <a href="<?php echo $this->Html->url(array('action' => 'certificate', $allot['id'])); ?>" target="_blank" class="wv-cert-btn">
-                    <i class="fa fa-qrcode"></i> <?php echo __('Download / Print Official QR Certificate'); ?>
-                </a>
+                    <!-- Specification Rows -->
+                    <div class="wv-spec-table">
+                        <div class="wv-spec-row">
+                            <span class="wv-spec-label"><?php echo __('Block / Sector:'); ?></span>
+                            <span class="wv-spec-val"><?php echo h($block); ?></span>
+                        </div>
+                        <div class="wv-spec-row">
+                            <span class="wv-spec-label"><?php echo __('Street:'); ?></span>
+                            <span class="wv-spec-val"><?php echo h($street); ?></span>
+                        </div>
+                        <div class="wv-spec-row">
+                            <span class="wv-spec-label"><?php echo __('Plot Size:'); ?></span>
+                            <span class="wv-spec-val"><?php echo h($size); ?></span>
+                        </div>
+                        <div class="wv-spec-row">
+                            <span class="wv-spec-label"><?php echo __('Category / Type:'); ?></span>
+                            <span class="wv-spec-val"><span class="badge" style="background:#0f172a; font-weight:700;"><?php echo h($category); ?></span></span>
+                        </div>
+                        <div class="wv-spec-row">
+                            <span class="wv-spec-label"><?php echo __('Allotment Ref:'); ?></span>
+                            <span class="wv-spec-val" style="font-family:monospace; font-size:13px; color:#0284c7;"><?php echo h($allotRef); ?></span>
+                        </div>
+                        <div class="wv-spec-row">
+                            <span class="wv-spec-label"><?php echo __('Allotment Date:'); ?></span>
+                            <span class="wv-spec-val"><?php echo h($allotDate); ?></span>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="wv-card-actions">
+                        <a href="<?php echo $this->Html->url(array('action' => 'allotmentletter', $allot['id'])); ?>" target="_blank" class="wv-btn-print-letter">
+                            <i class="fa fa-print"></i> <?php echo __('Print Allotment Letter (Duplicate)'); ?>
+                        </a>
+                        <a href="<?php echo $this->Html->url(array('action' => 'certificate', $allot['id'])); ?>" target="_blank" class="wv-btn-cert-qr">
+                            <i class="fa fa-qrcode"></i> <?php echo __('Download QR Certificate'); ?>
+                        </a>
+                    </div>
+
+                    <div class="wv-card-stamp-note">
+                        <i class="fa fa-shield text-success"></i> <?php echo __('Original backend allotment letter issued with Duplicate watermark'); ?>
+                    </div>
+                </div>
             </div>
         </div>
         <?php endforeach; ?>
     </div>
     <?php else: ?>
-    <div style="background:#ffffff; border:1px solid #dfe9f5; border-radius:14px; padding:28px; text-align:center; color:#64748b; margin-bottom:24px;">
-        <i class="fa fa-cube" style="font-size:36px; color:#cbd5e1; margin-bottom:10px;"></i>
-        <h4 style="font-weight:800; color:#0f172a; margin-bottom:4px;"><?php echo __('No Allotments Recorded Yet'); ?></h4>
-        <p style="margin:0; font-size:13px;"><?php echo __('Your bookings are queued for upcoming balloting runs. Ensure your installments are up to date to qualify.'); ?></p>
+    <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:16px; padding:36px 20px; text-align:center; color:#64748b; margin-bottom:28px; box-shadow:0 4px 14px rgba(15,23,42,0.04);">
+        <i class="fa fa-cube" style="font-size:42px; color:#cbd5e1; margin-bottom:12px; display:inline-block;"></i>
+        <h4 style="font-weight:900; color:#0f172a; margin-bottom:6px; font-size:17px;"><?php echo __('No Allotments Recorded Yet'); ?></h4>
+        <p style="margin:0 auto; max-width:540px; font-size:13.5px; color:#64748b; line-height:1.5;"><?php echo __('Your bookings are queued for upcoming balloting runs. Ensure your installments are up to date to maintain top balloting priority.'); ?></p>
     </div>
     <?php endif; ?>
 
     <!-- Other Deals Pending Balloting -->
     <?php if(!empty($clientDeals)): ?>
-    <h3 style="font-size:16px; font-weight:800; color:#07152a; margin:24px 0 14px;">
-        <i class="fa fa-hourglass-half text-info"></i> <?php echo __('Other Bookings Queued for Next Balloting'); ?>
+    <h3 class="wv-section-heading" style="font-size:16px;">
+        <i class="fa fa-hourglass-half text-primary"></i> <?php echo __('Other Bookings Queued for Next Balloting'); ?>
     </h3>
     <div class="row">
         <?php foreach($clientDeals as $cd):
@@ -373,14 +588,14 @@
             $pName = !empty($cd['Property']['name']) ? $cd['Property']['name'] : 'Plot/Villa';
             $invoice = !empty($d['invoice_no']) ? $d['invoice_no'] : ('DEAL-' . $d['id']);
         ?>
-        <div class="col-md-4 col-sm-6" style="margin-bottom:16px;">
-            <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:16px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                    <strong style="color:#07152a; font-size:14px;"><?php echo h($pName); ?></strong>
-                    <span class="badge badge-info" style="font-size:10px;"><?php echo __('QUEUED'); ?></span>
+        <div class="col-md-4 col-sm-6" style="margin-bottom:18px;">
+            <div class="wv-queued-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <strong style="color:#0f172a; font-size:14.5px;"><?php echo h($pName); ?></strong>
+                    <span class="badge" style="background:#eff6ff; color:#0284c7; border:1px solid #bfdbfe; font-size:10px; font-weight:800;"><?php echo __('QUEUED'); ?></span>
                 </div>
-                <div style="font-size:12px; color:#64748b; margin-bottom:4px;">Invoice: <strong><?php echo h($invoice); ?></strong></div>
-                <div style="font-size:12px; color:#64748b;">Booking Date: <strong><?php echo !empty($d['date']) ? date('d-M-Y', strtotime($d['date'])) : ''; ?></strong></div>
+                <div style="font-size:12.5px; color:#64748b; margin-bottom:6px;">Invoice: <strong style="color:#0f172a;"><?php echo h($invoice); ?></strong></div>
+                <div style="font-size:12.5px; color:#64748b;">Booking Date: <strong style="color:#0f172a;"><?php echo !empty($d['date']) ? date('d-M-Y', strtotime($d['date'])) : '-'; ?></strong></div>
             </div>
         </div>
         <?php endforeach; ?>

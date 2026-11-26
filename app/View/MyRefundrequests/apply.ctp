@@ -30,22 +30,22 @@ echo $this->Html->css('https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper
 echo $this->Html->script('https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js');
 ?>
 <style type="text/css">
-.wv-refund-apply{background:#f4f7fb;margin:-10px -5px 0;padding:14px;}
+.wv-refund-apply{background:transparent;margin:0;padding:0;touch-action:auto;overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%;}
 .wv-refund-apply *{box-sizing:border-box;}
-.wv-refund-apply-head{align-items:center;background:linear-gradient(135deg,#07152a 0%,#123252 72%,#047857 150%);border-radius:10px;color:#fff;display:flex;gap:12px;justify-content:space-between;margin-bottom:12px;padding:17px 18px;}
-.wv-refund-apply-head h1{color:#fff!important;font-size:25px;font-weight:900;margin:0 0 4px;}
-.wv-refund-apply-head p{color:#e6f2ff!important;font-size:12px;font-weight:800;margin:0;}
+.wv-refund-apply-head{align-items:center;background:#ffffff;border:1px solid #e2e8f0;border-top:4px solid #0284c7;border-radius:14px;box-shadow:0 4px 16px rgba(15,23,42,.04);color:#0f172a;display:flex;gap:12px;justify-content:space-between;margin-bottom:14px;padding:20px 22px;}
+.wv-refund-apply-head h1{color:#0f172a!important;font-size:25px;font-weight:900;margin:0 0 4px;}
+.wv-refund-apply-head p{color:#475569!important;font-size:13px;font-weight:600;margin:0;}
 .wv-refund-apply-card{background:#fff;border:1px solid #dfe9f5;border-radius:10px;box-shadow:0 8px 20px rgba(15,23,42,.07);padding:14px;}
 .wv-refund-summary{background:#f8fbff;border:1px solid #dfe9f5;border-radius:10px;margin-bottom:12px;padding:12px;}
 .wv-refund-summary strong{color:#07152a;font-weight:900;}
-.wv-refund-steps{display:grid;gap:8px;grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:14px;}
+.wv-refund-steps{display:grid;gap:8px;grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;}
 .wv-refund-step-tab{align-items:center;background:#f8fbff;border:1px solid #d8e4f1;border-radius:8px;color:#334155;display:flex;gap:8px;padding:10px;text-align:left;width:100%;}
 .wv-refund-step-tab span{align-items:center;background:#dbeafe;border-radius:999px;color:#075985;display:inline-flex;font-size:12px;font-weight:900;height:26px;justify-content:center;min-width:26px;}
 .wv-refund-step-tab strong{display:block;font-size:12px;font-weight:900;line-height:1.15;text-transform:uppercase;}
 .wv-refund-step-tab small{color:#64748b;display:block;font-size:10px;font-weight:800;margin-top:2px;}
-.wv-refund-step-tab.active{background:#07152a;border-color:#07152a;color:#fff;}
-.wv-refund-step-tab.active span{background:#10b981;color:#fff;}
-.wv-refund-step-tab.active small{color:#dbeafe;}
+.wv-refund-step-tab.active{background:#0284c7;border-color:#0284c7;color:#fff;}
+.wv-refund-step-tab.active span{background:#ffffff;color:#0284c7;}
+.wv-refund-step-tab.active small{color:#e0f2fe;}
 .wv-refund-step-panel{display:none;}
 .wv-refund-step-panel.active{display:block;}
 .wv-refund-section-title{border-bottom:1px solid #e2eaf4;color:#07152a;font-size:14px;font-weight:900;margin:6px 0 12px;padding-bottom:8px;text-transform:uppercase;}

@@ -23,152 +23,707 @@ $propertyActionUrl=$this->Html->url(array('controller'=>'Myproperties'));
 $useAdminDealLedger = $this->Session->check('User');
 ?>
 <style type="text/css">
-.wv-mydeals-page{background:#f4f7fb;margin:-10px -5px 0;padding:14px;}
-.wv-mydeals-page *{box-sizing:border-box;}
-.wv-mydeals-hero{background:linear-gradient(135deg,#07152a 0%,#102746 72%,#ff0a46 165%);border-radius:10px;box-shadow:0 14px 30px rgba(15,23,42,.13);color:#fff;margin-bottom:12px;overflow:hidden;padding:18px;position:relative;}
-.wv-mydeals-hero:after{content:"";display:none;}
-.wv-mydeals-hero-inner{align-items:center;display:flex;gap:18px;justify-content:space-between;position:relative;z-index:2;}
-.wv-mydeals-kicker{color:#7cf9ff;font-size:11px;font-weight:900;letter-spacing:0;margin-bottom:4px;text-transform:uppercase;}
-.wv-mydeals-hero h1{color:#fff!important;font-size:27px;font-weight:900;line-height:1.15;margin:0 0 5px;}
-.wv-mydeals-hero p{color:#eef6ff!important;font-size:12px;font-weight:800;line-height:1.45;margin:0;}
-.wv-mydeals-hero-actions{display:flex;flex-wrap:wrap;gap:9px;justify-content:flex-end;}
-.wv-mydeals-hero-actions .btn{border:0;border-radius:10px;font-size:11px;font-weight:900;padding:9px 14px;text-transform:uppercase;color:#fff!important;box-shadow:0 2px 6px rgba(0,0,0,.15);}
-.wv-mydeals-hero-actions .btn *{color:#fff!important;}
-.wv-mydeals-hero-actions .btn-primary{background:linear-gradient(135deg,#ff0a46,#dc2626)!important;color:#fff!important;}
-.wv-mydeals-hero-actions .btn-info{background:linear-gradient(135deg,#0284c7,#0369a1)!important;color:#fff!important;}
-.wv-mydeals-stats{display:grid;gap:10px;grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:12px;}
-.wv-mydeals-stat{background:#fff;border:1px solid #dfe9f5;border-radius:10px;box-shadow:0 8px 20px rgba(15,23,42,.06);padding:12px;position:relative;overflow:hidden;}
-.wv-mydeals-stat:before{background:#ff0a46;border-radius:999px;content:"";height:44px;opacity:.09;position:absolute;right:-13px;top:-13px;width:44px;}
-.wv-mydeals-stat span{color:#64748b;display:block;font-size:10px;font-weight:900;letter-spacing:0;margin-bottom:5px;text-transform:uppercase;}
-.wv-mydeals-stat strong{color:#07152a;display:block;font-size:20px;font-weight:900;line-height:1.15;word-break:break-word;}
-.wv-mydeals-stat small{color:#64748b;display:block;font-size:11px;font-weight:800;margin-top:5px;}
-.wv-mydeals-refund-alert{align-items:center;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:10px;color:#065f46;display:flex;gap:10px;justify-content:space-between;margin-bottom:12px;padding:12px 14px;}
-.wv-mydeals-refund-alert strong{display:block;font-size:13px;font-weight:900;text-transform:uppercase;}
-.wv-mydeals-refund-alert span{display:block;font-size:12px;font-weight:800;margin-top:3px;}
-.wv-mydeals-refund-alert .btn{border-radius:10px;font-size:11px;font-weight:900;text-transform:uppercase;white-space:nowrap;color:#fff!important;}
-.wv-mydeals-grid{display:grid;gap:12px;grid-template-columns:repeat(2,minmax(0,1fr));}
-.wv-deal-card{background:#fff;border:1px solid #dfe9f5;border-radius:10px;box-shadow:0 8px 20px rgba(15,23,42,.07);overflow:hidden;}
-.wv-deal-card-head{align-items:flex-start;background:#07152a;display:flex;gap:10px;justify-content:space-between;padding:13px 14px;}
-.wv-deal-card-head .wv-deal-title,.wv-deal-card-head .wv-deal-title a{color:#fff!important;font-size:16px;font-weight:900;line-height:1.25;margin:0;text-shadow:0 1px 1px rgba(0,0,0,.18);}
-.wv-deal-card-head .wv-deal-sub,.wv-deal-card-head .wv-deal-sub *{color:#e2e8f0!important;font-size:11px;font-weight:800;margin-top:4px;}
-.wv-deal-badge{background:#ff0a46;border-radius:8px;color:#fff!important;display:inline-block;font-size:10px;font-weight:900;padding:6px 8px;white-space:nowrap;}
-.wv-deal-body{padding:12px 14px 14px;}
-.wv-deal-money{display:grid;gap:8px;grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:10px;}
-.wv-deal-money-box{background:#f8fbff;border:1px solid #e2eaf4;border-radius:8px;padding:9px;}
-.wv-deal-money-box span{color:#64748b;display:block;font-size:10px;font-weight:900;letter-spacing:0;margin-bottom:4px;text-transform:uppercase;}
-.wv-deal-money-box strong{color:#07152a;display:block;font-size:13px;font-weight:900;line-height:1.2;word-break:break-word;}
-.wv-deal-money-box.paid strong{color:#047857;}
-.wv-deal-money-box.due strong{color:#ff0a46;}
-.wv-deal-progress{align-items:center;background:#e8eef6;border-radius:999px;display:flex;height:20px;margin-bottom:11px;overflow:hidden;position:relative;}
-.wv-deal-progress-fill{background:linear-gradient(90deg,#ff0a46,#1aa6b7,#047857);display:block;height:20px;min-width:34px;position:relative;width:0;}
-.wv-deal-progress-fill.is-zero{background:transparent;min-width:34px;}
-.wv-deal-progress-label{color:#fff;display:block;font-size:10px;font-weight:900;line-height:20px;position:absolute;right:7px;text-align:right;text-shadow:0 1px 2px rgba(0,0,0,.45);top:0;white-space:nowrap;}
-.wv-deal-progress-fill.is-zero .wv-deal-progress-label{color:#07152a;text-shadow:0 1px 0 rgba(255,255,255,.72);}
-.wv-deal-meta{display:grid;gap:8px;grid-template-columns:repeat(2,minmax(0,1fr));margin-bottom:11px;}
-.wv-deal-meta-item{background:#fbfdff;border:1px solid #edf3f8;border-radius:8px;padding:8px;}
-.wv-deal-meta-item span{color:#64748b;display:block;font-size:10px;font-weight:900;letter-spacing:0;text-transform:uppercase;}
-.wv-deal-meta-item strong{color:#111827;display:block;font-size:12px;font-weight:900;margin-top:3px;word-break:break-word;}
-.wv-deal-refund-status{align-items:center;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;color:#9a3412;display:flex;gap:8px;justify-content:space-between;margin:0 0 10px;padding:8px;}
-.wv-deal-refund-status strong{font-size:11px;font-weight:900;text-transform:uppercase;}
-.wv-deal-refund-status .btn{border-radius:10px;font-size:10px;font-weight:900;padding:5px 10px;text-transform:uppercase;white-space:nowrap;color:#fff!important;background:#ea580c!important;}
-.wv-deal-refund-status .btn *{color:#fff!important;}
-.wv-deal-actions{align-items:stretch;display:grid;gap:6px;grid-template-columns:repeat(6,minmax(0,1fr));margin-top:12px;}
+/* Light Theme Base */
+body {
+    background: #f8fafc;
+}
+.wv-mydeals-page {
+    background: #f8fafc;
+    margin: -10px -5px 0;
+    padding: 16px;
+    touch-action: auto;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+}
+.wv-mydeals-page * {
+    box-sizing: border-box;
+}
+
+/* Professional Hero Header - Light Theme */
+.wv-mydeals-hero {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-top: 4px solid #0284c7;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+    margin-bottom: 18px;
+    padding: 22px 24px;
+    position: relative;
+}
+.wv-mydeals-hero-inner {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+}
+.wv-mydeals-kicker {
+    align-items: center;
+    color: #0284c7;
+    display: inline-flex;
+    font-size: 11px;
+    font-weight: 800;
+    gap: 6px;
+    letter-spacing: 0.5px;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+.wv-mydeals-hero h1 {
+    color: #0f172a !important;
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 1.25;
+    margin: 0 0 6px;
+}
+.wv-mydeals-hero p {
+    color: #475569 !important;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.5;
+    margin: 0;
+    max-width: 680px;
+}
+.wv-mydeals-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.wv-mydeals-hero-actions .btn {
+    align-items: center;
+    border-radius: 8px;
+    display: inline-flex;
+    font-size: 11px;
+    font-weight: 800;
+    gap: 6px;
+    min-height: 38px;
+    padding: 9px 15px;
+    text-decoration: none !important;
+    text-transform: uppercase;
+    transition: all 0.2s ease;
+}
+.wv-mydeals-hero-actions .btn-payments {
+    background: #0284c7 !important;
+    border: 1px solid #0284c7 !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 6px rgba(2, 132, 199, 0.2);
+}
+.wv-mydeals-hero-actions .btn-payments:hover {
+    background: #0369a1 !important;
+    border-color: #0369a1 !important;
+    transform: translateY(-1px);
+}
+.wv-mydeals-hero-actions .btn-props {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #0f172a !important;
+}
+.wv-mydeals-hero-actions .btn-props:hover {
+    background: #f1f5f9 !important;
+    border-color: #94a3b8 !important;
+    transform: translateY(-1px);
+}
+.wv-mydeals-hero-actions .btn-docs {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #475569 !important;
+}
+.wv-mydeals-hero-actions .btn-docs:hover {
+    background: #f8fafc !important;
+    color: #0f172a !important;
+    transform: translateY(-1px);
+}
+
+/* Overall KPI Summary Cards */
+.wv-mydeals-stats {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-bottom: 18px;
+}
+.wv-mydeals-stat {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    min-height: 105px;
+    padding: 16px 18px;
+    position: relative;
+    transition: all 0.2s ease;
+}
+.wv-mydeals-stat:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.07);
+    transform: translateY(-1px);
+}
+.wv-mydeals-stat-top {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+.wv-mydeals-stat span {
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+}
+.wv-mydeals-stat-icon {
+    align-items: center;
+    border-radius: 8px;
+    display: flex;
+    font-size: 15px;
+    height: 32px;
+    justify-content: center;
+    width: 32px;
+}
+.stat-deals .wv-mydeals-stat-icon {
+    background: #eff6ff;
+    color: #2563eb;
+}
+.stat-val .wv-mydeals-stat-icon {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+.stat-paid .wv-mydeals-stat-icon {
+    background: #ecfdf5;
+    color: #059669;
+}
+.stat-due .wv-mydeals-stat-icon {
+    background: #fff7ed;
+    color: #d97706;
+}
+.wv-mydeals-stat strong {
+    color: #0f172a;
+    display: block;
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1.15;
+    word-break: break-word;
+}
+.stat-paid strong {
+    color: #059669;
+}
+.stat-due strong {
+    color: #d97706;
+}
+.wv-mydeals-stat small {
+    color: #64748b;
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    margin-top: 4px;
+}
+
+/* Refund Running Notice */
+.wv-mydeals-refund-alert {
+    align-items: center;
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    border-radius: 12px;
+    color: #065f46;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    padding: 14px 18px;
+}
+.wv-mydeals-refund-alert strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 800;
+}
+.wv-mydeals-refund-alert span {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 3px;
+}
+.wv-mydeals-refund-alert .btn {
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 800;
+    min-height: 34px;
+    padding: 7px 14px;
+    text-transform: uppercase;
+}
+
+/* Deals Grid */
+.wv-mydeals-grid {
+    display: grid;
+    gap: 18px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* Deal Card - Light Theme */
+.wv-deal-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+.wv-deal-card:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+.wv-deal-card-head {
+    align-items: flex-start;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    border-left: 4px solid #0284c7;
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
+    padding: 14px 18px;
+}
+.wv-deal-card-head .wv-deal-title {
+    color: #0f172a !important;
+    font-size: 16px;
+    font-weight: 900;
+    line-height: 1.25;
+    margin: 0;
+}
+.wv-deal-card-head .wv-deal-sub {
+    color: #64748b !important;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 3px;
+}
+.wv-deal-badge {
+    align-items: center;
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    border-radius: 6px;
+    color: #059669 !important;
+    display: inline-flex;
+    font-size: 11px;
+    font-weight: 800;
+    gap: 5px;
+    padding: 4px 10px;
+    white-space: nowrap;
+}
+
+/* Deal Body */
+.wv-deal-body {
+    padding: 16px 18px 18px;
+}
+
+/* Money Boxes */
+.wv-deal-money {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-bottom: 14px;
+}
+.wv-deal-money-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 10px 12px;
+}
+.wv-deal-money-box span {
+    color: #64748b;
+    display: block;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    margin-bottom: 3px;
+    text-transform: uppercase;
+}
+.wv-deal-money-box strong {
+    color: #0f172a;
+    display: block;
+    font-size: 14px;
+    font-weight: 900;
+    line-height: 1.2;
+    word-break: break-word;
+}
+.wv-deal-money-box.paid strong {
+    color: #059669;
+}
+.wv-deal-money-box.due strong {
+    color: #d97706;
+}
+
+/* Payment Progress Bar */
+.wv-deal-progress {
+    align-items: center;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 999px;
+    display: flex;
+    height: 18px;
+    margin-bottom: 14px;
+    overflow: hidden;
+    position: relative;
+}
+.wv-deal-progress-fill {
+    background: linear-gradient(90deg, #10b981, #059669);
+    border-radius: 999px;
+    display: block;
+    height: 100%;
+    min-width: 34px;
+    position: relative;
+    transition: width 0.4s ease;
+}
+.wv-deal-progress-fill.is-zero {
+    background: transparent;
+    min-width: 34px;
+}
+.wv-deal-progress-label {
+    color: #ffffff;
+    display: block;
+    font-size: 10px;
+    font-weight: 800;
+    line-height: 18px;
+    position: absolute;
+    right: 7px;
+    text-align: right;
+    top: 0;
+    white-space: nowrap;
+}
+.wv-deal-progress-fill.is-zero .wv-deal-progress-label {
+    color: #64748b;
+    position: static;
+    text-align: center;
+    width: 100%;
+}
+
+/* Deal Meta Grid */
+.wv-deal-meta {
+    display: grid;
+    gap: 8px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-bottom: 14px;
+}
+.wv-deal-meta-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 8px 12px;
+}
+.wv-deal-meta-item span {
+    color: #64748b;
+    display: block;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+.wv-deal-meta-item strong {
+    color: #0f172a;
+    display: block;
+    font-size: 12px;
+    font-weight: 800;
+    margin-top: 2px;
+    word-break: break-word;
+}
+
+/* Refund Status Box */
+.wv-deal-refund-status {
+    align-items: center;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 8px;
+    color: #9a3412;
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+    margin: 0 0 12px;
+    padding: 9px 12px;
+}
+.wv-deal-refund-status strong {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+.wv-deal-refund-status .btn {
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 4px 10px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+/* Action Buttons Container - Mobile Finger-Scrollable (Up/Down/Left/Right) */
+.wv-actions-scroll-wrap {
+    margin-top: 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    position: relative;
+    touch-action: pan-x pan-y;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+}
+.wv-deal-actions-hint {
+    align-items: center;
+    color: #64748b;
+    display: none;
+    font-size: 11px;
+    font-weight: 700;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+.wv-deal-actions-hint i {
+    color: #0284c7;
+}
+.wv-deal-actions {
+    align-items: stretch;
+    display: grid;
+    gap: 6px;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+}
 .wv-deal-actions .wv-action-btn,
 .wv-deal-actions a.wv-action-btn,
-.wv-deal-actions a.wv-action-btn:link,
-.wv-deal-actions a.wv-action-btn:visited,
-.wv-deal-actions a.wv-action-btn:hover,
-.wv-deal-actions a.wv-action-btn:focus,
-.wv-deal-actions a.wv-action-btn:active,
-.wv-deal-actions button.wv-action-btn{align-items:center;border:0;border-radius:10px!important;display:flex;flex-direction:column;font-size:10px;font-weight:900;justify-content:center;line-height:1.15;letter-spacing:0.3px;min-height:46px;padding:7px 4px;text-align:center;text-transform:uppercase;text-decoration:none!important;box-shadow:0 3px 8px rgba(15,23,42,.12);transition:all .2s cubic-bezier(0.4,0,0.2,1);color:#ffffff!important;text-shadow:0 1px 2px rgba(0,0,0,.35)!important;cursor:pointer;}
+.wv-deal-actions button.wv-action-btn {
+    align-items: center;
+    border: 0;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+    color: #ffffff !important;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    font-size: 10px;
+    font-weight: 800;
+    justify-content: center;
+    letter-spacing: 0.3px;
+    line-height: 1.15;
+    min-height: 48px;
+    padding: 7px 4px;
+    text-align: center;
+    text-decoration: none !important;
+    text-transform: uppercase;
+    transition: all 0.18s ease;
+}
+.wv-deal-actions .wv-action-btn * {
+    color: #ffffff !important;
+}
 .wv-deal-actions .wv-action-btn .fa,
-.wv-deal-actions .wv-action-btn .glyphicon,
-.wv-deal-actions .wv-action-btn span,
-.wv-deal-actions .wv-action-btn i,
-.wv-deal-actions .wv-action-btn *{color:#ffffff!important;fill:#ffffff!important;text-shadow:0 1px 2px rgba(0,0,0,.35)!important;}
-.wv-deal-actions .wv-action-btn .fa,
-.wv-deal-actions .wv-action-btn .glyphicon{display:block;font-size:14px;margin-bottom:3px;margin-right:0;}
-.wv-deal-actions .wv-action-btn:hover{filter:brightness(1.16);transform:translateY(-2px);box-shadow:0 6px 14px rgba(15,23,42,.22);color:#ffffff!important;}
+.wv-deal-actions .wv-action-btn .glyphicon {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 3px;
+}
+.wv-deal-actions .wv-action-btn:hover {
+    filter: brightness(1.12);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.16);
+}
 
-.wv-btn-calendar{background:linear-gradient(135deg,#0284c7,#0369a1)!important;}
-.wv-btn-discount{background:linear-gradient(135deg,#f59e0b,#d97706)!important;}
-.wv-btn-invoice{background:linear-gradient(135deg,#0284c7,#0ea5e9)!important;}
-.wv-btn-ledger{background:linear-gradient(135deg,#059669,#047857)!important;}
-.wv-btn-pdf{background:linear-gradient(135deg,#dc2626,#b91c1c)!important;}
-.wv-btn-details{background:linear-gradient(135deg,#4f46e5,#4338ca)!important;}
+/* Button Color Schemes - Professional & Legible */
+.wv-btn-calendar { background: #0284c7 !important; }
+.wv-btn-discount { background: #d97706 !important; }
+.wv-btn-invoice { background: #0369a1 !important; }
+.wv-btn-ledger { background: #059669 !important; }
+.wv-btn-pdf { background: #dc2626 !important; }
+.wv-btn-details { background: #4f46e5 !important; }
 
-.wv-btn-letters{background:linear-gradient(135deg,#2563eb,#1d4ed8)!important;}
-.wv-btn-vault{background:linear-gradient(135deg,#7c3aed,#6d28d9)!important;}
-.wv-btn-refund{background:linear-gradient(135deg,#ea580c,#c2410c)!important;}
-.wv-btn-photos{background:linear-gradient(135deg,#475569,#334155)!important;}
-.wv-btn-documents{background:linear-gradient(135deg,#0f766e,#115e59)!important;}
-.wv-btn-pay{background:linear-gradient(135deg,#16a34a,#15803d)!important;}
+.wv-btn-letters { background: #2563eb !important; }
+.wv-btn-vault { background: #7c3aed !important; }
+.wv-btn-refund { background: #ea580c !important; }
+.wv-btn-photos { background: #475569 !important; }
+.wv-btn-documents { background: #0f766e !important; }
+.wv-btn-pay { background: #16a34a !important; }
 
-.wv-deal-actions .wv-action-btn.disabled{cursor:not-allowed;opacity:.72;pointer-events:none;}
-.wv-mydeals-empty{background:#fff;border:1px dashed #cbd5e1;border-radius:10px;color:#64748b;font-size:14px;font-weight:900;padding:22px;text-align:center;}
-@media(max-width:1199px){.wv-mydeals-grid{grid-template-columns:1fr;}}
-@media(max-width:991px){.wv-mydeals-stats{grid-template-columns:repeat(2,minmax(0,1fr));}.wv-deal-actions{grid-template-columns:repeat(3,minmax(0,1fr));}}
-@media(max-width:767px){.wv-mydeals-page{margin:0;padding:10px;}.wv-mydeals-hero{padding:14px;}.wv-mydeals-hero-inner{display:block;}.wv-mydeals-hero h1{font-size:23px;}.wv-mydeals-hero-actions{justify-content:flex-start;margin-top:12px;}.wv-mydeals-hero-actions .btn{width:100%;}.wv-mydeals-refund-alert{align-items:flex-start;display:block;}.wv-mydeals-refund-alert .btn{margin-top:9px;width:100%;}.wv-deal-card-head{align-items:flex-start;display:flex;}.wv-deal-badge{margin-top:0;}.wv-deal-money{grid-template-columns:repeat(3,minmax(0,1fr));}.wv-deal-meta{grid-template-columns:repeat(2,minmax(0,1fr));}.dashboard-content{overflow:visible!important;}.dashboard-content .container-fluid{overflow:visible!important;}}
-@media(max-width:480px){.wv-mydeals-stats,.wv-deal-money,.wv-deal-meta{grid-template-columns:1fr;}.wv-deal-actions{grid-template-columns:repeat(2,minmax(0,1fr));}.wv-deal-card-head{display:block;}.wv-deal-badge{margin-top:8px;}.wv-deal-actions .wv-action-btn{width:100%;}.wv-mydeals-stat strong{font-size:18px;}}
+.wv-deal-actions .wv-action-btn.disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+    pointer-events: none;
+}
+
+/* Empty State */
+.wv-mydeals-empty {
+    background: #ffffff;
+    border: 1px dashed #cbd5e1;
+    border-radius: 12px;
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 800;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+/* Responsive Breakpoints - Mobile Readability & Finger Scrolling */
+@media (max-width: 1199px) {
+    .wv-mydeals-grid {
+        grid-template-columns: 1fr;
+    }
+}
+@media (max-width: 991px) {
+    .wv-mydeals-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .wv-deal-actions {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .wv-deal-actions-hint {
+        display: flex;
+    }
+}
+@media (max-width: 767px) {
+    .wv-mydeals-page {
+        margin: 0;
+        padding: 10px;
+    }
+    .wv-mydeals-hero {
+        padding: 16px;
+    }
+    .wv-mydeals-hero-inner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .wv-mydeals-hero h1 {
+        font-size: 20px;
+    }
+    .wv-mydeals-hero-actions {
+        width: 100%;
+        margin-top: 10px;
+    }
+    .wv-mydeals-hero-actions .btn {
+        flex: 1 1 auto;
+        justify-content: center;
+    }
+    .wv-mydeals-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+    .wv-mydeals-stat {
+        padding: 14px;
+        min-height: auto;
+    }
+    .wv-mydeals-stat strong {
+        font-size: 18px;
+    }
+    .wv-deal-card-head {
+        padding: 12px 14px;
+    }
+    .wv-deal-body {
+        padding: 14px;
+    }
+    .wv-deal-money {
+        gap: 8px;
+    }
+    .wv-deal-money-box strong {
+        font-size: 12.5px;
+    }
+    .wv-deal-meta {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+    }
+    .wv-deal-actions {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+    }
+    .wv-deal-actions .wv-action-btn {
+        min-height: 44px;
+        font-size: 9.5px;
+        padding: 6px 2px;
+    }
+}
+@media (max-width: 480px) {
+    .wv-mydeals-stats {
+        grid-template-columns: 1fr;
+    }
+    .wv-deal-card-head {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+    .wv-deal-money {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .wv-deal-actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
 </style>
 
 <div class="wv-mydeals-page">
-    <?php echo $this->Session->flash();?>
+    <?php echo $this->Session->flash(); ?>
+
+    <!-- Professional Hero Header - Light Theme -->
     <div class="wv-mydeals-hero">
         <div class="wv-mydeals-hero-inner">
             <div>
-                <div class="wv-mydeals-kicker"><?php echo __('Client Deal Center');?></div>
-                <h1><?php echo __('My Deals');?></h1>
-                <p><?php echo __('Review booked properties, invoices, receipts, letters, photos, and documents from one place.');?></p>
+                <div class="wv-mydeals-kicker"><i class="fa fa-handshake-o"></i> <?php echo __('Client Deal Portfolio'); ?></div>
+                <h1><?php echo __('My Property Deals & Bookings'); ?></h1>
+                <p><?php echo __('Comprehensive verified portfolio of your property bookings, installment schedules, invoices, and society legal records.'); ?></p>
             </div>
             <div class="wv-mydeals-hero-actions">
-                <?php echo $this->Html->link('<i class="fa fa-dollar"></i> '.__('Payment Ledger'),array('plugin'=>false,'admin'=>false,'controller'=>'MyPayments','action'=>'index'),array('class'=>'btn btn-info','escape'=>false));?>
-                <?php echo $this->Html->link('<i class="fa fa-building"></i> '.__('Search Properties'),array('plugin'=>false,'admin'=>false,'controller'=>'Properties','action'=>'index'),array('class'=>'btn btn-primary','escape'=>false));?>
+                <?php echo $this->Html->link('<i class="fa fa-credit-card"></i> '.__('Payment Ledger'), array('plugin'=>false,'admin'=>false,'controller'=>'MyPayments','action'=>'index'), array('class'=>'btn btn-payments','escape'=>false)); ?>
+                <?php echo $this->Html->link('<i class="fa fa-folder-open-o"></i> '.__('My Documents'), array('plugin'=>false,'admin'=>false,'controller'=>'MyDocuments','action'=>'index'), array('class'=>'btn btn-docs','escape'=>false)); ?>
+                <?php echo $this->Html->link('<i class="fa fa-building-o"></i> '.__('Properties'), array('plugin'=>false,'admin'=>false,'controller'=>'Properties','action'=>'index'), array('class'=>'btn btn-props','escape'=>false)); ?>
             </div>
         </div>
     </div>
 
+    <!-- Overall KPI Summary Cards -->
     <div class="wv-mydeals-stats">
-        <div class="wv-mydeals-stat">
-            <span><?php echo __('Total Deals');?></span>
-            <strong><?php echo (int)$totalDeals;?></strong>
-            <small><?php echo __('Visible in client portal');?></small>
+        <div class="wv-mydeals-stat stat-deals">
+            <div class="wv-mydeals-stat-top">
+                <span><?php echo __('Total Deals'); ?></span>
+                <div class="wv-mydeals-stat-icon"><i class="fa fa-briefcase"></i></div>
+            </div>
+            <strong><?php echo (int)$totalDeals; ?></strong>
+            <small><?php echo __('Active property deals'); ?></small>
         </div>
-        <div class="wv-mydeals-stat">
-            <span><?php echo __('Deal Value');?></span>
-            <strong><?php echo $currency.$this->Number->format($totalDealValue);?></strong>
-            <small><?php echo __('Total invoice amount');?></small>
+
+        <div class="wv-mydeals-stat stat-val">
+            <div class="wv-mydeals-stat-top">
+                <span><?php echo __('Total Value'); ?></span>
+                <div class="wv-mydeals-stat-icon"><i class="fa fa-money"></i></div>
+            </div>
+            <strong><?php echo $currency.$this->Number->format($totalDealValue); ?></strong>
+            <small><?php echo __('Registered invoice amount'); ?></small>
         </div>
-        <div class="wv-mydeals-stat">
-            <span><?php echo __('Paid');?></span>
-            <strong><?php echo $currency.$this->Number->format($totalPaidValue);?></strong>
-            <small><?php echo __('Received payments');?></small>
+
+        <div class="wv-mydeals-stat stat-paid">
+            <div class="wv-mydeals-stat-top">
+                <span><?php echo __('Paid Amount'); ?></span>
+                <div class="wv-mydeals-stat-icon"><i class="fa fa-check-circle"></i></div>
+            </div>
+            <strong><?php echo $currency.$this->Number->format($totalPaidValue); ?></strong>
+            <small><?php echo __('Cleared payments'); ?></small>
         </div>
-        <div class="wv-mydeals-stat">
-            <span><?php echo __('Balance');?></span>
-            <strong><?php echo $currency.$this->Number->format($totalDueValue);?></strong>
-            <small><?php echo __('Remaining amount');?></small>
+
+        <div class="wv-mydeals-stat stat-due">
+            <div class="wv-mydeals-stat-top">
+                <span><?php echo __('Balance Due'); ?></span>
+                <div class="wv-mydeals-stat-icon"><i class="fa fa-clock-o"></i></div>
+            </div>
+            <strong><?php echo $currency.$this->Number->format($totalDueValue); ?></strong>
+            <small><?php echo __('Remaining balance'); ?></small>
         </div>
     </div>
 
     <?php if(!empty($runningRefundNotice['request_id'])){ ?>
         <div class="wv-mydeals-refund-alert">
             <div>
-                <strong><span class="fa fa-refresh"></span> <?php echo __('Your Deal Refund is running');?></strong>
+                <strong><i class="fa fa-refresh"></i> <?php echo __('Your Deal Refund is running'); ?></strong>
                 <span>
-                    <?php echo __('Pending Balance');?>:
-                    <?php echo h($currency.$this->Number->format((float)$runningRefundNotice['pending_total']));?>
+                    <?php echo __('Pending Balance'); ?>:
+                    <?php echo h($currency.$this->Number->format((float)$runningRefundNotice['pending_total'])); ?>
                     <?php if(!empty($runningRefundNotice['request_no'])){ ?>
-                        | <?php echo __('Request');?>: <?php echo h($runningRefundNotice['request_no']);?>
+                        | <?php echo __('Request'); ?>: <?php echo h($runningRefundNotice['request_no']); ?>
                     <?php } ?>
                 </span>
             </div>
-            <?php echo $this->Html->link(__('View Schedule'),array('plugin'=>false,'admin'=>false,'controller'=>'MyRefundrequests','action'=>'view',(int)$runningRefundNotice['request_id']),array('class'=>'btn btn-success'));?>
+            <?php echo $this->Html->link(__('View Schedule'), array('plugin'=>false,'admin'=>false,'controller'=>'MyRefundrequests','action'=>'view',(int)$runningRefundNotice['request_id']), array('class'=>'btn btn-success')); ?>
         </div>
     <?php } ?>
 
     <?php if(empty($postArr)){ ?>
-        <div class="wv-mydeals-empty"><?php echo __('No deals found.');?></div>
+        <div class="wv-mydeals-empty">
+            <i class="fa fa-folder-open-o" style="font-size:36px;color:#cbd5e1;display:block;margin-bottom:10px;"></i>
+            <?php echo __('No property deals found in your account.'); ?>
+        </div>
     <?php }else{ ?>
         <div class="wv-mydeals-grid">
             <?php foreach($postArr as $post):
@@ -198,83 +753,94 @@ $useAdminDealLedger = $this->Session->check('User');
                 <div class="wv-deal-card">
                     <div class="wv-deal-card-head">
                         <div>
-                            <h2 class="wv-deal-title"><?php echo h($propertyName);?></h2>
+                            <h2 class="wv-deal-title"><?php echo h($propertyName); ?></h2>
                             <div class="wv-deal-sub">
-                                <?php echo __('Invoice');?>: <?php echo h(!empty($post['MyDeal']['invoice_no']) ? $post['MyDeal']['invoice_no'] : '-');?>
+                                <i class="fa fa-file-text-o"></i> <?php echo __('Invoice'); ?>: <strong><?php echo h(!empty($post['MyDeal']['invoice_no']) ? $post['MyDeal']['invoice_no'] : '-'); ?></strong>
                             </div>
                         </div>
-                        <span class="wv-deal-badge"><?php echo (int)$progressPercent;?>% <?php echo __('Paid');?></span>
+                        <span class="wv-deal-badge"><i class="fa fa-check"></i> <?php echo (int)$progressPercent; ?>% <?php echo __('Paid'); ?></span>
                     </div>
+
                     <div class="wv-deal-body">
+                        <!-- Money Summary Boxes -->
                         <div class="wv-deal-money">
                             <div class="wv-deal-money-box">
-                                <span><?php echo __('Total');?></span>
-                                <strong><?php echo $currency.$this->Number->format($dealTotal);?></strong>
+                                <span><?php echo __('Total Price'); ?></span>
+                                <strong><?php echo $currency.$this->Number->format($dealTotal); ?></strong>
                             </div>
                             <div class="wv-deal-money-box paid">
-                                <span><?php echo __('Paid');?></span>
-                                <strong><?php echo $currency.$this->Number->format($dealPaid);?></strong>
+                                <span><?php echo __('Paid Amount'); ?></span>
+                                <strong><?php echo $currency.$this->Number->format($dealPaid); ?></strong>
                             </div>
                             <div class="wv-deal-money-box due">
-                                <span><?php echo __('Balance');?></span>
-                                <strong><?php echo $currency.$this->Number->format($dealDue);?></strong>
+                                <span><?php echo __('Balance Due'); ?></span>
+                                <strong><?php echo $currency.$this->Number->format($dealDue); ?></strong>
                             </div>
                         </div>
-                        <div class="wv-deal-progress" aria-label="<?php echo h(__('Payment Progress'));?>">
-                            <span class="wv-deal-progress-fill<?php echo (int)$progressPercent <= 0 ? ' is-zero' : '';?>" style="width:<?php echo (int)$progressPercent;?>%;">
-                                <span class="wv-deal-progress-label"><?php echo (int)$progressPercent;?>%</span>
+
+                        <!-- Progress Bar -->
+                        <div class="wv-deal-progress" aria-label="<?php echo h(__('Payment Progress')); ?>">
+                            <span class="wv-deal-progress-fill<?php echo (int)$progressPercent <= 0 ? ' is-zero' : ''; ?>" style="width:<?php echo (int)$progressPercent; ?>%;">
+                                <span class="wv-deal-progress-label"><?php echo (int)$progressPercent; ?>%</span>
                             </span>
                         </div>
+
+                        <!-- Deal Meta Information -->
                         <div class="wv-deal-meta">
                             <div class="wv-deal-meta-item">
-                                <span><?php echo __('Invoice Date');?></span>
-                                <strong><?php echo $this->Time->format($sysDay.$dateSep.$sysMonth.$dateSep.$sysYear,h($post['MyDeal']['date']));?></strong>
+                                <span><?php echo __('Invoice Date'); ?></span>
+                                <strong><?php echo $this->Time->format($sysDay.$dateSep.$sysMonth.$dateSep.$sysYear, h($post['MyDeal']['date'])); ?></strong>
                             </div>
                             <div class="wv-deal-meta-item">
-                                <span><?php echo __('Area');?></span>
-                                <strong><?php echo h($dealArea.$dealUnit);?></strong>
+                                <span><?php echo __('Area & Unit'); ?></span>
+                                <strong><?php echo h($dealArea.$dealUnit); ?></strong>
                             </div>
                             <div class="wv-deal-meta-item">
-                                <span><?php echo __('Payment Plan');?></span>
-                                <strong><?php echo h($planName);?></strong>
+                                <span><?php echo __('Payment Plan'); ?></span>
+                                <strong><?php echo h($planName); ?></strong>
                             </div>
                             <div class="wv-deal-meta-item">
-                                <span><?php echo __('Receipts');?></span>
-                                <strong><?php echo (int)$receiptCount;?></strong>
+                                <span><?php echo __('Receipts Count'); ?></span>
+                                <strong><?php echo (int)$receiptCount; ?> <?php echo __('Receipts'); ?></strong>
                             </div>
                         </div>
+
                         <?php if(!empty($refundRequestId)){ ?>
                             <div class="wv-deal-refund-status">
-                                <strong><span class="fa fa-refresh"></span> <?php echo __('Refund Status');?>: <?php echo h($refundRequestStatus);?></strong>
-                                <?php echo $this->Html->link(__('View'),array('plugin'=>false,'admin'=>false,'controller'=>'MyRefundrequests','action'=>'view',$refundRequestId),array('class'=>'btn btn-warning'));?>
+                                <strong><i class="fa fa-refresh"></i> <?php echo __('Refund Status'); ?>: <?php echo h($refundRequestStatus); ?></strong>
+                                <?php echo $this->Html->link(__('View'), array('plugin'=>false,'admin'=>false,'controller'=>'MyRefundrequests','action'=>'view',$refundRequestId), array('class'=>'btn btn-warning')); ?>
                             </div>
                         <?php } ?>
-                        <div class="wv-deal-actions">
-                            <!-- LINE 1 (6 Buttons) -->
-                            <?php echo $this->Html->link('<span class="fa fa-calendar" style="color:#ffffff!important;display:block;font-size:14px;margin-bottom:3px;"></span><span style="color:#ffffff!important;font-weight:900;">'.__('Calendar').'</span>',array('plugin'=>false,'admin'=>false,'controller'=>'MyDeals','action'=>'calendar_ics',$id),array('class'=>'wv-action-btn wv-btn-calendar','style'=>'color:#ffffff!important;','escape'=>false,'title'=>__('Add Installment Schedule to Apple, Google or Outlook Calendar')));?>
-                            <button type="button" class="wv-action-btn wv-btn-discount" style="color:#ffffff!important;" onclick="openEarlyDiscountModal(<?php echo $id;?>);" title="<?php echo __('Calculate Early Settlement Discount');?>"><span class="fa fa-calculator" style="color:#ffffff!important;display:block;font-size:14px;margin-bottom:3px;"></span><span style="color:#ffffff!important;font-weight:900;"><?php echo __('Discount');?></span></button>
-                            <?php echo $this->Html->link('<span class="fa fa-print" style="color:#ffffff!important;display:block;font-size:14px;margin-bottom:3px;"></span><span style="color:#ffffff!important;font-weight:900;">'.__('Payment Plan').'</span>',array('plugin'=>false,'admin'=>false,'controller'=>'MyDeals','action'=>'printinvoice',$id),array('class'=>'wv-action-btn wv-btn-invoice','style'=>'color:#ffffff!important;','target'=>'_blank','escape'=>false,'title'=>__('Print Payment Plan')));?>
-                            <?php echo $this->Html->link('<span class="fa fa-list" style="color:#ffffff!important;display:block;font-size:14px;margin-bottom:3px;"></span><span style="color:#ffffff!important;font-weight:900;">'.__('My Payments').'</span>',$dealLedgerUrl,array('class'=>'wv-action-btn wv-btn-ledger','style'=>'color:#ffffff!important;','escape'=>false,'title'=>__('View My Payments')));?>
-                            <?php echo $this->Html->link('<span class="fa fa-file-pdf-o" style="color:#ffffff!important;display:block;font-size:14px;margin-bottom:3px;"></span><span style="color:#ffffff!important;font-weight:900;">'.__('Ledger').'</span>',$dealLedgerPdfUrl,array('class'=>'wv-action-btn wv-btn-pdf','style'=>'color:#ffffff!important;','target'=>'_blank','rel'=>'noopener','escape'=>false,'title'=>__('Download Ledger PDF')));?>
-                            <?php echo $this->Html->link('<span class="glyphicon glyphicon-fullscreen" style="color:#ffffff!important;display:block;font-size:14px;margin-bottom:3px;"></span><span style="color:#ffffff!important;font-weight:900;">'.__('Details').'</span>','#',array('onclick'=>"show_modal('MyDeals/view/$id');",'class'=>'wv-action-btn wv-btn-details','style'=>'color:#ffffff!important;','escape'=>false,'title'=>__('View Deal Details')));?>
 
-                            <!-- LINE 2 (6 Buttons) -->
-                            <?php echo $this->Html->link('<span class="fa fa-file-text-o" style="color:#ffffff!important;display:block;font-size:14px;margin-bottom:3px;"></span><span style="color:#ffffff!important;font-weight:900;">'.__('Letters').'</span>',array('plugin'=>false,'admin'=>false,'controller'=>'MyDeals','action'=>'letters',$id),array('class'=>'wv-action-btn wv-btn-letters','style'=>'color:#ffffff!important;','escape'=>false,'title'=>__('Deal Letters & Notices')));?>
-                            <?php echo $this->Html->link('<span class="fa fa-lock" style="color:#ffffff!important;display:block;font-size:14px;margin-bottom:3px;"></span><span style="color:#ffffff!important;font-weight:900;">'.__('Vault').'</span>',array('plugin'=>false,'admin'=>false,'controller'=>'MyDocuments','action'=>'index'),array('class'=>'wv-action-btn wv-btn-vault','style'=>'color:#ffffff!important;','escape'=>false,'title'=>__('Document Vault')));?>
-                            <?php 
-                            if(!empty($refundRequestId)){
-                                echo $this->Html->link('<span class="fa fa-refresh" style="color:#ffffff!important;display:block;font-size:14px;margin-bottom:3px;"></span><span style="color:#ffffff!important;font-weight:900;">'.__('Refund').'</span>',array('plugin'=>false,'admin'=>false,'controller'=>'MyRefundrequests','action'=>'view',$refundRequestId),array('class'=>'wv-action-btn wv-btn-refund','style'=>'color:#ffffff!important;','escape'=>false,'title'=>__('View Refund Status').': '.$refundRequestStatus));
-                            } elseif(!empty($canApplyRefund)){
-                                echo $this->Html->link('<span class="fa fa-undo" style="color:#ffffff!important;display:block;font-size:14px;margin-bottom:3px;"></span><span style="color:#ffffff!important;font-weight:900;">'.__('Refund').'</span>',array('plugin'=>false,'admin'=>false,'controller'=>'MyRefundrequests','action'=>'apply',$id),array('class'=>'wv-action-btn wv-btn-refund','style'=>'color:#ffffff!important;','escape'=>false,'title'=>__('Apply for Refund')));
-                            } else {
-                                echo $this->Html->link('<span class="fa fa-undo" style="color:#ffffff!important;display:block;font-size:14px;margin-bottom:3px;"></span><span style="color:#ffffff!important;font-weight:900;">'.__('Refund').'</span>','#',array('class'=>'wv-action-btn wv-btn-refund disabled','style'=>'color:#ffffff!important;opacity:0.6;','escape'=>false,'title'=>__('Refund not available')));
-                            }
-                            ?>
-                            <?php echo $this->Html->link('<span class="fa fa-image" style="color:#ffffff!important;display:block;font-size:14px;margin-bottom:3px;"></span><span style="color:#ffffff!important;font-weight:900;">'.__('Photos').'</span>','#',array('onclick'=>"show_modal('$propertyActionUrl/photo/$propertyId');",'class'=>'wv-action-btn wv-btn-photos','style'=>'color:#ffffff!important;','escape'=>false,'title'=>__('Property Photos')));?>
-                            <?php echo $this->Html->link('<span class="fa fa-file" style="color:#ffffff!important;display:block;font-size:14px;margin-bottom:3px;"></span><span style="color:#ffffff!important;font-weight:900;">'.__('Docs').'</span>','#',array('onclick'=>"show_modal('$propertyActionUrl/document/$propertyId');",'class'=>'wv-action-btn wv-btn-documents','style'=>'color:#ffffff!important;','escape'=>false,'title'=>__('Property Documents')));?>
-                            <?php if(!empty($hasBillingMeter)){ ?>
-                                <?php echo $this->Html->link('<span class="fa fa-bolt" style="color:#ffffff!important;display:block;font-size:14px;margin-bottom:3px;"></span><span style="color:#ffffff!important;font-weight:900;">'.__('Utility Bill').'</span>',array('plugin'=>false,'admin'=>false,'controller'=>'UtilityBills','action'=>'index'),array('class'=>'wv-action-btn wv-btn-pay','style'=>'color:#ffffff!important;','escape'=>false,'title'=>__('View & Pay Utility Bills')));?>
-                            <?php } ?>
+                        <!-- Action Buttons - Touch Scrollable Container -->
+                        <div class="wv-actions-scroll-wrap">
+                            <div class="wv-deal-actions">
+                                <!-- Line 1 -->
+                                <?php echo $this->Html->link('<i class="fa fa-calendar"></i><span>'.__('Calendar').'</span>', array('plugin'=>false,'admin'=>false,'controller'=>'MyDeals','action'=>'calendar_ics',$id), array('class'=>'wv-action-btn wv-btn-calendar','escape'=>false,'title'=>__('Add Installment Schedule to Calendar'))); ?>
+                                <button type="button" class="wv-action-btn wv-btn-discount" onclick="openEarlyDiscountModal(<?php echo $id; ?>);" title="<?php echo __('Calculate Early Settlement Discount'); ?>"><i class="fa fa-calculator"></i><span><?php echo __('Discount'); ?></span></button>
+                                <?php echo $this->Html->link('<i class="fa fa-print"></i><span>'.__('Payment Plan').'</span>', array('plugin'=>false,'admin'=>false,'controller'=>'MyDeals','action'=>'printinvoice',$id), array('class'=>'wv-action-btn wv-btn-invoice','target'=>'_blank','escape'=>false,'title'=>__('Print Payment Plan'))); ?>
+                                <?php echo $this->Html->link('<i class="fa fa-credit-card"></i><span>'.__('Payments').'</span>', $dealLedgerUrl, array('class'=>'wv-action-btn wv-btn-ledger','escape'=>false,'title'=>__('View Payments'))); ?>
+                                <?php echo $this->Html->link('<i class="fa fa-file-pdf-o"></i><span>'.__('Ledger PDF').'</span>', $dealLedgerPdfUrl, array('class'=>'wv-action-btn wv-btn-pdf','target'=>'_blank','rel'=>'noopener','escape'=>false,'title'=>__('Download Ledger PDF'))); ?>
+                                <?php echo $this->Html->link('<i class="fa fa-info-circle"></i><span>'.__('Details').'</span>', '#', array('onclick'=>"show_modal('MyDeals/view/$id');",'class'=>'wv-action-btn wv-btn-details','escape'=>false,'title'=>__('View Deal Details'))); ?>
+
+                                <!-- Line 2 -->
+                                <?php echo $this->Html->link('<i class="fa fa-envelope-o"></i><span>'.__('Letters').'</span>', array('plugin'=>false,'admin'=>false,'controller'=>'MyDeals','action'=>'letters',$id), array('class'=>'wv-action-btn wv-btn-letters','escape'=>false,'title'=>__('Deal Letters & Notices'))); ?>
+                                <?php echo $this->Html->link('<i class="fa fa-shield"></i><span>'.__('Vault').'</span>', array('plugin'=>false,'admin'=>false,'controller'=>'MyDocuments','action'=>'index'), array('class'=>'wv-action-btn wv-btn-vault','escape'=>false,'title'=>__('Document Vault'))); ?>
+                                <?php 
+                                if(!empty($refundRequestId)){
+                                    echo $this->Html->link('<i class="fa fa-refresh"></i><span>'.__('Refund').'</span>', array('plugin'=>false,'admin'=>false,'controller'=>'MyRefundrequests','action'=>'view',$refundRequestId), array('class'=>'wv-action-btn wv-btn-refund','escape'=>false,'title'=>__('View Refund Status').': '.$refundRequestStatus));
+                                } elseif(!empty($canApplyRefund)){
+                                    echo $this->Html->link('<i class="fa fa-undo"></i><span>'.__('Refund').'</span>', array('plugin'=>false,'admin'=>false,'controller'=>'MyRefundrequests','action'=>'apply',$id), array('class'=>'wv-action-btn wv-btn-refund','escape'=>false,'title'=>__('Apply for Refund')));
+                                } else {
+                                    echo $this->Html->link('<i class="fa fa-undo"></i><span>'.__('Refund').'</span>', '#', array('class'=>'wv-action-btn wv-btn-refund disabled','escape'=>false,'title'=>__('Refund not available')));
+                                }
+                                ?>
+                                <?php echo $this->Html->link('<i class="fa fa-image"></i><span>'.__('Photos').'</span>', '#', array('onclick'=>"show_modal('$propertyActionUrl/photo/$propertyId');",'class'=>'wv-action-btn wv-btn-photos','escape'=>false,'title'=>__('Property Photos'))); ?>
+                                <?php echo $this->Html->link('<i class="fa fa-file-text-o"></i><span>'.__('Docs').'</span>', '#', array('onclick'=>"show_modal('$propertyActionUrl/document/$propertyId');",'class'=>'wv-action-btn wv-btn-documents','escape'=>false,'title'=>__('Property Documents'))); ?>
+                                <?php if(!empty($hasBillingMeter)){ ?>
+                                    <?php echo $this->Html->link('<i class="fa fa-bolt"></i><span>'.__('Utility Bill').'</span>', array('plugin'=>false,'admin'=>false,'controller'=>'UtilityBills','action'=>'index'), array('class'=>'wv-action-btn wv-btn-pay','escape'=>false,'title'=>__('View & Pay Utility Bills'))); ?>
+                                <?php } ?>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -289,7 +855,7 @@ $useAdminDealLedger = $this->Session->check('User');
 <div class="modal fade" id="earlyDiscountModal" tabindex="-1" role="dialog" aria-labelledby="earlyDiscountModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content" style="border-radius:14px; overflow:hidden; border:none; box-shadow:0 20px 40px rgba(15,23,42,.25);">
-            <div class="modal-header" style="background:linear-gradient(135deg,#07152a 0%,#1e3a8a 100%); color:#fff; padding:16px 20px;">
+            <div class="modal-header" style="background:#0f172a; color:#fff; padding:16px 20px; border-bottom:1px solid #1e293b;">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color:#fff; opacity:.85; font-size:24px;">&times;</button>
                 <h4 class="modal-title" id="earlyDiscountModalLabel" style="font-weight:800; display:flex; align-items:center; gap:8px;">
                     <i class="fa fa-calculator text-warning"></i> <?php echo __('Early Payment & Lump-Sum Discount Calculator'); ?>
@@ -356,16 +922,16 @@ $useAdminDealLedger = $this->Session->check('User');
                             <button type="button" id="btnSpecialOverdueDiscount" class="btn btn-info btn-sm" style="font-weight:700; border-radius:6px; background:#0284c7; border-color:#0284c7; display:none;" onclick="selectSpecialOverduePackage();">
                                 <i class="fa fa-gift"></i> <?php echo __('Special Overdue Clearance Package'); ?>
                             </button>
-                            <button type="button" class="btn btn-primary btn-sm" style="background:#ff0a46; border-color:#ff0a46; font-weight:700; border-radius:6px;" onclick="selectFullDealSettlement();">
+                            <button type="button" class="btn btn-primary btn-sm" style="background:#0f172a; border-color:#0f172a; font-weight:700; border-radius:6px;" onclick="selectFullDealSettlement();">
                                 <i class="fa fa-star"></i> <?php echo __('100% Full Deal Settlement'); ?>
                             </button>
                         </div>
                     </div>
 
-                    <!-- Installments Checklist Table -->
-                    <div class="table-responsive" style="max-height:230px; overflow-y:auto; background:#fff; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:14px;">
-                        <table class="table table-condensed table-hover" style="margin:0; font-size:13px;">
-                            <thead style="background:#f1f5f9; position:sticky; top:0; z-index:2;">
+                    <!-- Installments Checklist Table (Touch Scrollable) -->
+                    <div class="table-responsive" style="max-height:230px; overflow-x:auto; overflow-y:auto; -webkit-overflow-scrolling:touch; touch-action:pan-x pan-y; overscroll-behavior-x:contain; background:#fff; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:14px;">
+                        <table class="table table-condensed table-hover" style="margin:0; font-size:13px; min-width:580px;">
+                            <thead style="background:#f8fafc; position:sticky; top:0; z-index:2; border-bottom:2px solid #cbd5e1;">
                                 <tr>
                                     <th width="40" class="text-center"><input type="checkbox" id="calcSelectAll" onchange="toggleAllInstallmentCheckboxes(this.checked);"></th>
                                     <th><?php echo __('Installment Name'); ?></th>
@@ -627,7 +1193,6 @@ function recalculateDiscount() {
         var missingCount = totalOverdueInList - selectedOverdueCount;
         $('#calcOverdueWarning').show();
         $('#calcOverdueWarningText').html('<strong>' + missingCount + ' <?php echo __("overdue installment(s) are unchecked.");?></strong> <?php echo __("You must select all overdue installments (0% discount) to qualify for early payment discounts on upcoming installments.");?>');
-        // Strip discount on upcoming until all overdue are selected
         upcomingDiscount = 0;
     } else {
         $('#calcOverdueWarning').hide();
@@ -670,11 +1235,8 @@ function recalculateDiscount() {
     $('#calcSavingsDetail').text('Rs. ' + totalEffectiveDiscount.toLocaleString() + ' <?php echo __("net total savings");?>');
     $('#calcNetPayableDisplay').text('Rs. ' + netPayable.toLocaleString());
 
-    // Update select all checkbox state
     var totalCbs = $('.calc-inst-checkbox').length;
     var totalChecked = $('.calc-inst-checkbox:checked').length;
     $('#calcSelectAll').prop('checked', totalCbs > 0 && totalChecked === totalCbs);
 }
 </script>
-
-

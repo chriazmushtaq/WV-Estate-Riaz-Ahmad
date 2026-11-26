@@ -13,8 +13,16 @@ class LetterverificationsController extends AppController
         parent::beforeFilter();
         if (isset($this->Auth))
         {
-            $this->Auth->allow('verify', 'view_document', 'download_pdf');
+            $this->Auth->allow('verify', 'verify_cnic');
         }
+        $this->response->header(array(
+            'X-Frame-Options' => 'SAMEORIGIN',
+            'X-Content-Type-Options' => 'nosniff',
+            'X-XSS-Protection' => '1; mode=block',
+            'Referrer-Policy' => 'strict-origin-when-cross-origin',
+            'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0, post-check=0, pre-check=0',
+            'Pragma' => 'no-cache'
+        ));
     }
 
     public function verify($id = null, $token = null)
@@ -38,6 +46,8 @@ class LetterverificationsController extends AppController
         $post = array();
         $securitySerial = '';
         $qrCodeUrl = '';
+        // ZERO-TRUST ARCHITECTURE:
+        // Do not render or leak official letter HTML in the initial public response.
         $renderedLetterHtml = '';
 
         if ($id > 0)
@@ -64,8 +74,6 @@ class LetterverificationsController extends AppController
                     
                     $verifyUrl = Router::url(array('controller' => 'letterverifications', 'action' => 'verify', $id, $matchedToken), true);
                     $qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&ecc=H&margin=4&format=png&data=' . rawurlencode($verifyUrl);
-                    
-                    $renderedLetterHtml = $this->_renderLetterContent($post, $securitySerial, $verifyUrl, $qrCodeUrl);
                 }
             }
         }
@@ -82,7 +90,230 @@ class LetterverificationsController extends AppController
         // Record scan audit log
         $this->_logQrScan($id, $token, $scanStatus, $post);
 
-        $this->set(compact('post', 'verified', 'securitySerial', 'qrCodeUrl', 'renderedLetterHtml', 'id', 'token'));
+        // Dynamic Request Integrity Security Token
+        $clientIp = $this->request->clientIp();
+        $salt = Configure::read('Security.salt') ?: 'wv-salt-2026';
+        $securityToken = hash_hmac('sha256', $id . '|' . $token . '|' . $clientIp, $salt);
+        $isDocumentUnlocked = false;
+
+        $this->set(compact('post', 'verified', 'securitySerial', 'qrCodeUrl', 'renderedLetterHtml', 'id', 'token', 'securityToken', 'isDocumentUnlocked'));
+    }
+
+    protected function _rateLimitFilePath($ip, $letterId)
+    {
+        $hash = md5($ip . '_' . $letterId . '_wv_lock_v1');
+        return TMP . 'cache' . DS . 'rl_' . $hash . '.json';
+    }
+
+    protected function _checkRateLimit($ip, $letterId)
+    {
+        $file = $this->_rateLimitFilePath($ip, $letterId);
+        if (!file_exists($file)) {
+            return 0;
+        }
+        $raw = @file_get_contents($file);
+        if (!$raw) return 0;
+        $data = @json_decode($raw, true);
+        if (!is_array($data)) return 0;
+
+        if (!empty($data['locked_until']) && time() < $data['locked_until']) {
+            return ceil(($data['locked_until'] - time()) / 60);
+        }
+        if (!empty($data['first_attempt']) && (time() - $data['first_attempt'] > 900) && empty($data['locked_until'])) {
+            @unlink($file);
+            return 0;
+        }
+        return 0;
+    }
+
+    protected function _recordFailedAttempt($ip, $letterId)
+    {
+        $file = $this->_rateLimitFilePath($ip, $letterId);
+        $data = array('attempts' => 0, 'first_attempt' => time(), 'locked_until' => 0);
+        if (file_exists($file)) {
+            $raw = @file_get_contents($file);
+            $parsed = @json_decode($raw, true);
+            if (is_array($parsed)) {
+                $data = $parsed;
+            }
+        }
+        if (time() - $data['first_attempt'] > 900 && empty($data['locked_until'])) {
+            $data['attempts'] = 0;
+            $data['first_attempt'] = time();
+        }
+
+        $data['attempts']++;
+        if ($data['attempts'] >= 5) {
+            $data['locked_until'] = time() + 900; // 15 minutes lockout
+        }
+        @file_put_contents($file, json_encode($data), LOCK_EX);
+
+        // Anti-Brute Force micro-delay
+        usleep(350000); // 350ms throttle
+    }
+
+    protected function _resetRateLimit($ip, $letterId)
+    {
+        $file = $this->_rateLimitFilePath($ip, $letterId);
+        if (file_exists($file)) {
+            @unlink($file);
+        }
+    }
+
+    public function verify_cnic($id = null, $token = null)
+    {
+        $this->autoRender = false;
+        $this->response->type('json');
+
+        if (!$this->request->is('post')) {
+            $this->response->statusCode(405);
+            return json_encode(array('status' => 'error', 'message' => __('Method Not Allowed. POST required.')));
+        }
+
+        // 1. Anti-Bot Honeypot Check
+        if (!empty($this->request->data('wv_auth_hp'))) {
+            usleep(500000);
+            return json_encode(array('status' => 'error', 'message' => __('Unauthorized request.')));
+        }
+
+        $clientIp = $this->request->clientIp();
+
+        if ($id === null && !empty($this->request->params['id'])) {
+            $id = $this->request->params['id'];
+        } elseif ($id === null && !empty($this->request->params['pass'][0])) {
+            $id = $this->request->params['pass'][0];
+        }
+
+        if ($token === null && !empty($this->request->params['token'])) {
+            $token = $this->request->params['token'];
+        } elseif ($token === null && !empty($this->request->params['pass'][1])) {
+            $token = $this->request->params['pass'][1];
+        }
+
+        $id = (int)$id;
+        $token = trim((string)$token);
+
+        // 2. Rate Limiting / Lockout Check
+        $lockRemaining = $this->_checkRateLimit($clientIp, $id);
+        if ($lockRemaining > 0) {
+            $this->response->statusCode(429);
+            return json_encode(array(
+                'status' => 'locked',
+                'remaining' => $lockRemaining,
+                'message' => sprintf(__('Security Lockout: Too many failed CNIC attempts. Access temporarily locked for %d minutes.'), $lockRemaining)
+            ));
+        }
+
+        // 3. HMAC Security Token Check
+        $salt = Configure::read('Security.salt') ?: 'wv-salt-2026';
+        $secToken = trim((string)$this->request->data('sec_token'));
+        $expectedSecToken = hash_hmac('sha256', $id . '|' . $token . '|' . $clientIp, $salt);
+        if ($secToken !== '' && !hash_equals($expectedSecToken, $secToken)) {
+            $this->_recordFailedAttempt($clientIp, $id);
+            $this->response->statusCode(403);
+            return json_encode(array('status' => 'error', 'message' => __('Security token mismatch. Please reload.')));
+        }
+
+        $inputCnic = trim((string)$this->request->data('cnic'));
+        $cleanInput = preg_replace('/[^0-9]/', '', $inputCnic);
+        if ($id <= 0 || strlen($cleanInput) < 13) {
+            $this->_recordFailedAttempt($clientIp, $id);
+            return json_encode(array('status' => 'error', 'message' => __('Please enter a valid 13-digit CNIC.')));
+        }
+
+        $post = $this->_letterDetails($id);
+        if (empty($post['Realestateletter']['id'])) {
+            $this->_recordFailedAttempt($clientIp, $id);
+            return json_encode(array('status' => 'error', 'message' => __('Document record not found.')));
+        }
+
+        $letterId = (int)$post['Realestateletter']['id'];
+        $dealId = !empty($post['Realestateletter']['deal_id']) ? (int)$post['Realestateletter']['deal_id'] : 0;
+        $clientId = !empty($post['Realestateletter']['client_id']) ? (int)$post['Realestateletter']['client_id'] : (!empty($post['Client']['id']) ? (int)$post['Client']['id'] : 0);
+
+        $token1 = $this->_verificationToken($letterId, $dealId, $clientId);
+        $token2 = $this->_verificationToken($letterId, $dealId, 0);
+        $tokenValid = ($token !== '' && (
+            hash_equals($token1, $token) || substr($token1, 0, strlen($token)) === $token ||
+            hash_equals($token2, $token) || substr($token2, 0, strlen($token)) === $token
+        ));
+
+        if (!$tokenValid) {
+            $this->_recordFailedAttempt($clientIp, $id);
+            return json_encode(array('status' => 'error', 'message' => __('Invalid verification token.')));
+        }
+
+        $clientCnic = !empty($post['Client']['pincode']) ? (string)$post['Client']['pincode'] : (!empty($post['Client']['phone']) ? (string)$post['Client']['phone'] : '');
+        $cleanClient = preg_replace('/[^0-9]/', '', $clientCnic);
+
+        $nomineeCnic = !empty($post['Deal']['nominee_cnic']) ? (string)$post['Deal']['nominee_cnic'] : '';
+        $cleanNominee = preg_replace('/[^0-9]/', '', $nomineeCnic);
+
+        // 4. Constant-Time Hash Comparison
+        $matched = false;
+        if ($cleanClient !== '') {
+            $matched = hash_equals(hash('sha256', $cleanClient), hash('sha256', $cleanInput));
+        }
+        if (!$matched && $cleanNominee !== '') {
+            $matched = hash_equals(hash('sha256', $cleanNominee), hash('sha256', $cleanInput));
+        }
+
+        if ($matched) {
+            // Reset rate limit on success
+            $this->_resetRateLimit($clientIp, $id);
+
+            $matchedToken = (hash_equals($token1, $token) || substr($token1, 0, strlen($token)) === $token) ? $token1 : $token2;
+            $securitySerial = 'WV-VER-' . strtoupper(substr(hash('sha256', $id . '|' . $matchedToken), 0, 8)) . '-' . date('Y', strtotime($post['Realestateletter']['created']));
+            $verifyUrl = Router::url(array('controller' => 'letterverifications', 'action' => 'verify', $id, $matchedToken), true);
+            $qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&ecc=H&margin=4&format=png&data=' . rawurlencode($verifyUrl);
+
+            // Compute masked serial for duplicate watermark stamp
+            $maskedSerial = $securitySerial;
+            if (preg_match('/^(WV-VER-)([A-Z0-9]{2})([A-Z0-9]{4})([A-Z0-9]{2})(-.*)$/i', $securitySerial, $sm)) {
+                $maskedSerial = $sm[1] . $sm[2] . '****' . $sm[4] . $sm[5];
+            }
+            $projectName = !empty($post['Project']['name']) ? $post['Project']['name'] : 'WHITE VILLAS REAL ESTATE';
+
+            // Render document content only upon verified authentication
+            $renderedLetter = $this->_renderLetterContent($post, $securitySerial, $verifyUrl, $qrCodeUrl);
+
+            $fullHtml = <<<HTML
+<!-- Giant Diagonal DUPLICATE COPY Watermark -->
+<div class="wv-client-duplicate-watermark">
+    <span>DUPLICATE COPY</span>
+</div>
+<!-- Official Security Stamp Watermark -->
+<div class="wv-watermark-overlay">
+    <div class="wv-watermark-stamp">
+        <div class="wv-watermark-badge">🛡️ OFFICIAL VERIFICATION &bull; تصدیق شدہ کاپی</div>
+        <div class="wv-watermark-duplicate">DUPLICATE COPY</div>
+        <div class="wv-watermark-text">VERIFIED OFFICIAL DOCUMENT</div>
+        <div class="wv-watermark-sub">{$projectName} &bull; {$maskedSerial}</div>
+    </div>
+</div>
+{$renderedLetter}
+HTML;
+
+            return json_encode(array(
+                'status' => 'success',
+                'message' => __('CNIC verified successfully! Document unlocked.'),
+                'html' => $fullHtml
+            ));
+        }
+
+        // Record failed attempt
+        $this->_recordFailedAttempt($clientIp, $id);
+        $attemptsCheck = $this->_checkRateLimit($clientIp, $id);
+        if ($attemptsCheck > 0) {
+            $this->response->statusCode(429);
+            return json_encode(array(
+                'status' => 'locked',
+                'remaining' => $attemptsCheck,
+                'message' => sprintf(__('Security Lockout: 5 failed attempts reached. Access locked for %d minutes.'), $attemptsCheck)
+            ));
+        }
+
+        return json_encode(array('status' => 'error', 'message' => __('The entered CNIC does not match the official record for this document. Please check and try again.')));
     }
 
     protected function _logQrScan($letterId, $token, $status, $post = array())
@@ -112,46 +343,9 @@ class LetterverificationsController extends AppController
 
     public function view_document($id = null, $token = null)
     {
-        $this->layout = false;
-        $this->autoRender = false;
         $id = (int)$id;
         $token = trim((string)$token);
-
-        if ($id <= 0)
-        {
-            throw new NotFoundException(__('Document not found.'));
-        }
-
-        $post = $this->_letterDetails($id);
-        if (empty($post['Realestateletter']['id']))
-        {
-            throw new NotFoundException(__('Document record not found.'));
-        }
-
-        $letterId = (int)$post['Realestateletter']['id'];
-        $dealId = !empty($post['Realestateletter']['deal_id']) ? (int)$post['Realestateletter']['deal_id'] : 0;
-        $clientId = !empty($post['Realestateletter']['client_id']) ? (int)$post['Realestateletter']['client_id'] : (!empty($post['Client']['id']) ? (int)$post['Client']['id'] : 0);
-
-        $token1 = $this->_verificationToken($letterId, $dealId, $clientId);
-        $token2 = $this->_verificationToken($letterId, $dealId, 0);
-
-        $verified = ($token !== '' && (
-            hash_equals($token1, $token) || substr($token1, 0, strlen($token)) === $token ||
-            hash_equals($token2, $token) || substr($token2, 0, strlen($token)) === $token
-        ));
-
-        if (!$verified)
-        {
-            throw new ForbiddenException(__('Invalid verification token.'));
-        }
-
-        $matchedToken = (hash_equals($token1, $token) || substr($token1, 0, strlen($token)) === $token) ? $token1 : $token2;
-        $securitySerial = 'WV-VER-' . strtoupper(substr(hash('sha256', $id . '|' . $matchedToken), 0, 8)) . '-' . date('Y', strtotime($post['Realestateletter']['created']));
-        $verifyUrl = Router::url(array('controller' => 'letterverifications', 'action' => 'verify', $id, $matchedToken), true);
-        $qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&ecc=H&margin=4&format=png&data=' . rawurlencode($verifyUrl);
-
-        $html = $this->_renderLetterContent($post, $securitySerial, $verifyUrl, $qrCodeUrl, true);
-        return $this->response->body($html);
+        return $this->redirect(array('controller' => 'letterverifications', 'action' => 'verify', $id, $token));
     }
 
     protected function _renderLetterContent($post, $securitySerial = '', $verifyUrl = '', $qrCodeUrl = '', $includeStandaloneWatermark = false)

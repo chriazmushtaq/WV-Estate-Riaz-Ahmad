@@ -1,17 +1,23 @@
 <style type="text/css">
 .wv-notif-page {
-    background: #f4f7fb;
+    background: #f8fafc;
     margin: -10px -5px 0;
-    padding: 14px;
+    padding: 16px;
     min-height: 85vh;
+    touch-action: auto;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
 }
 .wv-notif-header {
-    background: linear-gradient(135deg, #07152a 0%, #102746 100%);
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-top: 4px solid #0284c7;
     border-radius: 16px;
-    padding: 24px 28px;
-    color: #ffffff;
-    margin-bottom: 24px;
-    box-shadow: 0 14px 30px rgba(7, 21, 42, 0.12);
+    padding: 22px 26px;
+    color: #0f172a;
+    margin-bottom: 22px;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -22,28 +28,31 @@
     font-size: 24px;
     font-weight: 900;
     margin: 0 0 6px;
-    color: #ffffff !important;
+    color: #0f172a !important;
     display: flex;
     align-items: center;
     gap: 12px;
 }
 .wv-notif-header p {
-    font-size: 13px;
-    color: #cbd5e1;
+    font-size: 13.5px;
+    color: #475569;
     margin: 0;
+    line-height: 1.5;
 }
 .wv-notif-stats {
     display: flex;
+    align-items: center;
     gap: 12px;
+    flex-wrap: wrap;
 }
 .wv-notif-stat-pill {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
     border-radius: 999px;
     padding: 8px 16px;
     font-size: 12px;
     font-weight: 800;
-    color: #ffffff;
+    color: #0f172a;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -53,6 +62,9 @@
     gap: 8px;
     margin-bottom: 20px;
     flex-wrap: wrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
 }
 .wv-notif-filter-btn {
     background: #ffffff;
@@ -64,16 +76,17 @@
     color: #475569;
     text-decoration: none !important;
     transition: all 0.2s ease;
+    white-space: nowrap;
 }
 .wv-notif-filter-btn:hover {
     background: #f1f5f9;
     color: #0f172a;
 }
 .wv-notif-filter-btn.active {
-    background: #ff0a46;
-    border-color: #ff0a46;
+    background: #0f172a;
+    border-color: #0f172a;
     color: #ffffff;
-    box-shadow: 0 4px 12px rgba(255, 10, 70, 0.25);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
 }
 .wv-notif-list {
     display: flex;
@@ -98,7 +111,7 @@
 }
 .wv-notif-card.unread {
     background: #fbfdff;
-    border-left: 4px solid #ff0a46;
+    border-left: 4px solid #0284c7;
 }
 .wv-notif-icon-wrap {
     width: 44px;
@@ -112,6 +125,7 @@
 }
 .wv-notif-content {
     flex: 1 1 auto;
+    min-width: 0;
 }
 .wv-notif-top {
     display: flex;
@@ -119,6 +133,7 @@
     justify-content: space-between;
     margin-bottom: 4px;
     gap: 12px;
+    flex-wrap: wrap;
 }
 .wv-notif-title {
     font-size: 15px;
@@ -137,18 +152,20 @@
     color: #475569;
     margin: 0 0 10px;
     line-height: 1.5;
+    word-break: break-word;
 }
 .wv-notif-actions {
     display: flex;
     align-items: center;
     gap: 10px;
+    flex-wrap: wrap;
 }
 .wv-notif-action-btn {
     background: #07152a;
     color: #ffffff !important;
     border-radius: 999px;
-    padding: 6px 14px;
-    font-size: 11px;
+    padding: 7px 16px;
+    font-size: 11.5px;
     font-weight: 800;
     text-decoration: none !important;
     display: inline-flex;
@@ -157,7 +174,7 @@
     transition: all 0.2s ease;
 }
 .wv-notif-action-btn:hover {
-    background: #ff0a46;
+    background: #0284c7;
 }
 .wv-notif-empty {
     background: #ffffff;
@@ -172,6 +189,49 @@
     color: #cbd5e1;
     margin-bottom: 12px;
 }
+
+@media (max-width: 768px) {
+    .wv-notif-page {
+        padding: 12px;
+    }
+    .wv-notif-header {
+        padding: 18px 16px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .wv-notif-header h1 {
+        font-size: 20px;
+    }
+    .wv-notif-stats {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .wv-notif-card {
+        padding: 14px 16px;
+        gap: 12px;
+    }
+    .wv-notif-icon-wrap {
+        width: 38px;
+        height: 38px;
+        flex: 0 0 38px;
+        font-size: 16px;
+    }
+    .wv-notif-top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+    }
+    .wv-notif-time {
+        margin-bottom: 4px;
+    }
+    .wv-notif-actions {
+        width: 100%;
+    }
+    .wv-notif-actions .wv-notif-action-btn,
+    .wv-notif-actions .btn {
+        min-height: 38px;
+    }
+}
 </style>
 
 <div class="wv-notif-page">
@@ -184,10 +244,10 @@
         </div>
         <div class="wv-notif-stats">
             <div class="wv-notif-stat-pill">
-                <i class="fa fa-envelope-open-o"></i> <?php echo __('Unread:'); ?> <span class="badge" style="background:#ff0a46;"><?php echo (int)$unreadCount; ?></span>
+                <i class="fa fa-envelope-open-o"></i> <?php echo __('Unread:'); ?> <span class="badge" style="background:#0f172a; color:#fff;"><?php echo (int)$unreadCount; ?></span>
             </div>
             <?php if($unreadCount > 0): ?>
-            <a href="<?php echo $this->Html->url(array('action' => 'mark_all_read')); ?>" class="btn btn-sm" style="background:rgba(255,255,255,0.2); color:#fff; border-radius:999px; font-weight:800; font-size:12px;">
+            <a href="<?php echo $this->Html->url(array('action' => 'mark_all_read')); ?>" class="btn btn-sm" style="background:#0284c7; color:#fff !important; border-radius:999px; font-weight:800; font-size:12px; padding:7px 16px;">
                 <i class="fa fa-check"></i> <?php echo __('Mark All as Read'); ?>
             </a>
             <?php endif; ?>

@@ -1,0 +1,2144 @@
+/**
+ * White Villas - Global Executive Admin & SaaS Design System Override
+ * Modernizes CakePHP 2 + Limitless / Bootstrap 3 Admin Dashboard
+ * 100% Mobile Responsive, Crisp SaaS Cards, Standardized Inputs, Tables & Badges
+ */
+
+:root {
+  --wv-primary: #2563eb;
+  --wv-primary-hover: #1d4ed8;
+  --wv-primary-light: #eff6ff;
+  --wv-primary-border: #bfdbfe;
+  --wv-surface: #ffffff;
+  --wv-canvas: #f8fafc;
+  --wv-card-border: #e2e8f0;
+  --wv-input-border: #cbd5e1;
+  --wv-input-focus: #3b82f6;
+  --wv-text-main: #0f172a;
+  --wv-text-muted: #64748b;
+  --wv-success: #15803d;
+  --wv-success-bg: #dcfce7;
+  --wv-success-border: #bbf7d0;
+  --wv-warning: #b45309;
+  --wv-warning-bg: #fef3c7;
+  --wv-warning-border: #fde68a;
+  --wv-danger: #b91c1c;
+  --wv-danger-bg: #fee2e2;
+  --wv-danger-border: #fecaca;
+  --wv-info: #0369a1;
+  --wv-info-bg: #e0f2fe;
+  --wv-info-border: #bae6fd;
+}
+
+/* =========================================================================
+   1. GLOBAL PAGE LAYOUT & CONTAINERS
+   ========================================================================= */
+body {
+  background-color: var(--wv-canvas) !important;
+  color: var(--wv-text-main) !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.page-container {
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  max-width: 100% !important;
+}
+
+.content-wrapper {
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+/* Content bottom padding to prevent bottom row clipping & footer overlap */
+.content,
+.content-wrapper,
+.page-container .content,
+.deals-page-shell,
+.wv-admin-contacts,
+.wv-admin-web {
+  padding-bottom: 60px !important;
+}
+
+/* Stacking context: ensure pagination bars never overlap open action menus */
+.panel-footer,
+.card-footer,
+.datatable-footer,
+.wv-pagination-wrap,
+.pagination-wrapper {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Modern Card / Panel Wrapper */
+.panel,
+.panel-flat,
+.card,
+.wv-admin-card {
+  background: var(--wv-surface) !important;
+  border: 1px solid var(--wv-card-border) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05) !important;
+  margin-bottom: 24px !important;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.panel:hover,
+.panel-flat:hover,
+.card:hover,
+.wv-admin-card:hover {
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05) !important;
+}
+
+.panel-heading,
+.card-header,
+.wv-card-header {
+  background: var(--wv-surface) !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  padding: 16px 20px !important;
+  position: relative;
+}
+
+.panel-title,
+.card-title,
+.wv-card-title {
+  color: var(--wv-text-main) !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.2px !important;
+  margin: 0 !important;
+}
+
+.panel-body,
+.card-body,
+.wv-card-body {
+  padding: 20px !important;
+}
+
+.panel-footer,
+.card-footer,
+.wv-form-footer {
+  background: var(--wv-canvas) !important;
+  border-top: 1px solid var(--wv-card-border) !important;
+  padding: 14px 20px !important;
+}
+
+/* =========================================================================
+   2. PAGE HEADER & PRIMARY ACTION CONTROLS
+   ========================================================================= */
+.page-header-content,
+.wv-page-header {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding: 0 !important;
+}
+
+.page-title,
+.wv-page-title-box {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0 !important;
+}
+
+.page-title h4,
+.page-title h3,
+.page-title h2,
+.page-title h1,
+.wv-page-title {
+  color: var(--wv-text-main) !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.3px !important;
+  line-height: 1.3 !important;
+  margin: 0 0 4px 0 !important;
+}
+
+.page-title small,
+.wv-page-subtitle {
+  color: var(--wv-text-muted) !important;
+  display: block;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  margin-top: 2px;
+}
+
+.heading-elements,
+.wv-page-header-actions {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: 10px;
+  position: static !important;
+  margin: 0 !important;
+}
+
+/* Primary Header Buttons (+ Add New, Action links) */
+.heading-elements .btn-primary,
+.wv-page-header-actions .btn-primary,
+.page-header-content .btn-primary,
+.btn-primary {
+  background-color: var(--wv-primary) !important;
+  border: 1px solid var(--wv-primary) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 1px 3px 0 rgba(37, 99, 235, 0.3) !important;
+  color: #ffffff !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  min-height: 38px !important;
+  padding: 8px 16px !important;
+  transition: all 0.15s ease-in-out !important;
+  text-decoration: none !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: var(--wv-primary-hover) !important;
+  border-color: var(--wv-primary-hover) !important;
+  box-shadow: 0 4px 8px 0 rgba(37, 99, 235, 0.35) !important;
+  color: #ffffff !important;
+}
+
+.btn-default,
+.btn-secondary {
+  background-color: #ffffff !important;
+  border: 1px solid var(--wv-input-border) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04) !important;
+  color: #334155 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  min-height: 38px !important;
+  padding: 8px 16px !important;
+  transition: all 0.15s ease-in-out !important;
+  text-decoration: none !important;
+}
+
+.btn-default:hover,
+.btn-secondary:hover {
+  background-color: #f8fafc !important;
+  border-color: #94a3b8 !important;
+  color: #0f172a !important;
+}
+
+/* =========================================================================
+   2.1 EXECUTIVE SINGLE-LINE HEADER BAR & ACTION ROW
+   ========================================================================= */
+.wv-pro-header-bar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: wrap !important;
+  gap: 12px !important;
+  margin-bottom: 14px !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+  padding: 10px 16px !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04) !important;
+}
+
+.wv-pro-header-left {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  flex-wrap: wrap !important;
+  min-width: 0 !important;
+}
+
+.wv-pro-page-title {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 19px !important;
+  font-weight: 800 !important;
+  color: #0f172a !important;
+  line-height: 1.2 !important;
+  letter-spacing: -0.3px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  white-space: nowrap !important;
+}
+
+.wv-pro-title-icon {
+  color: #2563eb !important;
+  font-size: 18px !important;
+}
+
+.wv-pro-count-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  background: #f1f5f9 !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 999px !important;
+  padding: 3px 10px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: #475569 !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+}
+
+.wv-pro-count-num {
+  color: #0f172a !important;
+  font-weight: 800 !important;
+}
+
+.wv-pro-count-txt {
+  color: #64748b !important;
+  font-weight: 600 !important;
+}
+
+.wv-pro-header-right {
+  display: inline-flex !important;
+  align-items: center !important;
+  flex: 0 0 auto !important;
+}
+
+.wv-pro-actions-row {
+  display: inline-flex !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+.wv-pro-action-btn {
+  border-radius: 7px !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  padding: 0 12px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  text-decoration: none !important;
+  transition: all 0.15s ease !important;
+  white-space: nowrap !important;
+}
+
+/* Bulk Action Toolbar inside Top Header Line */
+.wv-bulk-action-inline {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  border-left: 1px solid #cbd5e1 !important;
+  padding-left: 10px !important;
+  margin-left: 2px !important;
+}
+
+.wv-bulk-action-select {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 7px !important;
+  box-shadow: none !important;
+  color: #1e293b !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  min-width: 155px !important;
+  width: auto !important;
+  padding: 6px 10px !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+.wv-bulk-action-select:focus {
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18) !important;
+  outline: none !important;
+}
+
+.wv-bulk-action-apply-btn {
+  align-items: center !important;
+  background: #2563eb !important;
+  border: 1px solid #1d4ed8 !important;
+  border-radius: 7px !important;
+  box-shadow: 0 1px 2px rgba(37, 99, 235, 0.22) !important;
+  color: #ffffff !important;
+  display: inline-flex !important;
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  height: 36px !important;
+  justify-content: center !important;
+  min-height: 36px !important;
+  padding: 0 13px !important;
+  transition: background 0.15s ease, transform 0.15s ease !important;
+  white-space: nowrap !important;
+}
+
+.wv-bulk-action-apply-btn:hover,
+.wv-bulk-action-apply-btn:focus {
+  background: #1d4ed8 !important;
+  border-color: #1e40af !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+}
+
+/* Dedicated Filters Toggle Button */
+.wv-pro-filter-toggle {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 7px !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+  color: #334155 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 7px !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  padding: 0 13px !important;
+  transition: all 0.15s ease !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+}
+
+.wv-pro-filter-toggle:hover,
+.wv-pro-filter-toggle:focus {
+  background: #f8fafc !important;
+  border-color: #94a3b8 !important;
+  color: #0f172a !important;
+}
+
+.wv-pro-filter-toggle.is-active,
+.wv-pro-filter-toggle[aria-expanded="true"]:not(.collapsed) {
+  background: #eff6ff !important;
+  border-color: #93c5fd !important;
+  color: #1d4ed8 !important;
+}
+
+.wv-pro-filter-toggle .wv-filter-icon {
+  color: #2563eb !important;
+  font-size: 13px !important;
+}
+
+.wv-pro-filter-toggle .wv-filter-badge {
+  background: #2563eb !important;
+  border-radius: 999px !important;
+  color: #ffffff !important;
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  padding: 2px 7px !important;
+}
+
+.wv-pro-filter-toggle .wv-chevron-icon {
+  color: #64748b !important;
+  font-size: 11px !important;
+  transition: transform 0.22s ease !important;
+}
+
+.wv-pro-filter-toggle.is-active .wv-chevron-icon,
+.wv-pro-filter-toggle[aria-expanded="true"]:not(.collapsed) .wv-chevron-icon {
+  transform: rotate(180deg) !important;
+}
+
+/* =========================================================================
+   2.2 HIGH-DENSITY COLLAPSIBLE FILTER DRAWER & GRID
+   ========================================================================= */
+.wv-pro-filter-panel {
+  margin-bottom: 14px !important;
+}
+
+.wv-pro-filter-card {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04) !important;
+  padding: 14px 16px !important;
+}
+
+.wv-pro-filter-grid {
+  display: grid !important;
+  grid-template-columns: 1.4fr 1.4fr 1fr 1fr 1fr 1fr !important;
+  gap: 10px 10px !important;
+  align-items: flex-end !important;
+  width: 100% !important;
+}
+
+.wv-pro-filter-item {
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.wv-pro-filter-label {
+  color: #475569 !important;
+  display: block !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.3px !important;
+  margin: 0 0 4px 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  text-transform: uppercase !important;
+  white-space: nowrap !important;
+}
+
+.wv-pro-label-spacer {
+  visibility: hidden !important;
+}
+
+.wv-pro-filter-input,
+.wv-pro-filter-select,
+.wv-pro-filter-item .form-control {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 7px !important;
+  box-shadow: none !important;
+  color: #1e293b !important;
+  font-size: 12.5px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  padding: 6px 10px !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+  width: 100% !important;
+}
+
+.wv-pro-filter-input:focus,
+.wv-pro-filter-select:focus,
+.wv-pro-filter-item .form-control:focus {
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18) !important;
+  outline: none !important;
+}
+
+.wv-pro-filter-input::placeholder,
+.wv-pro-filter-item .form-control::placeholder {
+  color: #94a3b8 !important;
+  font-size: 12px !important;
+}
+
+.wv-pro-action-btn-group {
+  align-items: center !important;
+  display: flex !important;
+  gap: 8px !important;
+  height: 36px !important;
+  width: 100% !important;
+}
+
+.wv-pro-btn-apply {
+  align-items: center !important;
+  background: #2563eb !important;
+  border: 1px solid #1d4ed8 !important;
+  border-radius: 7px !important;
+  box-shadow: 0 1px 2px rgba(37, 99, 235, 0.22) !important;
+  color: #ffffff !important;
+  display: inline-flex !important;
+  flex: 1 1 auto !important;
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  height: 36px !important;
+  justify-content: center !important;
+  min-height: 36px !important;
+  padding: 0 13px !important;
+  transition: background 0.15s ease, transform 0.15s ease !important;
+  white-space: nowrap !important;
+}
+
+.wv-pro-btn-apply:hover,
+.wv-pro-btn-apply:focus {
+  background: #1d4ed8 !important;
+  border-color: #1e40af !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+}
+
+.wv-pro-btn-reset {
+  align-items: center !important;
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 7px !important;
+  color: #64748b !important;
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  height: 36px !important;
+  justify-content: center !important;
+  min-height: 36px !important;
+  padding: 0 12px !important;
+  transition: all 0.15s ease !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+}
+
+.wv-pro-btn-reset:hover {
+  background: #f1f5f9 !important;
+  color: #0f172a !important;
+  border-color: #94a3b8 !important;
+  text-decoration: none !important;
+}
+
+.wv-pro-table-card {
+  margin-bottom: 24px !important;
+}
+
+/* =========================================================================
+   3. ENTERPRISE FORM CONTROLS & CAKEPHP 2 FORM COMPATIBILITY
+   ========================================================================= */
+/* Form Groups & Containers */
+.form-group,
+.input.text,
+.input.select,
+.input.textarea,
+.input.number,
+.input.date,
+.input.datetime,
+.input.password,
+.input.email,
+.input.file,
+.input.tel,
+.input.url {
+  margin-bottom: 18px !important;
+  position: relative;
+}
+
+/* Labels */
+.form-group label,
+.control-label,
+.input > label,
+label.control-label {
+  color: #1e293b !important;
+  display: inline-block !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.1px !important;
+  margin-bottom: 6px !important;
+  text-transform: none !important;
+}
+
+/* Required Asterisk */
+.form-group.required > label:after,
+.input.required > label:after,
+label.required:after,
+.required label:after {
+  content: " *" !important;
+  color: #ef4444 !important;
+  font-weight: 700 !important;
+}
+
+/* Inputs, Selects, and Textareas */
+.form-control,
+.input.text input,
+.input.select select,
+.input.number input,
+.input.date input,
+.input.datetime input,
+.input.password input,
+.input.email input,
+.input.tel input,
+.input.url input {
+  background-color: #ffffff !important;
+  border: 1px solid var(--wv-input-border) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04) !important;
+  box-sizing: border-box !important;
+  color: var(--wv-text-main) !important;
+  font-size: 14px !important;
+  height: 42px !important;
+  line-height: 1.42857 !important;
+  min-height: 42px !important;
+  outline: none !important;
+  padding: 8px 14px !important;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+  width: 100% !important;
+}
+
+.input.textarea textarea,
+textarea.form-control {
+  background-color: #ffffff !important;
+  border: 1px solid var(--wv-input-border) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04) !important;
+  box-sizing: border-box !important;
+  color: var(--wv-text-main) !important;
+  font-size: 14px !important;
+  height: auto !important;
+  line-height: 1.5 !important;
+  min-height: 100px !important;
+  outline: none !important;
+  padding: 10px 14px !important;
+  resize: vertical;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+  width: 100% !important;
+}
+
+/* Focus States */
+.form-control:focus,
+.input.text input:focus,
+.input.select select:focus,
+.input.textarea textarea:focus,
+.input.number input:focus,
+.input.date input:focus,
+.input.datetime input:focus,
+.input.password input:focus,
+.input.email input:focus,
+.input.tel input:focus,
+.input.url input:focus {
+  background-color: #ffffff !important;
+  border-color: var(--wv-input-focus) !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.22) !important;
+  outline: 0 !important;
+}
+
+/* Custom Select Styling */
+select.form-control,
+.input.select select {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%2364748b%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E") !important;
+  background-position: right 12px center !important;
+  background-repeat: no-repeat !important;
+  background-size: 16px 16px !important;
+  padding-right: 36px !important;
+}
+
+/* File Upload Controls */
+.input.file input[type="file"],
+input[type="file"].form-control {
+  background: #f8fafc !important;
+  border: 1px dashed var(--wv-input-border) !important;
+  border-radius: 8px !important;
+  cursor: pointer;
+  height: auto !important;
+  min-height: 44px !important;
+  padding: 9px 12px !important;
+}
+
+.input.file input[type="file"]:hover,
+input[type="file"].form-control:hover {
+  background: #f1f5f9 !important;
+  border-color: var(--wv-primary) !important;
+}
+
+/* Checkbox & Radio Alignment */
+.checkbox,
+.radio,
+.input.checkbox,
+.input.radio {
+  margin: 10px 0 !important;
+}
+
+.checkbox label,
+.radio label,
+.input.checkbox label,
+.input.radio label {
+  align-items: center !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  font-size: 13.5px !important;
+  font-weight: 500 !important;
+  gap: 8px !important;
+  margin: 0 !important;
+  padding-left: 0 !important;
+}
+
+.checkbox input[type="checkbox"],
+.radio input[type="radio"],
+.input.checkbox input[type="checkbox"],
+.input.radio input[type="radio"] {
+  accent-color: var(--wv-primary);
+  cursor: pointer !important;
+  height: 17px !important;
+  margin: 0 !important;
+  position: static !important;
+  width: 17px !important;
+}
+
+/* CakePHP 2 Validation Error Messages */
+.error-message,
+.form-group.has-error .help-block,
+.invalid-feedback {
+  color: #ef4444 !important;
+  display: block !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+  margin-top: 5px !important;
+}
+
+.form-group.has-error .form-control,
+.input.error input,
+.input.error select,
+.input.error textarea,
+.form-error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+}
+
+/* Form Footer Action Bar */
+.form-actions,
+.wv-form-footer {
+  align-items: center;
+  background: #f8fafc;
+  border-top: 1px solid var(--wv-card-border);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding: 16px 20px;
+}
+
+/* =========================================================================
+   4. EXECUTIVE DATA TABLES & PAGINATION
+   ========================================================================= */
+/* Horizontal Scroll Wrapper */
+.table-responsive {
+  border: 0 !important;
+  border-radius: 8px !important;
+  margin-bottom: 0 !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  width: 100% !important;
+}
+
+.table {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  margin-bottom: 0 !important;
+  width: 100% !important;
+}
+
+.table > thead > tr > th,
+.table > tbody > tr > th,
+.table > thead > tr > td,
+.table > tbody > tr > td {
+  border-top: 1px solid #f1f5f9 !important;
+  line-height: 1.42857 !important;
+  vertical-align: middle !important;
+  white-space: nowrap !important;
+}
+
+/* Table Header */
+.table > thead > tr > th {
+  background-color: #f8fafc !important;
+  border-bottom: 2px solid #e2e8f0 !important;
+  border-top: 0 !important;
+  color: #475569 !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px !important;
+  padding: 12px 16px !important;
+  text-transform: uppercase !important;
+}
+
+/* Paginator Sort Links in thead */
+.table > thead > tr > th a {
+  align-items: center;
+  color: #334155 !important;
+  display: inline-flex;
+  font-weight: 700 !important;
+  gap: 4px;
+  text-decoration: none !important;
+  transition: color 0.15s ease;
+}
+
+.table > thead > tr > th a:hover {
+  color: var(--wv-primary) !important;
+}
+
+/* Table Body Cells */
+.table > tbody > tr > td {
+  color: #1e293b !important;
+  font-size: 13.5px !important;
+  padding: 13px 16px !important;
+}
+
+/* Table Row Hover State */
+.table > tbody > tr:hover,
+.table-hover > tbody > tr:hover {
+  background-color: #f8fafc !important;
+}
+
+/* Alternating Row Striping */
+.table-striped > tbody > tr:nth-of-type(odd) {
+  background-color: #ffffff !important;
+}
+.table-striped > tbody > tr:nth-of-type(even) {
+  background-color: #fbfcfe !important;
+}
+
+/* Column Alignment Helpers */
+.table th.text-right,
+.table td.text-right,
+.col-amount,
+.col-price,
+.col-number {
+  text-align: right !important;
+}
+
+.table th.text-center,
+.table td.text-center,
+.col-center,
+.col-status,
+.col-date,
+.actions,
+.col-actions {
+  text-align: center !important;
+}
+
+.table th.text-left,
+.table td.text-left,
+.col-name,
+.col-title {
+  text-align: left !important;
+}
+
+/* =========================================================================
+   4.1 HIGH-DENSITY COMPACT DATA TABLES (.wv-pro-table)
+   ========================================================================= */
+.wv-pro-table {
+  width: 100% !important;
+  margin-bottom: 0 !important;
+}
+
+.wv-pro-table > thead > tr > th,
+.wv-pro-table > tbody > tr > th {
+  padding: 8px 8px !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.3px !important;
+  text-transform: uppercase !important;
+  vertical-align: middle !important;
+  background-color: #f8fafc !important;
+  color: #334155 !important;
+  border-bottom: 2px solid #e2e8f0 !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+}
+
+.wv-pro-table > tbody > tr > td {
+  padding: 6px 8px !important;
+  font-size: 12.5px !important;
+  line-height: 1.25 !important;
+  vertical-align: middle !important;
+  color: #1e293b !important;
+}
+
+/* Tight Column Constraints */
+.wv-pro-table .wv-col-checkbox {
+  width: 36px !important;
+  max-width: 36px !important;
+  text-align: center !important;
+  padding: 6px 4px !important;
+}
+
+.wv-pro-table .wv-col-num {
+  width: 42px !important;
+  max-width: 48px !important;
+  text-align: center !important;
+  font-variant-numeric: tabular-nums !important;
+  font-weight: 600 !important;
+  color: #64748b !important;
+  padding: 6px 4px !important;
+}
+
+.wv-pro-table .wv-col-office-id {
+  width: 1% !important;
+  white-space: nowrap !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+}
+
+.wv-pro-table .wv-col-name {
+  white-space: nowrap !important;
+  font-weight: 600 !important;
+  color: #1e293b !important;
+}
+
+.wv-pro-table .wv-col-price {
+  width: 1% !important;
+  white-space: nowrap !important;
+  font-weight: 700 !important;
+  color: #0f3b63 !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+.wv-pro-table .wv-col-type,
+.wv-pro-table .wv-col-contract {
+  width: 1% !important;
+  white-space: nowrap !important;
+  color: #334155 !important;
+}
+
+.wv-pro-table .wv-col-status {
+  width: 1% !important;
+  white-space: nowrap !important;
+  text-align: center !important;
+}
+
+.wv-pro-table .wv-col-flags {
+  width: 1% !important;
+  white-space: nowrap !important;
+  text-align: center !important;
+}
+
+.wv-pro-table .wv-col-quality {
+  width: 1% !important;
+  white-space: nowrap !important;
+}
+
+.wv-pro-table .wv-col-action {
+  width: 1% !important;
+  white-space: nowrap !important;
+  text-align: center !important;
+}
+
+/* Professional Status Badge with Icon */
+.wv-status-badge {
+  align-items: center !important;
+  border-radius: 999px !important;
+  display: inline-flex !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  gap: 5px !important;
+  letter-spacing: 0.2px !important;
+  line-height: 1 !important;
+  padding: 4px 9px !important;
+  text-transform: uppercase !important;
+  white-space: nowrap !important;
+}
+
+.wv-status-available {
+  background-color: #dcfce7 !important;
+  border: 1px solid #bbf7d0 !important;
+  color: #15803d !important;
+}
+
+.wv-status-available i {
+  color: #16a34a !important;
+  font-size: 11px !important;
+}
+
+.wv-status-sold {
+  background-color: #fee2e2 !important;
+  border: 1px solid #fecaca !important;
+  color: #b91c1c !important;
+}
+
+.wv-status-sold i {
+  color: #dc2626 !important;
+  font-size: 11px !important;
+}
+
+/* Professional Featured/Published Icon Buttons */
+.wv-flags-inline {
+  align-items: center !important;
+  display: inline-flex !important;
+  gap: 6px !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+}
+
+.wv-icon-flag {
+  align-items: center !important;
+  border-radius: 7px !important;
+  display: inline-flex !important;
+  height: 28px !important;
+  justify-content: center !important;
+  min-height: 28px !important;
+  min-width: 28px !important;
+  padding: 0 !important;
+  text-decoration: none !important;
+  transition: all 0.15s ease-in-out !important;
+  width: 28px !important;
+  cursor: pointer !important;
+}
+
+.wv-icon-flag:hover {
+  text-decoration: none !important;
+  transform: translateY(-1px);
+}
+
+/* Featured Star Flag */
+.wv-flag-featured.is-active {
+  background-color: #fef3c7 !important;
+  border: 1px solid #fde68a !important;
+  color: #d97706 !important;
+  box-shadow: 0 1px 2px rgba(217, 119, 6, 0.12) !important;
+}
+
+.wv-flag-featured.is-active:hover {
+  background-color: #fde68a !important;
+  border-color: #fcd34d !important;
+  color: #b45309 !important;
+}
+
+.wv-flag-featured.is-inactive {
+  background-color: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #94a3b8 !important;
+}
+
+.wv-flag-featured.is-inactive:hover {
+  background-color: #fef9c3 !important;
+  border-color: #fef08a !important;
+  color: #ca8a04 !important;
+}
+
+/* Published Globe/Eye Flag */
+.wv-flag-published.is-active {
+  background-color: #dcfce7 !important;
+  border: 1px solid #bbf7d0 !important;
+  color: #15803d !important;
+  box-shadow: 0 1px 2px rgba(21, 128, 61, 0.12) !important;
+}
+
+.wv-flag-published.is-active:hover {
+  background-color: #bbf7d0 !important;
+  border-color: #86efac !important;
+  color: #166534 !important;
+}
+
+.wv-flag-published.is-inactive {
+  background-color: #fee2e2 !important;
+  border: 1px solid #fecaca !important;
+  color: #dc2626 !important;
+}
+
+.wv-flag-published.is-inactive:hover {
+  background-color: #fecaca !important;
+  border-color: #fca5a5 !important;
+  color: #b91c1c !important;
+}
+
+/* Quality Bar & Checklist Button on Same Line */
+.wv-quality-inline {
+  align-items: center !important;
+  display: inline-flex !important;
+  gap: 7px !important;
+  white-space: nowrap !important;
+}
+
+.wv-quality-bar-track {
+  background-color: #e2e8f0 !important;
+  border-radius: 999px !important;
+  flex: 0 0 65px !important;
+  height: 6px !important;
+  overflow: hidden !important;
+  width: 65px !important;
+}
+
+.wv-quality-bar-fill {
+  background-color: #16a34a !important;
+  border-radius: 999px !important;
+  display: block !important;
+  height: 100% !important;
+  transition: width 0.3s ease !important;
+}
+
+.wv-quality-pct {
+  color: #0f172a !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  min-width: 27px !important;
+  text-align: right !important;
+  line-height: 1 !important;
+}
+
+/* Quality Checklist Icon Button */
+.wv-quality-checklist-icon-btn,
+.wv-btn-checklist {
+  align-items: center !important;
+  background-color: #eff6ff !important;
+  border: 1px solid #bfdbfe !important;
+  border-radius: 6px !important;
+  color: #2563eb !important;
+  display: inline-flex !important;
+  height: 26px !important;
+  justify-content: center !important;
+  min-height: 26px !important;
+  min-width: 26px !important;
+  padding: 0 !important;
+  text-decoration: none !important;
+  transition: all 0.15s ease-in-out !important;
+  width: 26px !important;
+  cursor: pointer !important;
+  box-shadow: 0 1px 2px rgba(37, 99, 235, 0.08) !important;
+}
+
+.wv-quality-checklist-icon-btn i,
+.wv-btn-checklist i {
+  color: #2563eb !important;
+  font-family: 'FontAwesome' !important;
+  font-style: normal !important;
+  font-size: 13px !important;
+  line-height: 1 !important;
+  display: inline-block !important;
+}
+
+.wv-quality-checklist-icon-btn:hover,
+.wv-quality-checklist-icon-btn:focus,
+.wv-btn-checklist:hover,
+.wv-btn-checklist:focus {
+  background-color: #dbeafe !important;
+  border-color: #93c5fd !important;
+  color: #1d4ed8 !important;
+  text-decoration: none !important;
+  transform: translateY(-1px);
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.2) !important;
+}
+
+.wv-quality-checklist-icon-btn:hover i,
+.wv-quality-checklist-icon-btn:focus i,
+.wv-btn-checklist:hover i,
+.wv-btn-checklist:focus i {
+  color: #1d4ed8 !important;
+}
+
+/* Compact Action Dropdown Button in Table */
+.property-action-cell .property-action-button,
+.property-action-cell .btn {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  height: 28px !important;
+  min-height: 28px !important;
+  line-height: 26px !important;
+  padding: 0 10px !important;
+  border-radius: 6px !important;
+}
+
+/* Executive Deals & Admin Data Table Styling */
+.deals-data-table {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  width: 100% !important;
+  margin-bottom: 0 !important;
+}
+
+.deals-data-table > thead > tr > th {
+  background: #f8fafc !important;
+  border-bottom: 2px solid #e2e8f0 !important;
+  border-top: 0 !important;
+  color: #475569 !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.4px !important;
+  padding: 12px 14px !important;
+  text-transform: uppercase !important;
+  white-space: nowrap !important;
+  vertical-align: middle !important;
+}
+
+.deals-data-table > tbody > tr > td {
+  border-top: 1px solid #f1f5f9 !important;
+  color: #1e293b !important;
+  font-size: 13px !important;
+  padding: 10px 14px !important;
+  vertical-align: middle !important;
+}
+
+.deals-data-table > tbody > tr:hover > td {
+  background-color: #f8fbff !important;
+}
+
+.deals-data-table th.pbutton:first-child,
+.deals-data-table td.pbutton:first-child {
+  text-align: center !important;
+  width: 40px !important;
+  min-width: 40px !important;
+  white-space: nowrap !important;
+}
+
+.deals-data-table td.deal-action-cell,
+.deals-data-table th.actions-col,
+.deals-data-table td.actions-col {
+  text-align: center !important;
+  width: 115px !important;
+  min-width: 115px !important;
+  white-space: nowrap !important;
+}
+
+.deals-data-table .deal-status-col {
+  text-align: center !important;
+  white-space: nowrap !important;
+}
+
+.deals-data-table .deal-control-cell,
+.deals-data-table th.deal-control-col {
+  min-width: 185px !important;
+  width: 185px !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+}
+
+.deals-total-row > td {
+  background-color: #f1f5f9 !important;
+  border-top: 2px solid #cbd5e1 !important;
+  color: #0f172a !important;
+  font-weight: 700 !important;
+  font-size: 13.5px !important;
+}
+
+/* Pagination Bar & Footer */
+.pagination-wrapper,
+.card-footer.table-footer {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 20px;
+}
+
+.pagination-info,
+.dataTables_info {
+  color: var(--wv-text-muted) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.pagination,
+.dataTables_paginate .pagination {
+  align-items: center;
+  display: inline-flex !important;
+  gap: 4px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.pagination > li > a,
+.pagination > li > span {
+  align-items: center !important;
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  color: #475569 !important;
+  display: inline-flex !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  height: 34px !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  min-width: 34px !important;
+  padding: 0 10px !important;
+  text-decoration: none !important;
+  transition: all 0.15s ease !important;
+}
+
+.pagination > li > a:hover {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: var(--wv-primary) !important;
+}
+
+.pagination > .active > a,
+.pagination > .active > span,
+.pagination > .active > a:hover,
+.pagination > .active > span:hover {
+  background-color: var(--wv-primary) !important;
+  border-color: var(--wv-primary) !important;
+  box-shadow: 0 1px 3px 0 rgba(37, 99, 235, 0.3) !important;
+  color: #ffffff !important;
+  cursor: default !important;
+}
+
+.pagination > .disabled > span,
+.pagination > .disabled > a,
+.pagination > .disabled > a:hover {
+  background-color: #f8fafc !important;
+  border-color: #f1f5f9 !important;
+  color: #cbd5e1 !important;
+  cursor: not-allowed !important;
+}
+
+/* =========================================================================
+   5. ACTION BUTTONS & STATUS BADGES
+   ========================================================================= */
+/* Actions Column Flex Container */
+.btn-group-actions,
+.table-actions,
+.actions-col,
+td.actions,
+td.actions-column {
+  align-items: center;
+  display: inline-flex;
+  gap: 6px;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+/* =========================================================================
+   TABLE ACTION DROPDOWNS & STACKING / OVERFLOW PROTECTION
+   ========================================================================= */
+/* Elevated z-index on active table rows and cells to prevent subsequent rows from clipping dropdown */
+.table tr.dropdown-open,
+.table tr.dropdown-open > td,
+.table tr.dropdown-open > th,
+td.dropdown-open {
+  position: relative !important;
+  z-index: 1060 !important;
+}
+
+/* Guarantee Action Column & Button Always Render at Every Zoom Level (50%-200%) */
+th.actions-col,
+td.actions-col,
+.table th.actions-col,
+.table td.actions-col,
+.table th.deal-action-cell,
+.table td.deal-action-cell,
+.table th.wv-contacts-action,
+.table td.wv-contacts-action,
+.table th.wv-rental-actions,
+.table td.wv-rental-actions,
+.deals-data-table th.actions-col,
+.deals-data-table td.actions-col,
+.deals-data-table th.deal-action-cell,
+.deals-data-table td.deal-action-cell,
+.wv-contacts-table th.actions-col,
+.wv-contacts-table td.actions-col,
+.wv-rental-table th.actions-col,
+.wv-rental-table td.actions-col {
+  min-width: 115px !important;
+  width: 115px !important;
+  white-space: nowrap !important;
+  position: relative !important;
+  visibility: visible !important;
+  display: table-cell !important;
+  text-align: center !important;
+}
+
+.actions-col .btn,
+.deal-action-cell .btn,
+.wv-contacts-action .btn,
+.wv-rental-actions .btn {
+  min-width: 85px !important;
+  white-space: nowrap !important;
+  visibility: visible !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.table .btn-group.open,
+.table .dropdown.open,
+.actions-col .btn-group.open,
+.deal-action-cell .btn-group.open,
+.deal-control-btn-group.open,
+.wv-contacts-action .btn-group.open,
+.wv-rental-actions .btn-group.open {
+  position: relative !important;
+  z-index: 1050 !important;
+}
+
+/* Unified Deal Control Status Button & Cell Styling */
+.table th.deal-control-col,
+.table td.deal-control-cell,
+.deals-data-table th.deal-control-col,
+.deals-data-table td.deal-control-cell {
+  min-width: 185px !important;
+  width: 185px !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+}
+
+.deal-control-flex-wrap {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  vertical-align: middle !important;
+  width: auto !important;
+  min-width: max-content !important;
+  max-width: none !important;
+  white-space: nowrap !important;
+}
+
+.deal-control-status-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 7px !important;
+  height: 32px !important;
+  min-height: 32px !important;
+  width: auto !important;
+  min-width: max-content !important;
+  max-width: none !important;
+  padding: 0 14px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  color: #ffffff !important;
+  font-size: 11.5px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.35px !important;
+  text-transform: uppercase !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.16) !important;
+  cursor: pointer !important;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  word-break: normal !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+  flex-shrink: 0 !important;
+}
+
+.deal-control-status-btn:hover,
+.deal-control-status-btn:focus,
+.deal-control-btn-group.open .deal-control-status-btn,
+.btn-group.open .deal-control-status-btn {
+  filter: brightness(1.1) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.22) !important;
+  color: #ffffff !important;
+  outline: none !important;
+  text-decoration: none !important;
+}
+
+.deal-control-status-btn .caret {
+  margin-left: 5px !important;
+  border-top: 4px solid #ffffff !important;
+  border-right: 4px solid transparent !important;
+  border-left: 4px solid transparent !important;
+  border-bottom: 0 !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+  transition: transform 0.15s ease !important;
+  flex-shrink: 0 !important;
+}
+
+.btn-group.open .deal-control-status-btn .caret {
+  transform: rotate(180deg) !important;
+}
+
+.btn-group.dropup .deal-control-status-btn .caret,
+.btn-group.dropup.open .deal-control-status-btn .caret {
+  transform: none !important;
+  border-top: 0 !important;
+  border-bottom: 4px solid #ffffff !important;
+}
+
+.deal-control-badge-dot {
+  width: 7px !important;
+  height: 7px !important;
+  border-radius: 50% !important;
+  background-color: #ffffff !important;
+  display: inline-block !important;
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.5) !important;
+  flex-shrink: 0 !important;
+}
+
+.deal-control-badge-text {
+  display: inline-block !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  max-width: none !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  font-size: 11.5px !important;
+  letter-spacing: 0.3px !important;
+  line-height: 1 !important;
+  text-transform: uppercase !important;
+  flex-shrink: 0 !important;
+}
+
+.deal-control-reason-icon {
+  font-size: 11.5px !important;
+  color: rgba(255, 255, 255, 0.95) !important;
+  margin-left: 2px !important;
+  flex-shrink: 0 !important;
+}
+
+.deal-control-btn-group {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  max-width: none !important;
+  min-width: max-content !important;
+  margin: 0 !important;
+  vertical-align: middle !important;
+  white-space: nowrap !important;
+}
+
+.deal-control-dropdown-menu,
+body > .dropdown-menu.deal-control-dropdown-menu {
+  min-width: 220px !important;
+  border-radius: 10px !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 16px 36px -4px rgba(15, 23, 42, 0.22), 0 4px 10px -2px rgba(15, 23, 42, 0.08) !important;
+  padding: 6px !important;
+  background: #ffffff !important;
+}
+
+.deal-control-menu-reason {
+  padding: 4px 8px 6px !important;
+}
+
+.deal-control-menu-reason-box {
+  background: #f8fafc;
+  border: 1px solid #d8e2ee;
+  border-radius: 6px;
+  padding: 7px 9px;
+  font-size: 11px;
+  color: #334155;
+  box-shadow: inset 3px 0 0 #2563eb;
+  max-width: 250px;
+  white-space: normal;
+  word-break: break-word;
+  text-align: left;
+}
+
+.deal-control-menu-reason-box strong {
+  color: #0f172a;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.deal-control-menu-reason-box .deal-control-reason-text {
+  line-height: 1.35;
+  color: #475569;
+}
+
+.deal-control-dropdown-menu .dropdown-header,
+body > .dropdown-menu.deal-control-dropdown-menu .dropdown-header {
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  color: #64748b !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  padding: 6px 12px 4px !important;
+}
+
+.deal-control-dropdown-menu > li > a,
+body > .dropdown-menu.deal-control-dropdown-menu > li > a {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 8px 12px !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  color: #334155 !important;
+  border-radius: 6px !important;
+  transition: all 0.15s ease !important;
+}
+
+.deal-control-dropdown-menu > li > a:hover,
+body > .dropdown-menu.deal-control-dropdown-menu > li > a:hover {
+  background: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+.deal-control-dropdown-menu > li.active-status > a,
+body > .dropdown-menu.deal-control-dropdown-menu > li.active-status > a {
+  background: #eff6ff !important;
+  color: #1d4ed8 !important;
+  font-weight: 700 !important;
+}
+
+/* Touch-friendly uniform dropdown toggle button */
+.table .btn-group > .btn.dropdown-toggle,
+.table td .btn.dropdown-toggle {
+  align-items: center !important;
+  border-radius: 6px !important;
+  display: inline-flex !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  gap: 5px !important;
+  height: 32px !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  min-height: 32px !important;
+  padding: 0 10px !important;
+  transition: all 0.15s ease-in-out !important;
+}
+
+.table .btn-group > .btn.dropdown-toggle .caret {
+  margin-left: 3px !important;
+}
+
+/* Table Dropdown Menu */
+.table .dropdown-menu {
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 14px 35px -4px rgba(15, 23, 42, 0.2), 0 4px 8px -2px rgba(15, 23, 42, 0.08) !important;
+  margin: 0 !important;
+  min-width: 205px !important;
+  padding: 6px !important;
+  z-index: 99999 !important;
+  box-sizing: border-box !important;
+}
+
+/* Body-Portaled Dropdown Menu (Zoom-Proof & Overflow-Proof) */
+body > .dropdown-menu.wv-portal-active-menu {
+  position: fixed !important;
+  z-index: 99999 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  box-shadow: 0 16px 40px -4px rgba(15, 23, 42, 0.28), 0 6px 14px -2px rgba(15, 23, 42, 0.12) !important;
+  border: 1px solid #cbd5e1 !important;
+  background: #ffffff !important;
+  border-radius: 8px !important;
+  min-width: 205px !important;
+  padding: 6px !important;
+}
+
+body > .dropdown-menu.wv-portal-active-menu > li > a,
+body > .dropdown-menu.wv-portal-active-menu > li > form button,
+body > .dropdown-menu.wv-portal-active-menu > li > form input[type="submit"] {
+  align-items: center !important;
+  border-radius: 6px !important;
+  clear: both !important;
+  color: #334155 !important;
+  display: flex !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  gap: 9px !important;
+  line-height: 1.4 !important;
+  min-height: 36px !important;
+  padding: 8px 14px !important;
+  text-decoration: none !important;
+  transition: all 0.15s ease !important;
+  white-space: nowrap !important;
+}
+
+body > .dropdown-menu.wv-portal-active-menu > li > a:hover,
+body > .dropdown-menu.wv-portal-active-menu > li > a:focus,
+body > .dropdown-menu.wv-portal-active-menu > li > form button:hover {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+body > .dropdown-menu.wv-portal-active-menu > li > a i,
+body > .dropdown-menu.wv-portal-active-menu > li > a span.fa {
+  color: #64748b !important;
+  font-size: 13px !important;
+  text-align: center !important;
+  width: 18px !important;
+}
+
+body > .dropdown-menu.wv-portal-active-menu > li > a:hover i,
+body > .dropdown-menu.wv-portal-active-menu > li > a:hover span.fa {
+  color: var(--wv-primary) !important;
+}
+
+/* Dropup specific positioning */
+.dropup .dropdown-menu,
+.table .dropup .dropdown-menu,
+.btn-group.dropup .dropdown-menu,
+.table-responsive .dropup .dropdown-menu,
+.deal-action-cell .dropup .dropdown-menu,
+.wv-contacts-action .dropup .dropdown-menu,
+.wv-rental-actions .dropup .dropdown-menu {
+  bottom: 100% !important;
+  margin-bottom: 6px !important;
+  margin-top: 0 !important;
+  top: auto !important;
+}
+
+/* Caret indicator flips upside for dropup */
+.dropup .dropdown-toggle .caret,
+.btn-group.dropup .dropdown-toggle .caret {
+  border-bottom: 4px solid !important;
+  border-top: 0 !important;
+  content: "" !important;
+}
+
+.table tr.dropdown-open,
+.table tr.dropdown-open > td,
+.table tr.dropdown-open > th,
+td.dropdown-open,
+.table .btn-group.open,
+.table .btn-group.dropup.open {
+  position: relative !important;
+  z-index: 1070 !important;
+}
+
+.table .dropdown-menu {
+  z-index: 99999 !important;
+}
+
+.table-responsive.dropdown-active {
+  overflow-y: visible !important;
+}
+
+.table .dropdown-menu-right {
+  left: auto !important;
+  right: 0 !important;
+}
+
+/* Touch-friendly dropdown menu items */
+.table .dropdown-menu > li > a,
+.table .dropdown-menu > li > form button,
+.table .dropdown-menu > li > form input[type="submit"] {
+  align-items: center !important;
+  border-radius: 6px !important;
+  clear: both !important;
+  color: #334155 !important;
+  display: flex !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  gap: 9px !important;
+  line-height: 1.4 !important;
+  min-height: 36px !important;
+  padding: 8px 14px !important;
+  text-decoration: none !important;
+  transition: all 0.15s ease !important;
+  white-space: nowrap !important;
+}
+
+.table .dropdown-menu > li > a:hover,
+.table .dropdown-menu > li > a:focus,
+.table .dropdown-menu > li > form button:hover,
+.table .dropdown-menu > li > form input[type="submit"]:hover {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+  text-decoration: none !important;
+}
+
+.table .dropdown-menu > li > a i,
+.table .dropdown-menu > li > a span.fa,
+.table .dropdown-menu > li > a span.glyphicon {
+  color: #64748b !important;
+  font-size: 13px !important;
+  text-align: center !important;
+  transition: color 0.15s ease !important;
+  width: 18px !important;
+}
+
+.table .dropdown-menu > li > a:hover i,
+.table .dropdown-menu > li > a:hover span.fa,
+.table .dropdown-menu > li > a:hover span.glyphicon {
+  color: var(--wv-primary) !important;
+}
+
+.table .dropdown-menu > li.divider {
+  background-color: #f1f5f9 !important;
+  height: 1px !important;
+  margin: 5px 0 !important;
+  overflow: hidden !important;
+}
+
+.table .dropdown-menu > li.disabled > a,
+.table .dropdown-menu > li.disabled > span {
+  align-items: center !important;
+  color: #94a3b8 !important;
+  cursor: not-allowed !important;
+  display: flex !important;
+  gap: 9px !important;
+  padding: 8px 14px !important;
+}
+
+.table .dropdown-menu > li.disabled > a:hover {
+  background: transparent !important;
+}
+
+/* Touch-friendly compact action buttons (View, Edit, Delete) */
+.btn-xs,
+.btn-action {
+  align-items: center !important;
+  border-radius: 6px !important;
+  display: inline-flex !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  gap: 4px !important;
+  height: 32px !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  min-height: 32px !important;
+  min-width: 32px !important;
+  padding: 0 10px !important;
+  text-decoration: none !important;
+  transition: all 0.15s ease-in-out !important;
+}
+
+/* View Action (Slate/Neutral) */
+.btn-action-view,
+.btn-info.btn-xs,
+.btn-info.btn-sm {
+  background-color: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #334155 !important;
+}
+.btn-action-view:hover,
+.btn-info.btn-xs:hover,
+.btn-info.btn-sm:hover {
+  background-color: #e2e8f0 !important;
+  border-color: #94a3b8 !important;
+  color: #0f172a !important;
+}
+
+/* Edit Action (Soft Blue) */
+.btn-action-edit,
+.btn-primary.btn-xs,
+.btn-primary.btn-sm {
+  background-color: var(--wv-primary-light) !important;
+  border: 1px solid var(--wv-primary-border) !important;
+  color: var(--wv-primary) !important;
+}
+.btn-action-edit:hover,
+.btn-primary.btn-xs:hover,
+.btn-primary.btn-sm:hover {
+  background-color: #dbeafe !important;
+  border-color: #93c5fd !important;
+  color: #1d4ed8 !important;
+}
+
+/* Delete Action (Soft Red) */
+.btn-action-delete,
+.btn-danger.btn-xs,
+.btn-danger.btn-sm {
+  background-color: var(--wv-danger-bg) !important;
+  border: 1px solid var(--wv-danger-border) !important;
+  color: var(--wv-danger) !important;
+}
+.btn-action-delete:hover,
+.btn-danger.btn-xs:hover,
+.btn-danger.btn-sm:hover {
+  background-color: #fee2e2 !important;
+  border-color: #fca5a5 !important;
+  color: #991b1b !important;
+}
+
+/* Status Pill Badges */
+.badge-status,
+.label {
+  align-items: center !important;
+  border-radius: 999px !important;
+  display: inline-flex !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  gap: 5px !important;
+  letter-spacing: 0.2px !important;
+  line-height: 1.3 !important;
+  padding: 4px 10px !important;
+  text-decoration: none !important;
+}
+
+/* Success / Active / Paid */
+.label-success,
+.badge-success,
+.status-active,
+.status-paid,
+.status-completed {
+  background-color: var(--wv-success-bg) !important;
+  border: 1px solid var(--wv-success-border) !important;
+  color: var(--wv-success) !important;
+}
+
+/* Warning / Pending / Due */
+.label-warning,
+.badge-warning,
+.status-pending,
+.status-due,
+.status-in-progress {
+  background-color: var(--wv-warning-bg) !important;
+  border: 1px solid var(--wv-warning-border) !important;
+  color: var(--wv-warning) !important;
+}
+
+/* Danger / Inactive / Cancelled / Past Due */
+.label-danger,
+.badge-danger,
+.status-inactive,
+.status-cancelled,
+.status-past-due,
+.status-rejected {
+  background-color: var(--wv-danger-bg) !important;
+  border: 1px solid var(--wv-danger-border) !important;
+  color: var(--wv-danger) !important;
+}
+
+/* Info / Draft / Neutral */
+.label-info,
+.badge-info,
+.label-default,
+.status-draft,
+.status-neutral {
+  background-color: var(--wv-info-bg) !important;
+  border: 1px solid var(--wv-info-border) !important;
+  color: var(--wv-info) !important;
+}
+
+/* =========================================================================
+   6. 100% MOBILE RESPONSIVE OPTIMIZATIONS
+   ========================================================================= */
+@media (max-width: 768px) {
+  /* Prevent iOS zoom on input tap */
+  .form-control,
+  .input.text input,
+  .input.select select,
+  .input.textarea textarea,
+  .input.number input,
+  .input.date input,
+  .input.datetime input,
+  .input.password input,
+  .input.email input,
+  .input.tel input,
+  .input.url input {
+    font-size: 16px !important;
+  }
+
+  /* Page Header Mobile Stack */
+  .page-header-content,
+  .wv-page-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+
+  .page-title,
+  .wv-page-title-box {
+    width: 100% !important;
+  }
+
+  .heading-elements,
+  .wv-page-header-actions {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .heading-elements .btn,
+  .wv-page-header-actions .btn {
+    width: 100% !important;
+    text-align: center !important;
+  }
+
+  /* Form Footer Mobile Stack */
+  .form-actions,
+  .wv-form-footer {
+    flex-direction: column-reverse !important;
+    width: 100% !important;
+  }
+
+  .form-actions .btn,
+  .wv-form-footer .btn {
+    width: 100% !important;
+    margin-bottom: 8px !important;
+  }
+
+  /* Pagination Mobile Stack */
+  .pagination-wrapper,
+  .card-footer.table-footer {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 12px !important;
+  }
+
+  .pagination,
+  .dataTables_paginate .pagination {
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+  }
+
+  /* Card padding on smaller screens */
+  .panel-body,
+  .card-body,
+  .wv-card-body {
+    padding: 14px !important;
+  }
+
+  /* Executive Header Bar & Filter Panel Mobile Stack */
+  .wv-pro-header-bar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+    padding: 12px 14px !important;
+  }
+
+  .wv-pro-header-left {
+    justify-content: space-between !important;
+    width: 100% !important;
+  }
+
+  .wv-pro-header-right {
+    width: 100% !important;
+  }
+
+  .wv-pro-actions-row {
+    width: 100% !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+
+  .wv-pro-action-btn {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    text-align: center !important;
+    font-size: 12px !important;
+    padding: 0 8px !important;
+  }
+
+  .wv-bulk-action-inline {
+    border-left: 0 !important;
+    margin-left: 0 !important;
+    margin-top: 4px !important;
+    padding-left: 0 !important;
+    width: 100% !important;
+    display: flex !important;
+  }
+
+  .wv-bulk-action-select {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  .wv-bulk-action-apply-btn {
+    flex: 0 0 auto !important;
+  }
+
+  .wv-pro-filter-toggle {
+    width: 100% !important;
+    margin-top: 4px !important;
+    justify-content: space-between !important;
+  }
+
+  .wv-pro-filter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 9px !important;
+  }
+
+  .wv-pro-col-wide,
+  .wv-pro-filter-actions {
+    grid-column: span 2 !important;
+  }
+}
+
+@media (max-width: 575px) {
+  .wv-pro-filter-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .wv-pro-col-wide,
+  .wv-pro-filter-actions {
+    grid-column: span 1 !important;
+  }
+}

@@ -4,14 +4,14 @@ App::uses('AppController', 'Controller');
 class MyDocumentsController extends AppController
 {
     public $helpers = array('Html', 'Session', 'Time', 'Number');
-    public $uses = array('MyDeal', 'MyPayment', 'Admin.DealDocument', 'Admin.Realestateletter');
+    public $uses = array('MyDeal', 'Admin.DealDocument', 'Admin.Realestateletter');
     protected $_portalVisibleDealStatuses = array('Active', 'Blocked');
 
     public function beforeFilter()
     {
         parent::beforeFilter();
         $this->authenticate();
-        $this->userId = $this->userValue['Client']['id'];
+        $this->userId = !empty($this->userValue['Client']['id']) ? (int)$this->userValue['Client']['id'] : 0;
         $this->_ensureClientDealDocumentsTable();
     }
 
@@ -44,19 +44,9 @@ class MyDocumentsController extends AppController
             }
         }
 
-        $receipts = $letters = $vaultDocuments = array();
+        $letters = $vaultDocuments = array();
         if(!empty($dealIds))
         {
-            $receipts = $this->MyPayment->find('all', array(
-                'fields' => array('MyPayment.*', 'Deal.id', 'Deal.invoice_no', 'Property.name'),
-                'joins' => array(
-                    array('table' => 'deals', 'alias' => 'Deal', 'type' => 'LEFT', 'conditions' => array('MyPayment.deal_id=Deal.id')),
-                    array('table' => 'properties', 'alias' => 'Property', 'type' => 'LEFT', 'conditions' => array('Deal.property_id=Property.id'))
-                ),
-                'conditions' => array('MyPayment.deal_id' => $dealIds),
-                'order' => array('MyPayment.id' => 'desc'),
-                'recursive' => -1
-            ));
             $letters = $this->Realestateletter->find('all', array(
                 'fields' => array('Realestateletter.*', 'Deal.id', 'Deal.invoice_no', 'Property.name'),
                 'joins' => array(
@@ -78,7 +68,10 @@ class MyDocumentsController extends AppController
                 'recursive' => -1
             ));
         }
-        $this->set(compact('deals', 'receipts', 'letters', 'vaultDocuments'));
+
+        $this->set('title_for_layout', __('My Documents & Records'));
+        $this->set('isClientPortal', true);
+        $this->set(compact('deals', 'letters', 'vaultDocuments'));
     }
 
     public function download($id = null)
@@ -181,7 +174,7 @@ class MyDocumentsController extends AppController
         }
         catch(Exception $e)
         {
-            // The page can still load receipts/letters if vault table creation is blocked.
+            // The page can still load letters if vault table creation is blocked.
         }
     }
 }

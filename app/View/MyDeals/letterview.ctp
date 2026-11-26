@@ -4,20 +4,16 @@
   padding: 0;
 }
 .wv-letterview-hero {
-  background: linear-gradient(135deg, #07152a 0%, #102746 72%, #ff0a46 170%);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-top: 4px solid #0284c7;
   border-radius: 16px;
-  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.14);
-  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+  color: #0f172a;
   margin-bottom: 20px;
   overflow: hidden;
-  padding: 24px;
+  padding: 22px 24px;
   position: relative;
-}
-.wv-letterview-hero:after {
-  background: radial-gradient(circle at 85% 15%, rgba(124, 249, 255, 0.22), rgba(124, 249, 255, 0) 40%);
-  content: "";
-  inset: 0;
-  position: absolute;
 }
 .wv-letterview-hero-inner {
   align-items: center;
@@ -29,7 +25,7 @@
   z-index: 2;
 }
 .wv-letterview-kicker {
-  color: #7cf9ff;
+  color: #0284c7;
   font-size: 11px;
   font-weight: 900;
   letter-spacing: 0.8px;
@@ -37,28 +33,29 @@
   text-transform: uppercase;
 }
 .wv-letterview-title {
-  color: #ffffff !important;
+  color: #0f172a !important;
   font-size: 26px;
   font-weight: 900;
   line-height: 1.2;
   margin: 0 0 6px;
 }
 .wv-letterview-meta {
-  color: #cbd5e1;
+  color: #475569;
   display: flex;
   flex-wrap: wrap;
   font-size: 13px;
   font-weight: 800;
-  gap: 12px;
+  gap: 10px;
 }
 .wv-letterview-meta span {
   align-items: center;
-  background: rgba(255, 255, 255, 0.10);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   border-radius: 999px;
   display: inline-flex;
   gap: 6px;
-  padding: 4px 10px;
+  padding: 6px 12px;
+  color: #334155 !important;
 }
 .wv-letterview-actions {
   display: flex;
@@ -67,9 +64,9 @@
 }
 .wv-letterview-card {
   background: #ffffff;
-  border: 1px solid #dfe9f5;
+  border: 1px solid #e2e8f0;
   border-radius: 14px;
-  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
   margin-bottom: 20px;
   overflow: hidden;
   padding: 20px;
@@ -81,8 +78,8 @@
   margin-bottom: 20px;
 }
 .wv-letterview-spec {
-  background: #f8fbff;
-  border: 1px solid #dfe9f5;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   border-radius: 10px;
   padding: 12px 14px;
 }
@@ -95,7 +92,7 @@
   text-transform: uppercase;
 }
 .wv-letterview-spec strong {
-  color: #07152a;
+  color: #0f172a;
   display: block;
   font-size: 14px;
   font-weight: 900;
@@ -103,30 +100,33 @@
   word-break: break-word;
 }
 .wv-letterview-preview-wrap {
-  background: #f1f5f9;
-  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   border-radius: 12px;
   overflow: hidden;
   padding: 12px;
+  touch-action: pan-x pan-y;
+  -webkit-overflow-scrolling: touch;
 }
 .wv-letterview-iframe {
   background: #ffffff;
-  border: 1px solid #dfe9f5;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
   display: block;
   min-height: 850px;
   width: 100%;
 }
 .wv-letterview-body-box {
   background: #ffffff;
-  border: 1px solid #dfe9f5;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
   font-size: 14px;
   line-height: 1.6;
   min-height: 400px;
   padding: 28px;
+  color: #1e293b;
 }
 
 @media(max-width:991px){
@@ -139,7 +139,7 @@
   .wv-letterview-actions{width:100%;}
   .wv-letterview-actions .btn{flex:1 1 auto;justify-content:center;}
   .wv-letterview-specs-grid{grid-template-columns:1fr;}
-  .wv-letterview-iframe{min-height:600px;}
+  .wv-letterview-iframe{min-height:550px;}
 }
 </style>
 

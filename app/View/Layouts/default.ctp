@@ -148,6 +148,7 @@ $ogPageUrl = Router::url(null, true);
 		if(!empty($wvLayoutNeedsValidation)){ echo $this->Html->css('validationEngine.jquery'); }
 		echo $this->Html->css('wv-theme-tokens');
 		echo $this->Html->css('wv-portal-theme');
+		echo $this->Html->css('/design2000/assets/css/admin-pro-upgrade.css?v=20261126-pro-v1');
 		if(!empty($themeDynamicCss)){ echo '<style type="text/css" id="wv-dynamic-theme">'.$themeDynamicCss.'</style>'; }
 		echo $this->fetch('meta');		
 		echo $this->fetch('css');
@@ -414,7 +415,37 @@ function googleTranslateElementInit() {
 				?>
 				     	<div class="dashboard-user-image" style="background-image: url('<?php echo h($urlPhoto);?>')">
 					</div><!-- /.dashboar-user-image -->
-					<strong><?php echo h(!empty($currentClientArr['name']) ? $currentClientArr['name'] : __('Client'));?></strong>
+					<div class="wv-sidebar-user-row">
+						<strong class="wv-sidebar-user-name" title="<?php echo h(!empty($currentClientArr['name']) ? $currentClientArr['name'] : __('Client'));?>"><?php echo h(!empty($currentClientArr['name']) ? $currentClientArr['name'] : __('Client'));?></strong>
+						<!-- In-Portal Notification Bell Dropdown (In Sidebar after Client Name) -->
+						<div class="wv-client-notif-dropdown dropdown" id="wvClientNotifDropdown">
+							<a href="javascript:void(0);" class="wv-client-bell-btn" id="wvNotifBellBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="<?php echo __('Notifications'); ?>">
+								<i class="fa fa-bell-o" aria-hidden="true"></i>
+								<?php $unreadNotifDisplay = !empty($clientUnreadNotifCount) ? (int)$clientUnreadNotifCount : 0; ?>
+								<span class="wv-bell-badge <?php echo ($unreadNotifDisplay > 0) ? 'has-unread' : ''; ?>" id="wvBellBadge" style="<?php echo ($unreadNotifDisplay > 0) ? '' : 'display:none;'; ?>">
+									<?php echo $unreadNotifDisplay; ?>
+								</span>
+							</a>
+							<div class="dropdown-menu wv-notif-menu" aria-labelledby="wvNotifBellBtn">
+								<div class="wv-notif-menu-header">
+									<div class="wv-notif-menu-title">
+										<i class="fa fa-bell text-warning"></i> <?php echo __('Notifications'); ?>
+									</div>
+									<a href="javascript:void(0);" id="wvMarkAllReadBtn" class="wv-notif-mark-read">
+										<i class="fa fa-check"></i> <?php echo __('Mark all read'); ?>
+									</a>
+								</div>
+								<div class="wv-notif-items-wrap" id="wvNotifItemsWrap">
+									<div class="wv-notif-loading"><i class="fa fa-spinner fa-spin"></i> <?php echo __('Loading updates...'); ?></div>
+								</div>
+								<div class="wv-notif-menu-footer">
+									<a href="<?php echo $this->Html->url(array('controller' => 'ClientNotifications', 'action' => 'index')); ?>" class="wv-notif-see-all">
+										<?php echo __('View All Notifications'); ?> <i class="fa fa-arrow-right"></i>
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div><!-- /.dashboard-user -->
 
 				<div class="dashboard-nav-primary collapse navbar-toggleable-md">
@@ -439,25 +470,25 @@ function googleTranslateElementInit() {
 							<span class="wv-portal-badge"><i class="fa fa-shield"></i> <?php echo __('White Villas Client Portal'); ?></span>
 						</div>
 						<div class="wv-client-top-right">
-							<!-- In-Portal Notification Bell Dropdown -->
-							<div class="wv-client-notif-dropdown dropdown" id="wvClientNotifDropdown">
-								<a href="javascript:void(0);" class="wv-client-bell-btn dropdown-toggle" id="wvNotifBellBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="<?php echo __('Notifications'); ?>">
-									<i class="fa fa-bell-o"></i>
+							<!-- In-Portal Notification Bell (Visible in top bar on mobile/tablet < 992px) -->
+							<div class="wv-client-notif-dropdown dropdown hidden-lg-up" id="wvClientNotifDropdownMobile">
+								<a href="javascript:void(0);" class="wv-client-bell-btn" id="wvNotifBellBtnMobile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="<?php echo __('Notifications'); ?>">
+									<i class="fa fa-bell-o" aria-hidden="true"></i>
 									<?php $unreadNotifDisplay = !empty($clientUnreadNotifCount) ? (int)$clientUnreadNotifCount : 0; ?>
-									<span class="wv-bell-badge <?php echo ($unreadNotifDisplay > 0) ? 'has-unread' : ''; ?>" id="wvBellBadge" style="<?php echo ($unreadNotifDisplay > 0) ? '' : 'display:none;'; ?>">
+									<span class="wv-bell-badge <?php echo ($unreadNotifDisplay > 0) ? 'has-unread' : ''; ?>" id="wvBellBadgeMobile" style="<?php echo ($unreadNotifDisplay > 0) ? '' : 'display:none;'; ?>">
 										<?php echo $unreadNotifDisplay; ?>
 									</span>
 								</a>
-								<div class="dropdown-menu dropdown-menu-right wv-notif-menu" aria-labelledby="wvNotifBellBtn">
+								<div class="dropdown-menu dropdown-menu-right wv-notif-menu" aria-labelledby="wvNotifBellBtnMobile">
 									<div class="wv-notif-menu-header">
 										<div class="wv-notif-menu-title">
 											<i class="fa fa-bell text-warning"></i> <?php echo __('Notifications'); ?>
 										</div>
-										<a href="javascript:void(0);" id="wvMarkAllReadBtn" class="wv-notif-mark-read">
+										<a href="javascript:void(0);" id="wvMarkAllReadBtnMobile" class="wv-notif-mark-read">
 											<i class="fa fa-check"></i> <?php echo __('Mark all read'); ?>
 										</a>
 									</div>
-									<div class="wv-notif-items-wrap" id="wvNotifItemsWrap">
+									<div class="wv-notif-items-wrap" id="wvNotifItemsWrapMobile">
 										<div class="wv-notif-loading"><i class="fa fa-spinner fa-spin"></i> <?php echo __('Loading updates...'); ?></div>
 									</div>
 									<div class="wv-notif-menu-footer">
@@ -466,11 +497,6 @@ function googleTranslateElementInit() {
 										</a>
 									</div>
 								</div>
-							</div>
-
-							<div class="wv-client-user-pill hidden-xs-down">
-								<i class="fa fa-user-circle"></i>
-								<span><?php echo h(!empty($currentClientArr['name']) ? $currentClientArr['name'] : __('Client')); ?></span>
 							</div>
 						</div>
 					</div><!-- /.dashboard-header -->
@@ -1149,48 +1175,121 @@ body.wv-client-theme .dashboard-content .wv-client-table-wrap{
   align-items: center;
   gap: 14px;
 }
-.wv-client-bell-btn {
-  position: relative;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: #f1f5f9;
-  border: 1px solid #e2e8f0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: #07152a !important;
-  font-size: 18px;
+/* Sidebar User Row with Bell after Name */
+.wv-sidebar-user-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  margin-top: 8px !important;
+  position: relative !important;
+}
+.wv-sidebar-user-name {
+  color: #ffffff !important;
+  font-size: 13.5px !important;
+  font-weight: 800 !important;
+  line-height: 1.3 !important;
+  margin: 0 !important;
+  max-width: 175px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.45) !important;
+}
+.wv-client-notif-dropdown {
+  display: inline-flex !important;
+  align-items: center !important;
+  position: relative !important;
+}
+/* Professional Bell Button - Without Background */
+.wv-client-bell-btn,
+.wv-client-bell-btn.dropdown-toggle,
+a.wv-client-bell-btn {
+  position: relative !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  line-height: 1 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #cbd5e1 !important;
+  font-size: 18px !important;
+  padding: 3px 5px !important;
+  margin: 0 !important;
   text-decoration: none !important;
-  transition: all 0.2s ease;
+  transition: color 0.15s ease, transform 0.15s ease !important;
+  cursor: pointer !important;
+  vertical-align: middle !important;
 }
-.wv-client-bell-btn:hover {
-  background: #fff1f4;
-  color: #ff0a46 !important;
-  border-color: #ffd6df;
+.wv-client-bell-btn:hover,
+.wv-client-bell-btn:focus,
+.wv-client-bell-btn:active,
+.open > .wv-client-bell-btn,
+.open > a.wv-client-bell-btn {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+  color: #38bdf8 !important;
+  transform: scale(1.12) !important;
 }
+/* Ensure NO caret arrow or dropdown triangle is ever rendered */
+.wv-client-bell-btn::after,
+.wv-client-bell-btn:after,
+.wv-client-notif-dropdown .dropdown-toggle::after,
+.wv-client-notif-dropdown .dropdown-toggle:after,
+.wv-client-bell-btn .caret {
+  display: none !important;
+  content: none !important;
+  border: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  margin: 0 !important;
+}
+.wv-client-bell-btn i.fa {
+  font-size: 18px !important;
+  line-height: 1 !important;
+  color: inherit !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+}
+/* Professional Notification Count Badge */
 .wv-bell-badge {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  background: #ff0a46;
-  color: #ffffff;
-  font-size: 10px;
-  font-weight: 900;
-  min-width: 18px;
-  height: 18px;
-  line-height: 18px;
-  border-radius: 999px;
-  text-align: center;
-  padding: 0 4px;
-  box-shadow: 0 2px 6px rgba(255, 10, 70, 0.4);
+  position: absolute !important;
+  top: -6px !important;
+  right: -8px !important;
+  background: #ef4444 !important;
+  color: #ffffff !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  min-width: 17px !important;
+  height: 17px !important;
+  line-height: 15px !important;
+  border: 1.5px solid #07152a !important;
+  border-radius: 999px !important;
+  text-align: center !important;
+  padding: 0 4px !important;
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.45) !important;
+  z-index: 5 !important;
+  pointer-events: none !important;
 }
 .wv-bell-badge.has-unread {
-  animation: pulse-ring 2s infinite;
+  animation: wv-badge-pulse 2s infinite !important;
 }
-@keyframes pulse-ring {
+@keyframes wv-badge-pulse {
   0% { transform: scale(1); }
-  50% { transform: scale(1.15); }
+  50% { transform: scale(1.12); }
   100% { transform: scale(1); }
 }
 .wv-client-user-pill {
@@ -1205,18 +1304,64 @@ body.wv-client-theme .dashboard-content .wv-client-table-wrap{
   align-items: center;
   gap: 6px;
 }
+/* Notification Dropdown Menu */
 .wv-notif-menu {
-  width: 340px;
-  max-width: 90vw;
-  border-radius: 14px;
-  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.16);
-  border: 1px solid #dfe9f5;
-  padding: 0;
-  margin-top: 10px;
-  right: 0;
-  left: auto !important;
-  overflow: hidden;
-  z-index: 1080;
+  width: 320px !important;
+  max-width: 90vw !important;
+  border-radius: 14px !important;
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.22) !important;
+  border: 1px solid #dfe9f5 !important;
+  padding: 0 !important;
+  margin-top: 10px !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  top: 100% !important;
+  overflow: hidden !important;
+  z-index: 1099 !important;
+}
+body.wv-client-theme .dashboard-sidebar,
+body.wv-client-theme .dashboard-user,
+body.wv-client-theme .dashboard-wrapper {
+  overflow: visible !important;
+}
+@media (max-width: 991px) {
+  body.wv-client-theme .dashboard-user {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04) !important;
+  }
+  body.wv-client-theme .dashboard-user .wv-sidebar-user-name {
+    color: #0f172a !important;
+    text-shadow: none !important;
+  }
+  body.wv-client-theme .dashboard-user .wv-client-bell-btn {
+    color: #334155 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+  body.wv-client-theme .dashboard-user .wv-client-bell-btn:hover,
+  body.wv-client-theme .dashboard-user .wv-client-bell-btn:focus {
+    color: #0284c7 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+  body.wv-client-theme .dashboard-user .wv-bell-badge {
+    border-color: #ffffff !important;
+  }
+}
+@media (max-width: 767px) {
+  .wv-notif-menu {
+    position: fixed !important;
+    top: 60px !important;
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+    max-width: none !important;
+    transform: none !important;
+  }
 }
 .wv-notif-menu-header {
   background: #07152a;
@@ -1315,14 +1460,14 @@ body.wv-client-theme .dashboard-content .wv-client-table-wrap{
     $.getJSON(notifPollUrl, function(data){
       if (data && data.status === 'success') {
         var count = parseInt(data.unread_count, 10) || 0;
-        var $badge = $('#wvBellBadge');
+        var $badge = $('#wvBellBadge, #wvBellBadgeMobile');
         if (count > 0) {
           $badge.text(count).show().addClass('has-unread');
         } else {
           $badge.text(0).hide().removeClass('has-unread');
         }
 
-        var $wrap = $('#wvNotifItemsWrap');
+        var $wrap = $('#wvNotifItemsWrap, #wvNotifItemsWrapMobile');
         if (data.items && data.items.length > 0) {
           var html = '';
           $.each(data.items, function(i, item){
@@ -1343,15 +1488,15 @@ body.wv-client-theme .dashboard-content .wv-client-table-wrap{
   }
 
   $(function(){
-    $('#wvClientNotifDropdown').on('show.bs.dropdown', function(){
+    $('#wvClientNotifDropdown, #wvClientNotifDropdownMobile').on('show.bs.dropdown', function(){
       fetchNotifications();
     });
 
-    $('#wvMarkAllReadBtn').on('click', function(e){
+    $('#wvMarkAllReadBtn, #wvMarkAllReadBtnMobile').on('click', function(e){
       e.preventDefault();
       e.stopPropagation();
       $.post(markAllUrl, function(){
-        $('#wvBellBadge').hide().removeClass('has-unread');
+        $('#wvBellBadge, #wvBellBadgeMobile').hide().removeClass('has-unread');
         $('.wv-notif-item').removeClass('unread');
       });
     });
@@ -1430,6 +1575,7 @@ $ogPageUrl = Router::url(null, true);
 		if(!empty($wvLayoutNeedsValidation)){ echo $this->Html->css('validationEngine.jquery'); }
 		echo $this->Html->css('wv-theme-tokens');
 		echo $this->Html->css('wv-portal-theme');
+		echo $this->Html->css('/design2000/assets/css/admin-pro-upgrade.css?v=20261126-pro-v1');
 		if(!empty($themeDynamicCss)){ echo '<style type="text/css" id="wv-dynamic-theme">'.$themeDynamicCss.'</style>'; }
 		echo $this->fetch('meta');		
 		echo $this->fetch('css');
@@ -2887,6 +3033,257 @@ body.header-transparent{
     bindClientSidebarMobile();
     bindFrontMenuMobile();
   });
+})(jQuery);
+</script>
+
+<!-- Table Action Dropdown Body-Portal Delegated Fixed Positioning & Direction Handler (Zoom-Proof & Overflow-Proof) -->
+<script type="text/javascript">
+(function($) {
+    if (typeof $ === 'undefined') return;
+
+    var actionDropdownSelector = '.table .btn-group, .table .dropdown, .table-responsive .btn-group, .table-responsive .dropdown, .actions-col .btn-group';
+
+    function restorePortaledMenu($btnGroup) {
+        var $placeholders = $btnGroup ? $btnGroup.find('.wv-portal-placeholder') : $('.wv-portal-placeholder');
+        $placeholders.each(function() {
+            var $ph = $(this);
+            var $menu = $ph.data('wv-menu');
+            var $bg = $ph.data('wv-btn-group');
+            if ($menu && $menu.length) {
+                $menu.css({
+                    position: '',
+                    top: '',
+                    left: '',
+                    right: '',
+                    bottom: '',
+                    display: '',
+                    visibility: '',
+                    'z-index': '',
+                    'max-height': '',
+                    'overflow-y': '',
+                    margin: ''
+                }).removeClass('wv-portal-active-menu dropup-menu-up');
+
+                $ph.before($menu);
+                $ph.remove();
+            }
+            if ($bg && $bg.length) {
+                $bg.removeClass('dropup');
+            }
+        });
+
+        $('body > .dropdown-menu.wv-portal-active-menu').each(function() {
+            var $m = $(this);
+            var $ph = $m.data('wv-placeholder');
+            if ($ph && $ph.length && $ph.parent().length) {
+                $ph.before($m);
+                $ph.remove();
+            }
+            $m.css({
+                position: '',
+                top: '',
+                left: '',
+                right: '',
+                bottom: '',
+                display: '',
+                visibility: '',
+                'z-index': '',
+                'max-height': '',
+                'overflow-y': '',
+                margin: ''
+            }).removeClass('wv-portal-active-menu dropup-menu-up');
+        });
+    }
+
+    function portalAndPositionMenu($btnGroup) {
+        var $toggle = $btnGroup.children('[data-toggle="dropdown"]');
+        var $menu = $btnGroup.children('.dropdown-menu');
+
+        if (!$menu.length) {
+            var $existingPh = $btnGroup.find('.wv-portal-placeholder');
+            if ($existingPh.length) {
+                $menu = $existingPh.data('wv-menu');
+            }
+        }
+        if (!$toggle.length || !$menu.length) return;
+
+        var btn = $toggle[0];
+        var btnRect = btn.getBoundingClientRect();
+
+        var $placeholder = $btnGroup.find('.wv-portal-placeholder');
+        if (!$placeholder.length) {
+            $placeholder = $('<span class="wv-portal-placeholder" style="display:none !important;"></span>');
+            $placeholder.data('wv-menu', $menu);
+            $placeholder.data('wv-btn-group', $btnGroup);
+            $menu.after($placeholder);
+            $menu.data('wv-placeholder', $placeholder);
+        }
+
+        if ($menu.parent()[0] !== document.body) {
+            $('body').append($menu);
+        }
+        $menu.addClass('wv-portal-active-menu');
+
+        $menu.css({
+            position: 'fixed',
+            display: 'block',
+            visibility: 'hidden',
+            top: 0,
+            left: 0,
+            right: 'auto',
+            bottom: 'auto',
+            'z-index': 99999,
+            margin: 0
+        });
+
+        var menuWidth = $menu.outerWidth() || 220;
+        var menuHeight = $menu.outerHeight() || 380;
+
+        var clientHeight = document.documentElement.clientHeight || window.innerHeight;
+        var clientWidth = document.documentElement.clientWidth || window.innerWidth;
+
+        var spaceBelow = clientHeight - btnRect.bottom;
+        var spaceAbove = btnRect.top;
+
+        var topPos;
+        var isDropup = false;
+
+        if (spaceBelow < (menuHeight + 10) && spaceAbove > spaceBelow) {
+            isDropup = true;
+            topPos = btnRect.top - menuHeight - 4;
+            if (topPos < 8) {
+                topPos = 8;
+                $menu.css({
+                    'max-height': Math.max(160, (btnRect.top - 14)) + 'px',
+                    'overflow-y': 'auto'
+                });
+            } else {
+                $menu.css({ 'max-height': '', 'overflow-y': '' });
+            }
+        } else {
+            isDropup = false;
+            topPos = btnRect.bottom + 4;
+            if (topPos + menuHeight > clientHeight - 8) {
+                $menu.css({
+                    'max-height': Math.max(160, (clientHeight - topPos - 10)) + 'px',
+                    'overflow-y': 'auto'
+                });
+            } else {
+                $menu.css({ 'max-height': '', 'overflow-y': '' });
+            }
+        }
+
+        // Smart horizontal alignment:
+        // For far-right action columns, align menu's right edge with button's right edge.
+        // For middle columns (e.g. Deal Control), center the menu directly over the button so it opens in its column area!
+        var isFarRight = ($btnGroup.closest('.actions-col, .deal-action-cell, .wv-contacts-action, .wv-rental-actions').length > 0) || (btnRect.right > clientWidth - 250);
+        var leftPos;
+        if (isFarRight) {
+            leftPos = Math.max(8, btnRect.right - menuWidth);
+        } else {
+            leftPos = Math.round(btnRect.left + (btnRect.width / 2) - (menuWidth / 2));
+        }
+        if (leftPos < 8) {
+            leftPos = 8;
+        }
+        if (leftPos + menuWidth > clientWidth - 8) {
+            leftPos = Math.max(8, clientWidth - menuWidth - 8);
+        }
+
+        if (isDropup) {
+            $btnGroup.addClass('dropup');
+            $menu.addClass('dropup-menu-up');
+        } else {
+            $btnGroup.removeClass('dropup');
+            $menu.removeClass('dropup-menu-up');
+        }
+
+        $menu.css({
+            position: 'fixed',
+            top: Math.round(topPos) + 'px',
+            left: Math.round(leftPos) + 'px',
+            right: 'auto',
+            bottom: 'auto',
+            display: 'block',
+            visibility: 'visible',
+            'z-index': 99999
+        });
+    }
+
+    $(document).on('click', '.table [data-toggle="dropdown"], .table-responsive [data-toggle="dropdown"], .actions-col [data-toggle="dropdown"]', function(e) {
+        var $toggle = $(this);
+        var $btnGroup = $toggle.closest('.btn-group, .dropdown');
+        if (!$btnGroup.length) return;
+
+        setTimeout(function() {
+            if ($btnGroup.hasClass('open')) {
+                portalAndPositionMenu($btnGroup);
+            } else {
+                restorePortaledMenu($btnGroup);
+            }
+        }, 10);
+    });
+
+    $(document).on('show.bs.dropdown', actionDropdownSelector, function(e) {
+        var $btnGroup = $(this);
+        portalAndPositionMenu($btnGroup);
+    });
+
+    $(document).on('shown.bs.dropdown', actionDropdownSelector, function(e) {
+        var $btnGroup = $(this);
+        portalAndPositionMenu($btnGroup);
+    });
+
+    $(document).on('hidden.bs.dropdown', actionDropdownSelector, function(e) {
+        var $btnGroup = $(this);
+        restorePortaledMenu($btnGroup);
+    });
+
+    $(document).on('click', '.wv-portal-active-menu a, .wv-portal-active-menu button, .wv-portal-active-menu input[type="submit"]', function(e) {
+        var $item = $(this);
+        var $menu = $item.closest('.wv-portal-active-menu');
+        var $ph = $menu.data('wv-placeholder');
+        var $bg = $ph ? $ph.data('wv-btn-group') : null;
+        if ($bg && $bg.length) {
+            $bg.removeClass('open');
+        }
+        setTimeout(function() {
+            restorePortaledMenu($bg);
+        }, 50);
+    });
+
+    $(document).on('click.wvPortalDismiss', function(e) {
+        var $target = $(e.target);
+        if ($target.closest('.wv-portal-active-menu').length || $target.closest('[data-toggle="dropdown"]').length) {
+            return;
+        }
+        var $openGroups = $(actionDropdownSelector).filter('.open');
+        if ($openGroups.length) {
+            $openGroups.removeClass('open');
+        }
+        restorePortaledMenu();
+    });
+
+    $(window).on('scroll.wvTableDropdown resize.wvTableDropdown', function(e) {
+        var $openGroups = $(actionDropdownSelector).filter('.open');
+        if ($openGroups.length) {
+            $openGroups.each(function() {
+                var $bg = $(this);
+                $bg.removeClass('open');
+                restorePortaledMenu($bg);
+            });
+        } else {
+            restorePortaledMenu();
+        }
+    });
+
+    $(document).on('scroll', '.table-responsive', function(e) {
+        var $openGroups = $(actionDropdownSelector).filter('.open');
+        if ($openGroups.length) {
+            $openGroups.removeClass('open');
+            restorePortaledMenu();
+        }
+    });
 })(jQuery);
 </script>
 </body>   

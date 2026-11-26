@@ -3,51 +3,97 @@ $p = $plan['Plan'];
 $difference = round($planTotal-$scheduleTotal,2);
 $isBalanced = !empty($scheduleRows) && abs($difference) <= 0.01;
 ?>
-<style>
-.plan-view{margin:0 auto;max-width:1500px}.plan-view-head{align-items:center;background:#102746;border-radius:8px;color:#fff;display:flex;justify-content:space-between;padding:18px 20px}.plan-view-head h2{color:#fff;font-size:20px;font-weight:800;margin:0}.plan-view-head p{color:#c5d5e8;margin:5px 0 0}.plan-view-actions{display:flex;gap:8px}.plan-view-actions .btn{border-radius:6px;font-weight:700}.plan-view-summary{display:grid;gap:12px;grid-template-columns:repeat(4,1fr);margin:14px 0}.plan-view-card{background:#fff;border:1px solid #d5e1ee;border-radius:8px;padding:15px}.plan-view-card small{color:#667a92;display:block;font-size:10px;font-weight:800;text-transform:uppercase}.plan-view-card strong{color:#102746;display:block;font-size:19px;margin-top:5px}.plan-view-card.match{background:#eaf8f3;border-color:#83d6b8}.plan-view-card.difference{background:#fff3e9;border-color:#f0bc89}.plan-view-table{background:#fff;border:1px solid #d5e1ee;border-radius:8px;overflow:hidden}.plan-view-table .table{margin:0}.plan-view-table th{background:#203a5c;color:#fff;font-size:11px;padding:11px;text-transform:uppercase}.plan-view-table td{padding:11px;vertical-align:middle}.plan-view-table tfoot td{background:#edf4fb;color:#102746;font-weight:800}.plan-empty{color:#667a92;padding:32px;text-align:center}@media(max-width:850px){.plan-view-head{align-items:flex-start;flex-direction:column;gap:14px}.plan-view-summary{grid-template-columns:1fr 1fr}.plan-view-table{overflow-x:auto}.plan-view-table .table{min-width:850px}}@media(max-width:500px){.plan-view-summary{grid-template-columns:1fr}.plan-view-actions{width:100%}.plan-view-actions .btn{flex:1}}
-</style>
-<div class="page-title"><div class="title-env"><h1 class="title"><?php echo __('View Payment Plan');?></h1></div></div>
-<div class="plan-view">
-    <?php echo $this->Session->flash();?>
-    <div class="plan-view-head">
-        <div>
-            <h2><?php echo h($p['name']);?></h2>
-            <p><?php echo __('Read-only payment schedule and calculated totals.');?></p>
-        </div>
-        <div class="plan-view-actions">
-            <?php echo $this->Html->link('<span class="fa fa-edit"></span>&nbsp;'.__('Edit'),array('action'=>'edit',(int)$p['id']),array('escape'=>false,'class'=>'btn btn-info'));?>
-            <?php echo $this->Html->link('<span class="fa fa-arrow-left"></span>&nbsp;'.__('Back'),array('action'=>'index'),array('escape'=>false,'class'=>'btn btn-default'));?>
-        </div>
+<div class="page-header-content wv-page-header">
+    <div class="page-title wv-page-title-box">
+        <h4 class="wv-page-title"><i class="fa fa-calendar-check-o text-primary"></i> <?php echo h($p['name']);?></h4>
+        <small class="wv-page-subtitle"><?php echo __('Installment breakdown, payment milestones, and schedule balance.');?></small>
     </div>
-    <div class="plan-view-summary">
-        <div class="plan-view-card"><small><?php echo __('Total Payment');?></small><strong>Rs <?php echo CakeNumber::format($planTotal);?></strong></div>
-        <div class="plan-view-card"><small><?php echo __('Scheduled Payments');?></small><strong><?php echo (int)$paymentCount;?></strong></div>
-        <div class="plan-view-card"><small><?php echo __('Status');?></small><strong><?php echo h($p['status']);?></strong></div>
-        <div class="plan-view-card <?php echo $isBalanced?'match':'difference';?>"><small><?php echo __('Schedule Difference');?></small><strong>Rs <?php echo CakeNumber::format($difference);?></strong></div>
+    <div class="heading-elements wv-page-header-actions">
+        <?php echo $this->Html->link('<i class="fa fa-arrow-left"></i> '.__('Back to Plans'),array('action'=>'index'),array('escape'=>false,'class'=>'btn btn-default'));?>
+        <?php echo $this->Html->link('<i class="fa fa-edit"></i> '.__('Edit Plan'),array('action'=>'edit',(int)$p['id']),array('escape'=>false,'class'=>'btn btn-primary'));?>
     </div>
-    <div class="plan-view-table">
-        <?php if(empty($scheduleRows)):?>
-            <div class="plan-empty"><span class="fa fa-info-circle"></span>&nbsp; <?php echo __('This is a legacy payment plan and has no detailed schedule template.');?></div>
-        <?php else:?>
-        <table class="table table-bordered table-striped">
-            <thead><tr><th>#</th><th><?php echo __('Payment');?></th><th><?php echo __('Title');?></th><th><?php echo __('Amount As');?></th><th><?php echo __('Value');?></th><th><?php echo __('Payments');?></th><th><?php echo __('Every Months');?></th><th><?php echo __('Each Payment');?></th><th><?php echo __('Row Total');?></th></tr></thead>
-            <tbody>
-            <?php foreach($scheduleRows as $index=>$row):?>
-                <tr>
-                    <td><?php echo $index+1;?></td>
-                    <td><?php echo h(Inflector::humanize($row['payment_type']));?></td>
-                    <td><strong><?php echo h($row['title']);?></strong></td>
-                    <td><?php echo $row['amount_mode']==='percentage'?__('Percentage'):__('Amount');?></td>
-                    <td><?php echo $row['amount_mode']==='percentage'?h($row['amount_value']).'%':'Rs '.CakeNumber::format($row['amount_value']);?></td>
-                    <td><?php echo (int)$row['repeat_count'];?></td>
-                    <td><?php echo (int)$row['interval_months'];?></td>
-                    <td>Rs <?php echo CakeNumber::format($row['unit_amount']);?></td>
-                    <td><strong>Rs <?php echo CakeNumber::format($row['row_total']);?></strong></td>
-                </tr>
-            <?php endforeach;?>
-            </tbody>
-            <tfoot><tr><td colspan="8"><?php echo __('Schedule Total');?></td><td>Rs <?php echo CakeNumber::format($scheduleTotal);?></td></tr></tfoot>
-        </table>
-        <?php endif;?>
+</div>
+
+<div class="panel panel-flat">
+    <div class="panel-body">
+        <?php echo $this->Session->flash();?>
+        <div class="row" style="margin-bottom: 20px;">
+            <div class="col-xs-12 col-sm-6 col-md-3" style="margin-bottom: 12px;">
+                <div class="panel panel-body" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; margin:0; padding:16px;">
+                    <small class="text-muted" style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;"><?php echo __('Total Plan Value');?></small>
+                    <div style="font-size:22px; font-weight:800; color:#0f172a; margin-top:4px;">Rs <?php echo CakeNumber::format($planTotal);?></div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-3" style="margin-bottom: 12px;">
+                <div class="panel panel-body" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; margin:0; padding:16px;">
+                    <small class="text-muted" style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;"><?php echo __('Scheduled Payments');?></small>
+                    <div style="font-size:22px; font-weight:800; color:#0f172a; margin-top:4px;"><?php echo (int)$paymentCount;?> <?php echo __('Stages');?></div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-3" style="margin-bottom: 12px;">
+                <div class="panel panel-body" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; margin:0; padding:16px;">
+                    <small class="text-muted" style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;"><?php echo __('Plan Status');?></small>
+                    <div style="margin-top:6px;">
+                        <span class="badge-status label label-<?php if($p['status']=="Active")echo"success";else echo"danger";?>">
+                            <i class="fa fa-circle" style="font-size:7px;"></i> <?php echo h($p['status']);?>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-3" style="margin-bottom: 12px;">
+                <div class="panel panel-body" style="background:<?php echo $isBalanced?'#f0fdf4':'#fff7ed';?>; border:1px solid <?php echo $isBalanced?'#bbf7d0':'#fed7aa';?>; border-radius:10px; margin:0; padding:16px;">
+                    <small class="<?php echo $isBalanced?'text-success':'text-warning';?>" style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;"><?php echo __('Schedule Difference');?></small>
+                    <div style="font-size:22px; font-weight:800; color:<?php echo $isBalanced?'#15803d':'#c2410c';?>; margin-top:4px;">Rs <?php echo CakeNumber::format($difference);?></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <?php if(empty($scheduleRows)):?>
+                <div class="text-center text-muted" style="padding: 40px;">
+                    <i class="fa fa-info-circle fa-2x" style="display:block; margin-bottom: 10px; color: #94a3b8;"></i>
+                    <?php echo __('This is a legacy payment plan and has no detailed schedule template.');?>
+                </div>
+            <?php else:?>
+            <table class="table table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th style="width: 50px;" class="text-center">#</th>
+                        <th><?php echo __('Payment Stage');?></th>
+                        <th><?php echo __('Installment Title');?></th>
+                        <th class="text-center"><?php echo __('Amount Mode');?></th>
+                        <th class="text-right"><?php echo __('Configured Value');?></th>
+                        <th class="text-center"><?php echo __('Count');?></th>
+                        <th class="text-center"><?php echo __('Interval (Months)');?></th>
+                        <th class="text-right"><?php echo __('Per Installment');?></th>
+                        <th class="text-right"><?php echo __('Stage Subtotal');?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php foreach($scheduleRows as $index=>$row):?>
+                    <tr>
+                        <td class="text-center"><?php echo $index+1;?></td>
+                        <td><span class="label label-info"><?php echo h(Inflector::humanize($row['payment_type']));?></span></td>
+                        <td style="font-weight: 600; color: #0f172a;"><?php echo h($row['title']);?></td>
+                        <td class="text-center"><?php echo $row['amount_mode']==='percentage'?__('Percentage'):__('Fixed Amount');?></td>
+                        <td class="text-right" style="font-family: monospace; font-size: 13px; font-weight: 600;">
+                            <?php echo $row['amount_mode']==='percentage'?h($row['amount_value']).'%':'Rs '.CakeNumber::format($row['amount_value']);?>
+                        </td>
+                        <td class="text-center"><?php echo (int)$row['repeat_count'];?></td>
+                        <td class="text-center"><?php echo (int)$row['interval_months'];?></td>
+                        <td class="text-right" style="font-family: monospace; font-size: 13px;">Rs <?php echo CakeNumber::format($row['unit_amount']);?></td>
+                        <td class="text-right" style="font-family: monospace; font-size: 13.5px; font-weight: 700; color: #1e293b;">Rs <?php echo CakeNumber::format($row['row_total']);?></td>
+                    </tr>
+                <?php endforeach;?>
+                </tbody>
+                <tfoot>
+                    <tr style="background:#f8fafc; font-weight:700;">
+                        <td colspan="8" class="text-right" style="font-size:14px;"><?php echo __('Schedule Total');?>:</td>
+                        <td class="text-right" style="font-family: monospace; font-size:15px; font-weight:800; color:#2563eb;">Rs <?php echo CakeNumber::format($scheduleTotal);?></td>
+                    </tr>
+                </tfoot>
+            </table>
+            <?php endif;?>
+        </div>
     </div>
 </div>

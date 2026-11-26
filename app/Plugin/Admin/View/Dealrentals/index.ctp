@@ -28,10 +28,19 @@
 <?php echo $this->Form->end();?>
 <div class="table-responsive">
 <table class="table table-bordered table-striped wv-rental-table">
-<thead><tr><th><?php echo __('Agreement');?></th><th><?php echo __('Deal');?></th><th><?php echo __('Client');?></th><th><?php echo __('Father / Guardian');?></th><th><?php echo __('Tenant');?></th><th><?php echo __('Monthly Rent');?></th><th><?php echo __('Paid');?></th><th><?php echo __('Due');?></th><th><?php echo __('Period');?></th><th><?php echo __('Status');?></th><th><?php echo __('Client Access');?></th><th><?php echo __('Action');?></th></tr></thead>
+<thead><tr><th><?php echo __('Agreement');?></th><th><?php echo __('Deal');?></th><th><?php echo __('Client');?></th><th><?php echo __('Father / Guardian');?></th><th><?php echo __('Tenant');?></th><th><?php echo __('Monthly Rent');?></th><th><?php echo __('Paid');?></th><th><?php echo __('Due');?></th><th><?php echo __('Period');?></th><th><?php echo __('Status');?></th><th><?php echo __('Client Access');?></th><th class="actions-col"><?php echo __('Action');?></th></tr></thead>
 <tbody>
 <?php if(empty($rentals)){ ?><tr><td colspan="12" class="text-center"><?php echo __('No rental agreements found.');?></td></tr><?php } ?>
-<?php foreach((array)$rentals as $row): $r=$row['DealRental']; $rentalId=(int)$r['id']; $hasPaidRent=!empty($paidRentalMap[$rentalId]); $scheduleTotals=isset($rentalScheduleTotals[$rentalId])?$rentalScheduleTotals[$rentalId]:array('paid'=>0,'due'=>0); ?>
+<?php 
+$totalRentals = !empty($rentals) ? count($rentals) : 0;
+$rentalIndex = 0;
+foreach((array)$rentals as $row): 
+    $rentalIndex++;
+    $r=$row['DealRental']; 
+    $rentalId=(int)$r['id']; 
+    $hasPaidRent=!empty($paidRentalMap[$rentalId]); 
+    $scheduleTotals=isset($rentalScheduleTotals[$rentalId])?$rentalScheduleTotals[$rentalId]:array('paid'=>0,'due'=>0); 
+?>
 <tr>
     <td><strong><?php echo h($r['agreement_no']);?></strong></td>
     <td><?php echo h(!empty($row['Deal']['invoice_no'])?$row['Deal']['invoice_no']:'#'.$r['deal_id']);?></td>
@@ -57,21 +66,21 @@
     <td><?php echo h(date('d-M-Y',strtotime($r['start_date'])));?> <?php echo __('to');?> <?php echo h(date('d-M-Y',strtotime($r['end_date'])));?></td>
     <td><span class="wv-rental-status <?php echo h($r['status']);?>"><?php echo h($r['status']);?></span></td>
     <td><?php $portalAccess=!empty($r['client_portal_access'])?$r['client_portal_access']:'Unknown';?><span class="wv-rental-access <?php echo h($portalAccess);?>"><?php echo h($portalAccess);?></span></td>
-    <td>
+    <td class="actions-col">
         <div class="wv-rental-actions">
             <div class="btn-group">
-                <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="<?php echo h(__('Actions'));?>"><i class="fa fa-cog"></i> <span class="caret"></span></button>
-                <ul class="dropdown-menu dropdown-menu-right">
-                    <li><?php echo $this->Html->link('<i class="fa fa-eye"></i>'.__('View Rental'), array('action'=>'view',(int)$r['id']), array('escape'=>false));?></li>
-                    <li><?php echo $this->Html->link('<i class="fa fa-money"></i>'.__('Add Rent Payment'), array('action'=>'receipt',(int)$r['id']), array('escape'=>false));?></li>
-                    <li><?php echo $this->Html->link('<i class="fa fa-print"></i>'.__('Print Agreement'), array('action'=>'agreement',(int)$r['id']), array('escape'=>false,'target'=>'_blank'));?></li>
+                <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="<?php echo h(__('Actions'));?>"><i class="fa fa-cog"></i> <?php echo __('Action');?> <span class="caret"></span></button>
+                <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                    <li><?php echo $this->Html->link('<i class="fa fa-eye"></i> '.__('View Rental'), array('action'=>'view',(int)$r['id']), array('escape'=>false));?></li>
+                    <li><?php echo $this->Html->link('<i class="fa fa-money text-success"></i> '.__('Add Rent Payment'), array('action'=>'receipt',(int)$r['id']), array('escape'=>false));?></li>
+                    <li><?php echo $this->Html->link('<i class="fa fa-print text-info"></i> '.__('Print Agreement'), array('action'=>'agreement',(int)$r['id']), array('escape'=>false,'target'=>'_blank'));?></li>
                     <li class="divider"></li>
-                    <li><?php echo $this->Html->link('<i class="fa fa-edit"></i>'.__('Edit Rental'), array('action'=>'edit',(int)$r['id']), array('escape'=>false));?></li>
+                    <li><?php echo $this->Html->link('<i class="fa fa-edit text-warning"></i> '.__('Edit Rental'), array('action'=>'edit',(int)$r['id']), array('escape'=>false));?></li>
                     <li class="divider"></li>
                     <?php if($hasPaidRent){ ?>
-                        <li class="disabled"><span class="wv-rental-delete-disabled" title="<?php echo h(__('Cannot delete: paid rent is recorded.'));?>"><i class="fa fa-trash"></i><?php echo __('Delete Rental');?></span></li>
+                        <li class="disabled"><span class="wv-rental-delete-disabled" title="<?php echo h(__('Cannot delete: paid rent is recorded.'));?>"><i class="fa fa-trash"></i> <?php echo __('Delete Rental');?></span></li>
                     <?php } else { ?>
-                        <li class="wv-rental-delete-item"><?php echo $this->Html->link('<i class="fa fa-trash"></i>'.__('Delete Rental'), array('action'=>'delete',(int)$r['id']), array('escape'=>false,'confirm'=>__('Delete this rental agreement?')));?></li>
+                        <li class="wv-rental-delete-item"><?php echo $this->Html->link('<i class="fa fa-trash text-danger"></i> '.__('Delete Rental'), array('action'=>'delete',(int)$r['id']), array('escape'=>false,'confirm'=>__('Delete this rental agreement?')));?></li>
                     <?php } ?>
                 </ul>
             </div>

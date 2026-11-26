@@ -18,22 +18,25 @@ $lastLoginStr = !empty($client['last_login']) ? $this->Time->format($sysDay.$dat
 .wv-profile-wrap {
   margin: 0;
   padding: 0;
+  touch-action: auto;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
 }
 .wv-profile-hero {
-  background: linear-gradient(135deg, #07152a 0%, #102746 72%, #ff0a46 170%);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-top: 4px solid #0284c7;
   border-radius: 16px;
-  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.14);
-  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+  color: #0f172a;
   margin-bottom: 20px;
   overflow: hidden;
-  padding: 24px;
+  padding: 22px 24px;
   position: relative;
 }
 .wv-profile-hero:after {
-  background: radial-gradient(circle at 85% 15%, rgba(124, 249, 255, 0.22), rgba(124, 249, 255, 0) 40%);
-  content: "";
-  inset: 0;
-  position: absolute;
+  display: none;
 }
 .wv-profile-hero-inner {
   align-items: center;
@@ -51,15 +54,15 @@ $lastLoginStr = !empty($client['last_login']) ? $this->Time->format($sysDay.$dat
 }
 .wv-profile-avatar {
   background: #ffffff center/cover no-repeat;
-  border: 3px solid rgba(124, 249, 255, 0.85);
+  border: 3px solid #0284c7;
   border-radius: 50%;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.18);
   flex: 0 0 80px;
   height: 80px;
   width: 80px;
 }
 .wv-profile-kicker {
-  color: #7cf9ff;
+  color: #0284c7;
   font-size: 11px;
   font-weight: 900;
   letter-spacing: 0.8px;
@@ -67,7 +70,7 @@ $lastLoginStr = !empty($client['last_login']) ? $this->Time->format($sysDay.$dat
   text-transform: uppercase;
 }
 .wv-profile-name {
-  color: #ffffff !important;
+  color: #0f172a !important;
   font-size: 26px;
   font-weight: 900;
   line-height: 1.2;
@@ -80,10 +83,10 @@ $lastLoginStr = !empty($client['last_login']) ? $this->Time->format($sysDay.$dat
 }
 .wv-profile-pill {
   align-items: center;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   border-radius: 999px;
-  color: #ffffff !important;
+  color: #334155 !important;
   display: inline-flex;
   font-size: 12px;
   font-weight: 800;
@@ -91,9 +94,9 @@ $lastLoginStr = !empty($client['last_login']) ? $this->Time->format($sysDay.$dat
   padding: 4px 12px;
 }
 .wv-profile-pill.verified {
-  background: rgba(16, 185, 129, 0.25);
-  border-color: rgba(16, 185, 129, 0.45);
-  color: #a7f3d0 !important;
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #065f46 !important;
 }
 .wv-profile-actions {
   display: flex;
@@ -114,19 +117,20 @@ $lastLoginStr = !empty($client['last_login']) ? $this->Time->format($sysDay.$dat
 }
 .wv-profile-card-header {
   align-items: center;
-  background: #07152a;
-  border-bottom: 1px solid #102746;
-  color: #ffffff;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  border-top: 3px solid #0284c7;
+  color: #0f172a;
   display: flex;
   gap: 10px;
   padding: 14px 18px;
 }
 .wv-profile-card-header i {
-  color: #7cf9ff;
+  color: #0284c7;
   font-size: 16px;
 }
 .wv-profile-card-header h3 {
-  color: #ffffff !important;
+  color: #0f172a !important;
   font-size: 15px;
   font-weight: 900;
   margin: 0;

@@ -13,22 +13,25 @@ $summary = isset($rentalSummary) ? $rentalSummary : array('scheduled'=>0,'paid'=
 .wv-rentals-wrap {
   margin: 0;
   padding: 0;
+  touch-action: auto;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
 }
 .wv-rentals-hero {
-  background: linear-gradient(135deg, #07152a 0%, #102746 72%, #ff0a46 170%);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-top: 4px solid #0284c7;
   border-radius: 16px;
-  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.14);
-  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+  color: #0f172a;
   margin-bottom: 20px;
   overflow: hidden;
-  padding: 24px;
+  padding: 22px 24px;
   position: relative;
 }
 .wv-rentals-hero:after {
-  background: radial-gradient(circle at 85% 15%, rgba(124, 249, 255, 0.22), rgba(124, 249, 255, 0) 40%);
-  content: "";
-  inset: 0;
-  position: absolute;
+  display: none;
 }
 .wv-rentals-hero-inner {
   align-items: center;
@@ -40,7 +43,7 @@ $summary = isset($rentalSummary) ? $rentalSummary : array('scheduled'=>0,'paid'=
   z-index: 2;
 }
 .wv-rentals-kicker {
-  color: #7cf9ff;
+  color: #0284c7;
   font-size: 11px;
   font-weight: 900;
   letter-spacing: 0.8px;
@@ -48,16 +51,16 @@ $summary = isset($rentalSummary) ? $rentalSummary : array('scheduled'=>0,'paid'=
   text-transform: uppercase;
 }
 .wv-rentals-title {
-  color: #ffffff !important;
+  color: #0f172a !important;
   font-size: 26px;
   font-weight: 900;
   line-height: 1.2;
   margin: 0 0 6px;
 }
 .wv-rentals-desc {
-  color: #e2e8f0;
+  color: #475569;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
   margin: 0;
 }
 .wv-rentals-panel {
@@ -175,6 +178,18 @@ $summary = isset($rentalSummary) ? $rentalSummary : array('scheduled'=>0,'paid'=
 .wv-rentals-tabs {
   border-bottom: 2px solid #e2e8f0;
   margin-bottom: 16px;
+  display: flex;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
+  white-space: nowrap;
+  flex-wrap: nowrap;
+  padding-bottom: 4px;
+}
+.wv-rentals-tabs > li {
+  float: none;
+  display: inline-block;
+  flex-shrink: 0;
 }
 .wv-rentals-tabs > li > a {
   border-radius: 8px 8px 0 0;
@@ -187,9 +202,23 @@ $summary = isset($rentalSummary) ? $rentalSummary : array('scheduled'=>0,'paid'=
 .wv-rentals-tabs > li.active > a,
 .wv-rentals-tabs > li.active > a:focus,
 .wv-rentals-tabs > li.active > a:hover {
-  background: #07152a !important;
-  border-color: #07152a !important;
+  background: #0284c7 !important;
+  border-color: #0284c7 !important;
   color: #ffffff !important;
+}
+
+.table-responsive {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
+  margin-bottom: 15px;
+  width: 100%;
+}
+.table-responsive > .table {
+  min-width: 700px;
+  margin-bottom: 0;
 }
 
 .my-rental-form {

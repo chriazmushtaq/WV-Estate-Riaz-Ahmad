@@ -8,6 +8,7 @@ $clientAddress = !empty($c['address']) ? $c['address'] : '-';
 <html>
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo __('Utility Account Statement'); ?> - <?php echo h($clientName); ?></title>
     <style>
         @page {
@@ -21,6 +22,18 @@ $clientAddress = !empty($c['address']) ? $c['address'] : '-';
             margin: 0;
             padding: 20px;
             background: #ffffff;
+            touch-action: auto;
+        }
+        .statement-table-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .statement-table-wrap table {
+            min-width: 760px;
+            margin-bottom: 0;
         }
         .statement-header {
             border-bottom: 2px solid #0f172a;
@@ -117,6 +130,7 @@ $clientAddress = !empty($c['address']) ? $c['address'] : '-';
         </div>
     </div>
 
+    <div class="statement-table-wrap">
     <table>
         <thead>
             <tr>
@@ -189,6 +203,7 @@ $clientAddress = !empty($c['address']) ? $c['address'] : '-';
             </tr>
         </tfoot>
     </table>
+    </div>
 
     <div style="font-size:10px;color:#94a3b8;border-top:1px solid #cbd5e1;padding-top:8px;text-align:center;">
         This is a computer-generated account statement from White Villas Management Information System. No physical signature required.

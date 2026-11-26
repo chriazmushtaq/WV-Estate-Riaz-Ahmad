@@ -11,11 +11,11 @@ $statusClass = function($value) {
 };
 ?>
 <style type="text/css">
-.wv-refund-page{background:#f4f7fb;margin:-10px -5px 0;padding:14px;}
+.wv-refund-page{background:transparent;margin:0;padding:0;touch-action:auto;overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%;}
 .wv-refund-page *{box-sizing:border-box;}
-.wv-refund-hero{align-items:center;background:linear-gradient(135deg,#07152a 0%,#123252 72%,#047857 150%);border-radius:10px;box-shadow:0 14px 30px rgba(15,23,42,.12);color:#fff;display:flex;gap:15px;justify-content:space-between;margin-bottom:12px;padding:18px;}
-.wv-refund-hero h1{color:#fff!important;font-size:26px;font-weight:900;margin:0 0 5px;}
-.wv-refund-hero p{color:#e6f2ff!important;font-size:12px;font-weight:800;margin:0;}
+.wv-refund-hero{align-items:center;background:#ffffff;border:1px solid #e2e8f0;border-top:4px solid #0284c7;border-radius:14px;box-shadow:0 4px 16px rgba(15,23,42,.04);color:#0f172a;display:flex;gap:15px;justify-content:space-between;margin-bottom:14px;padding:20px 22px;}
+.wv-refund-hero h1{color:#0f172a!important;font-size:26px;font-weight:900;margin:0 0 5px;}
+.wv-refund-hero p{color:#475569!important;font-size:13px;font-weight:600;margin:0;}
 .wv-refund-hero .btn{border:0;border-radius:8px;font-size:11px;font-weight:900;padding:9px 12px;text-transform:uppercase;}
 .wv-refund-stats{display:grid;gap:10px;grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:12px;}
 .wv-refund-stat{background:#fff;border:1px solid #dfe9f5;border-radius:10px;box-shadow:0 8px 20px rgba(15,23,42,.06);padding:12px;}
@@ -24,9 +24,9 @@ $statusClass = function($value) {
 .wv-refund-filter{background:#fff;border:1px solid #dfe9f5;border-radius:10px;margin-bottom:12px;padding:10px;}
 .wv-refund-filter .form-control{border-radius:7px;font-weight:800;height:36px;margin-right:6px;}
 .wv-refund-card{background:#fff;border:1px solid #dfe9f5;border-radius:10px;box-shadow:0 8px 20px rgba(15,23,42,.06);margin-bottom:10px;overflow:hidden;}
-.wv-refund-card-head{align-items:flex-start;background:#07152a;color:#fff;display:flex;gap:12px;justify-content:space-between;padding:12px 14px;}
-.wv-refund-card-head h2{color:#fff!important;font-size:16px;font-weight:900;line-height:1.25;margin:0;}
-.wv-refund-card-head small{color:#dbeafe!important;font-weight:800;}
+.wv-refund-card-head{align-items:flex-start;background:#ffffff;border-bottom:1px solid #e2e8f0;border-top:3px solid #0284c7;color:#0f172a;display:flex;gap:12px;justify-content:space-between;padding:12px 14px;}
+.wv-refund-card-head h2{color:#0f172a!important;font-size:16px;font-weight:900;line-height:1.25;margin:0;}
+.wv-refund-card-head small{color:#64748b!important;font-weight:700;}
 .wv-refund-body{padding:12px 14px;}
 .wv-refund-grid{display:grid;gap:8px;grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:10px;}
 .wv-refund-box{background:#f8fbff;border:1px solid #e2eaf4;border-radius:8px;padding:9px;}
