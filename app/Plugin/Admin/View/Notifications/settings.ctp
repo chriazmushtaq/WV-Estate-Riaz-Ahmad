@@ -96,6 +96,29 @@ input:checked + .slider:before {
 
 <div class="row">
     <div class="col-md-12">
+        <!-- Project & Agency WhatsApp & Portal Notifications Hub Banner -->
+        <div style="background: linear-gradient(135deg, #07152a, #0b2246); border-radius: 12px; padding: 18px 24px; margin-bottom: 20px; box-shadow: 0 4px 16px rgba(7,21,42,0.18); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; border: 1px solid #1e3a8a;">
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <div style="width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #10b981, #059669); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 24px; box-shadow: 0 4px 12px rgba(16,185,129,0.35);">
+                    <i class="fa fa-whatsapp"></i>
+                </div>
+                <div>
+                    <h4 style="margin: 0; font-weight: 800; font-size: 16px; color: #f8fafc;">
+                        <?php echo __('Project-Based WhatsApp & Client Portal Notification Center'); ?>
+                        <span class="label label-success" style="font-size: 11px; margin-left: 8px;">PROJECT ON/OFF TOGGLES</span>
+                    </h4>
+                    <p style="margin: 4px 0 0; color: #cbd5e1; font-size: 13px;">
+                        <?php echo __('Configure project-level ON/OFF toggles, 7-day & 1-day installment reminders, instant receipt delivery, and two-way WhatsApp bot.'); ?>
+                    </p>
+                </div>
+            </div>
+            <div>
+                <a href="<?php echo $this->Html->url(array('controller' => 'ProjectNotificationSettings', 'action' => 'index')); ?>" class="btn btn-success" style="font-weight: 800; border-radius: 8px; padding: 10px 22px; box-shadow: 0 4px 12px rgba(16,185,129,0.35);">
+                    <i class="fa fa-sliders"></i> <?php echo __('Configure Project WhatsApp & Alerts'); ?> &rarr;
+                </a>
+            </div>
+        </div>
+
         <!-- Prominent Gateway Hub Integration Banner -->
         <div style="background: linear-gradient(135deg, #0f172a, #1e293b); border-radius: 12px; padding: 18px 24px; margin-bottom: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; border: 1px solid #334155;">
             <div style="display: flex; align-items: center; gap: 16px;">

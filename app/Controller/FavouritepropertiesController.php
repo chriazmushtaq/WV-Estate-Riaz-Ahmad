@@ -10,7 +10,11 @@ class FavouritepropertiesController extends AppController
     public function beforeFilter()
     {
         parent::beforeFilter();
-        $this->userId=$this->userValue['Client']['id'];
+        $this->layout = 'default';
+        $this->userId = !empty($this->userValue['Client']['id']) ? (int)$this->userValue['Client']['id'] : 0;
+        if(empty($this->userId) && $this->Session->check('frontUser.Client.id')) {
+            $this->userId = (int)$this->Session->read('frontUser.Client.id');
+        }
     }
     public function index()
     {  

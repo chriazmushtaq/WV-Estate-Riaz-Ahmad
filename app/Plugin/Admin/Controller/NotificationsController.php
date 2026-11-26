@@ -563,11 +563,22 @@ class NotificationsController extends AdminAppController
         // 3. Purge notifications older than 60 days
         $purgedCount = $this->UserNotification->purgeOldNotifications(60);
 
+        // 4. Automated WhatsApp & Client Portal Installment Reminders (7-day & 1-day)
+        $waReminders = array('sent_7d' => 0, 'sent_1d' => 0, 'in_portal_created' => 0);
+        try {
+            App::uses('WhatsAppAutomationComponent', 'Controller/Component');
+            $waAuto = new WhatsAppAutomationComponent(new ComponentCollection());
+            $waReminders = $waAuto->processCronReminders();
+        } catch (Exception $eWa) {}
+
         $out = array(
             'status' => 'success',
             'timestamp' => $now,
             'upcoming_reminders_sent' => $remindersCount,
             'overdue_alerts_sent' => $overdueCount,
+            'whatsapp_reminders_7d' => isset($waReminders['sent_7d']) ? $waReminders['sent_7d'] : 0,
+            'whatsapp_reminders_1d' => isset($waReminders['sent_1d']) ? $waReminders['sent_1d'] : 0,
+            'in_portal_client_reminders' => isset($waReminders['in_portal_created']) ? $waReminders['in_portal_created'] : 0,
             'purged_old_notifications' => $purgedCount
         );
         echo json_encode($out);

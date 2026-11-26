@@ -764,6 +764,17 @@ class CrmwebhooksController extends AppController
         $contactName = !empty($contacts['profile']['name']) ? trim((string)$contacts['profile']['name']) : '';
         $waId = !empty($contacts['wa_id']) ? trim((string)$contacts['wa_id']) : trim((string)(isset($message['from']) ? $message['from'] : ''));
         $messageText = $this->_extractWhatsAppMessageText($message);
+
+        // Two-Way WhatsApp Bot for Registered Clients
+        if (!empty($messageText) && !empty($waId)) {
+            App::uses('WhatsAppAutomationComponent', 'Controller/Component');
+            $waBot = new WhatsAppAutomationComponent(new ComponentCollection());
+            if ($waBot->handleBotQuery($waId, $messageText)) {
+                $this->_logEvent('whatsapp_cloud', 'bot_query', $messageId, 'bot_replied', 'Two-way bot auto-reply sent to client', array('from' => $waId, 'text' => $messageText));
+                return true;
+            }
+        }
+
         $assignment = $this->_resolveAssignment('whatsapp_cloud', $settingsRow, array(
             array('match_type' => 'phone_number_id', 'external_id' => isset($metadata['phone_number_id']) ? $metadata['phone_number_id'] : '')
         ));
@@ -945,6 +956,11 @@ class CrmwebhooksController extends AppController
             }
         }
         return $this->_writeJsonResponse(array('success' => true, 'processed' => $processed), 200);
+    }
+
+    public function whatsapp_bot()
+    {
+        return $this->whatsapp();
     }
 }
 ?>

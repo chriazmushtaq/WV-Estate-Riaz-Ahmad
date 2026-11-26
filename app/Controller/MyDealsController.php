@@ -968,60 +968,76 @@ class MyDealsController extends AppController
         $this->set('portalAutoLetterTypeArr',$this->_portalAutoLetterTypeArr);
     }
 
-    public function viewletter($dealId = null, $letterId = null)
+    public function letterview($param1 = null, $param2 = null)
     {
-        $dealId = (int)$dealId;
-        $letterId = (int)$letterId;
-        if($dealId <= 0 || $letterId <= 0)
-        {
-            $this->Session->setFlash(__('Invalid Post.'),'flash',array('alert'=>'danger'));
-            return $this->redirect(array('action' => 'index'));
-        }
-        $post = $this->_portalLetterDetails($dealId, $letterId);
-        if(empty($post['Realestateletter']['id']))
-        {
-            $this->Session->setFlash(__('Invalid Post.'),'flash',array('alert'=>'danger'));
-            return $this->redirect(array('action' => 'letters', $dealId));
-        }
-        $renderedDescription = $this->_portalRenderLetterBody($post);
-        $letterType = isset($post['Realestateletter']['letter_type']) ? trim((string)$post['Realestateletter']['letter_type']) : '';
-        $letterTypeLabel = isset($this->_portalLetterTypeArr[$letterType]) ? $this->_portalLetterTypeArr[$letterType] : $letterType;
-        $this->set('dealId',$dealId);
-        $this->set('post',$post);
-        $this->set('renderedDescription',$renderedDescription);
-        $this->set('isFullHtmlTemplate',$this->_portalIsFullHtmlDocument($renderedDescription));
-        $this->set('letterTypeLabel',$letterTypeLabel);
-        $this->set('autoPrint',false);
-        $this->layout = null;
-        $this->render('letterprint');
+        return $this->viewletter($param1, $param2);
     }
 
-    public function printletter($dealId = null, $letterId = null)
+    public function viewletter($param1 = null, $param2 = null)
     {
-        $this->layout = null;
-        $dealId = (int)$dealId;
-        $letterId = (int)$letterId;
-        if($dealId <= 0 || $letterId <= 0)
-        {
-            $this->Session->setFlash(__('Invalid Post.'),'flash',array('alert'=>'danger'));
+        return $this->_renderPortalLetter($param1, $param2, false);
+    }
+
+    public function printletter($param1 = null, $param2 = null)
+    {
+        return $this->_renderPortalLetter($param1, $param2, true);
+    }
+
+    protected function _renderPortalLetter($param1 = null, $param2 = null, $autoPrint = false)
+    {
+        $this->layout = false;
+        $dealId = 0;
+        $letterId = 0;
+
+        if ($param2 !== null && (int)$param2 > 0) {
+            $dealId = (int)$param1;
+            $letterId = (int)$param2;
+        } else {
+            $letterId = (int)$param1;
+        }
+
+        if ($letterId <= 0) {
+            $this->Session->setFlash(__('Invalid document request.'), 'flash', array('alert' => 'danger'));
             return $this->redirect(array('action' => 'index'));
         }
-        $post = $this->_portalLetterDetails($dealId, $letterId);
-        if(empty($post['Realestateletter']['id']))
-        {
-            $this->Session->setFlash(__('Invalid Post.'),'flash',array('alert'=>'danger'));
-            return $this->redirect(array('action' => 'letters', $dealId));
+
+        // If dealId was not supplied in the URL, discover it from the letter record
+        $this->loadModel('Admin.Realestateletter');
+        if ($dealId <= 0) {
+            $letterRow = $this->Realestateletter->find('first', array(
+                'fields' => array('Realestateletter.id', 'Realestateletter.deal_id', 'Realestateletter.status'),
+                'conditions' => array('Realestateletter.id' => $letterId),
+                'recursive' => -1
+            ));
+            if (!empty($letterRow['Realestateletter']['deal_id'])) {
+                $dealId = (int)$letterRow['Realestateletter']['deal_id'];
+            }
         }
+
+        if ($dealId <= 0) {
+            $this->Session->setFlash(__('Document not found.'), 'flash', array('alert' => 'danger'));
+            return $this->redirect(array('action' => 'index'));
+        }
+
+        // Security check: _portalLetterDetails strictly ensures Realestateletter.deal_id = $dealId,
+        // Deal.client_id = $this->userId, and Realestateletter.status = 'Published'
+        $post = $this->_portalLetterDetails($dealId, $letterId);
+        if (empty($post['Realestateletter']['id'])) {
+            $this->Session->setFlash(__('Access denied. You do not have permission to view this document.'), 'flash', array('alert' => 'danger'));
+            return $this->redirect(array('action' => 'index'));
+        }
+
         $renderedDescription = $this->_portalRenderLetterBody($post);
         $letterType = isset($post['Realestateletter']['letter_type']) ? trim((string)$post['Realestateletter']['letter_type']) : '';
         $letterTypeLabel = isset($this->_portalLetterTypeArr[$letterType]) ? $this->_portalLetterTypeArr[$letterType] : $letterType;
-        $this->set('dealId',$dealId);
-        $this->set('post',$post);
-        $this->set('renderedDescription',$renderedDescription);
-        $this->set('isFullHtmlTemplate',$this->_portalIsFullHtmlDocument($renderedDescription));
-        $this->set('letterTypeLabel',$letterTypeLabel);
-        $this->set('autoPrint',true);
-        $this->render('letterprint');
+
+        $this->set('dealId', $dealId);
+        $this->set('post', $post);
+        $this->set('renderedDescription', $renderedDescription);
+        $this->set('isFullHtmlTemplate', $this->_portalIsFullHtmlDocument($renderedDescription));
+        $this->set('letterTypeLabel', $letterTypeLabel);
+        $this->set('autoPrint', (bool)$autoPrint);
+        $this->render('/MyDeals/letterprint');
     }
 
     protected function _portalLetterDetails($dealId, $letterId)

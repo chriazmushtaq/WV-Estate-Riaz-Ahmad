@@ -2,20 +2,21 @@
 class MyPaymentsController extends AppController
 {
     public $helpers = array('Html', 'Form', 'Session', 'Time', 'Number', 'NumToWord');
+    public $uses = array('MyPayment', 'Admin.DealsPayment', 'Admin.PlansPayment');
     protected $_portalVisibleDealStatuses = array('Active','Blocked');
     public function beforeFilter()
     {
         parent::beforeFilter();
         $action = !empty($this->request->params['action']) ? strtolower($this->request->params['action']) : '';
         if ($action === 'statement') {
-            if ($this->Session->check('Client')) {
+            if ($this->Session->check('frontUser') || $this->Session->check('Client')) {
                 $this->authenticate();
-                $this->userId = $this->userValue['Client']['id'];
+                $this->userId = !empty($this->userValue['Client']['id']) ? (int)$this->userValue['Client']['id'] : 0;
             }
             return;
         }
         $this->authenticate();
-        $this->userId = $this->userValue['Client']['id'];
+        $this->userId = !empty($this->userValue['Client']['id']) ? (int)$this->userValue['Client']['id'] : 0;
     }
 
     protected function _dealVisibilityCondition($alias='Deal')
@@ -380,8 +381,9 @@ class MyPaymentsController extends AppController
 
     public function printreceipt($id = null)
     {
-        $this->layout = null;
+        $this->layout = false;
         $this->loadModel('Admin.PlansPayment');
+        $this->loadModel('Admin.DealsPayment');
         if (!$id)
         {
             $this->Session->setFlash(__('Invalid Post.'),'flash',array('alert'=>'danger'));
@@ -523,9 +525,9 @@ class MyPaymentsController extends AppController
                 ));
                 if(!empty($currentPlanRow))
                 {
-                    $currentPaidRow = $this->DealsPayment->find('first', array(
-                        'fields' => array('SUM(DealsPayment.emi) AS paid_total'),
-                        'conditions' => array('DealsPayment.plans_payment_id' => $currentPlanId),
+                    $currentPaidRow = $this->MyPayment->find('first', array(
+                        'fields' => array('SUM(MyPayment.emi) AS paid_total'),
+                        'conditions' => array('MyPayment.plans_payment_id' => $currentPlanId),
                         'recursive' => -1
                     ));
                     $currentPaid = !empty($currentPaidRow[0]['paid_total']) ? (float)$currentPaidRow[0]['paid_total'] : 0;
@@ -558,9 +560,9 @@ class MyPaymentsController extends AppController
 
                 $nextPlanId = (int)$targetNextPlan['PlansPayment']['id'];
                 $nextPlanAmount = (float)$targetNextPlan['PlansPayment']['amount'];
-                $nextPaidRow = $this->DealsPayment->find('first', array(
-                    'fields' => array('SUM(DealsPayment.emi) AS paid_total'),
-                    'conditions' => array('DealsPayment.plans_payment_id' => $nextPlanId),
+                $nextPaidRow = $this->MyPayment->find('first', array(
+                    'fields' => array('SUM(MyPayment.emi) AS paid_total'),
+                    'conditions' => array('MyPayment.plans_payment_id' => $nextPlanId),
                     'recursive' => -1
                 ));
                 $nextPaidAmount = !empty($nextPaidRow[0]['paid_total']) ? (float)$nextPaidRow[0]['paid_total'] : 0;
@@ -657,7 +659,7 @@ class MyPaymentsController extends AppController
 
     public function statement($dealId = null, $token = null)
     {
-        $this->layout = null;
+        $this->layout = false;
         $this->loadModel('Deal');
         $this->loadModel('PlansPayment');
         $this->loadModel('Project');
@@ -688,11 +690,19 @@ class MyPaymentsController extends AppController
         $providedToken = !empty($token) ? trim((string)$token) : (!empty($this->request->query['token']) ? trim((string)$this->request->query['token']) : '');
 
         $hasSessionAuth = false;
-        if ($this->Session->check('Client')) {
+        $clientId = 0;
+        if (!empty($this->userId)) {
+            $clientId = (int)$this->userId;
+        } elseif (!empty($this->userValue['Client']['id'])) {
+            $clientId = (int)$this->userValue['Client']['id'];
+        } elseif ($this->Session->check('frontUser.Client.id')) {
+            $clientId = (int)$this->Session->read('frontUser.Client.id');
+        } elseif ($this->Session->check('Client.id')) {
             $clientId = (int)$this->Session->read('Client.id');
-            if ($clientId > 0 && $clientId === (int)$deal['Deal']['client_id']) {
-                $hasSessionAuth = true;
-            }
+        }
+
+        if ($clientId > 0 && $clientId === (int)$deal['Deal']['client_id']) {
+            $hasSessionAuth = true;
         } elseif ($this->Session->check('User')) {
             $hasSessionAuth = true;
         }

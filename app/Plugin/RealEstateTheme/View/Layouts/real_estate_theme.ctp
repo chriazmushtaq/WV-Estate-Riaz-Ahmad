@@ -1,5 +1,5 @@
 <?php
-$ts = !empty($themeSettings) ? $themeSettings : array();
+$ts = !empty($themeSettings) ? $themeSettings : (isset($ts) && is_array($ts) ? $ts : array());
 
 if (!function_exists('wv_render_rich_html')) {
     function wv_render_rich_html($text, $allowBreaks = true) {
@@ -110,6 +110,67 @@ $ogPageTitle = !empty($title_for_layout) ? ($title_for_layout . ' — ' . $ogSit
 $ogPageDesc = !empty($siteDescription) ? $siteDescription : 'White Villas — Premier Real Estate, Luxury Lodges & Verified Investment Opportunities.';
 $ogPageUrl = Router::url(null, true);
 $siteFaviconFile = !empty($siteFavicon) ? $siteFavicon : '';
+
+// Resolve logged-in client / admin user session and original profile DP for frontend header
+$frontIsClientLogged = false;
+$frontIsAdminLogged = false;
+$frontClientPhoto = '';
+$frontClientName = '';
+$frontClientShortName = '';
+$frontClientEmail = '';
+$frontDashboardUrl = $this->Html->url('/Dashboards');
+$frontLogoutUrl = $this->Html->url('/Clients/logout');
+$photoUrlBase = $this->Html->url('/img/');
+
+$fSessionUser = (array)$this->Session->read('frontUser');
+$fClient = !empty($fSessionUser['Client']) && is_array($fSessionUser['Client']) 
+    ? $fSessionUser['Client'] 
+    : (!empty($fSessionUser['Contact']) && is_array($fSessionUser['Contact']) 
+        ? $fSessionUser['Contact'] 
+        : (!empty($UserArr['Client']) 
+            ? $UserArr['Client'] 
+            : (!empty($frontUser['Client']) 
+                ? $frontUser['Client'] 
+                : (!empty($fSessionUser['name']) ? $fSessionUser : array()))));
+
+$frontImpersonation = (array)$this->Session->read('Impersonation.front');
+
+if (!empty($fClient['id']) || $this->Session->check('frontUser') || !empty($frontImpersonation['target_contact_id'])) {
+    $frontIsClientLogged = true;
+    $frontClientName = !empty($fClient['name']) ? $fClient['name'] : (!empty($frontImpersonation['target_contact_name']) ? $frontImpersonation['target_contact_name'] : __('Client'));
+    $frontClientEmail = !empty($fClient['email']) ? $fClient['email'] : '';
+    $nameParts = preg_split('/\s+/', trim($frontClientName));
+    $frontClientShortName = !empty($nameParts[0]) ? $nameParts[0] : __('Client');
+    $frontDashboardUrl = $this->Html->url('/Dashboards');
+    $frontLogoutUrl = $this->Html->url('/Clients/logout');
+
+    if (!empty($frontClientPhotoUrl)) {
+        $frontClientPhoto = $frontClientPhotoUrl;
+    } elseif (!empty($fClient['photo'])) {
+        $clientPhotoFile = trim($fClient['photo']);
+        $clientPhotoDir = !empty($fClient['dir']) ? trim($fClient['dir']) : (!empty($fClient['dirt']) ? trim($fClient['dirt']) : 'client');
+        $frontClientPhoto = $photoUrlBase . trim($clientPhotoDir, '/\\') . '_thumb/' . $clientPhotoFile;
+    } else {
+        $frontClientPhoto = $photoUrlBase . 'user-icon.png';
+    }
+} elseif ($this->Session->check('User')) {
+    $aUser = (array)$this->Session->read('User');
+    $aAdmin = !empty($aUser['User']) ? $aUser['User'] : array();
+    $aGroup = !empty($aUser['Ugroup']['name']) ? $aUser['Ugroup']['name'] : __('Admin');
+    $frontIsClientLogged = true;
+    $frontIsAdminLogged = true;
+    $frontClientName = !empty($aAdmin['name']) ? $aAdmin['name'] : $aGroup;
+    $nameParts = preg_split('/\s+/', trim($frontClientName));
+    $frontClientShortName = !empty($nameParts[0]) ? $nameParts[0] : __('Admin');
+    $frontClientEmail = !empty($aAdmin['email']) ? $aAdmin['email'] : '';
+    $frontDashboardUrl = $this->Html->url('/admin/Dashboards');
+    $frontLogoutUrl = $this->Html->url('/admin/Users/logout');
+    if (!empty($aAdmin['photo'])) {
+        $frontClientPhoto = $photoUrlBase . 'user_thumb/' . trim($aAdmin['photo']);
+    } else {
+        $frontClientPhoto = $photoUrlBase . 'user-icon.png';
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en-US" class="no-js">
@@ -972,6 +1033,182 @@ $siteFaviconFile = !empty($siteFavicon) ? $siteFavicon : '';
             color: #ffffff !important;
         }
 
+        /* Client User Pill & Avatar in Frontend Header */
+        .wv-front-user-pill {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            border-radius: 999px;
+            padding: 2px 12px 2px 3px;
+            color: #ffffff !important;
+            text-decoration: none !important;
+            font-size: 11px;
+            font-weight: 700;
+            transition: all 0.2s ease;
+        }
+        .wv-front-user-pill:hover,
+        .wv-front-user-pill:focus {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: #7cf9ff;
+            color: #ffffff !important;
+        }
+        .wv-front-user-pill::after {
+            display: none !important;
+        }
+        .wv-front-user-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: #ffffff;
+            border: 1.5px solid #7cf9ff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+            display: inline-block;
+        }
+
+        /* Luxury Dark Profile Dropdown in Top Bar */
+        .wv-front-user-dropdown {
+            position: relative;
+        }
+        .wv-front-user-menu {
+            background: linear-gradient(145deg, #07152a 0%, #0d2242 100%) !important;
+            border: 1px solid rgba(124, 249, 255, 0.25) !important;
+            border-radius: 12px !important;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.06) !important;
+            padding: 8px 0 !important;
+            min-width: 245px !important;
+            margin-top: 10px !important;
+            z-index: 1090 !important;
+        }
+        .wv-front-user-head {
+            padding: 10px 18px 12px 18px !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+            background: rgba(255, 255, 255, 0.03) !important;
+            margin-bottom: 6px !important;
+        }
+        .wv-front-user-head .wv-user-title {
+            color: #ffffff !important;
+            font-size: 13.5px !important;
+            font-weight: 800 !important;
+            letter-spacing: 0.03em !important;
+            line-height: 1.25 !important;
+            text-transform: uppercase !important;
+            font-family: 'League Spartan', sans-serif !important;
+            display: block !important;
+        }
+        .wv-front-user-head .wv-user-sub {
+            color: #94a3b8 !important;
+            font-size: 11.5px !important;
+            margin-top: 4px !important;
+            display: block !important;
+            word-break: break-all !important;
+            font-weight: 500 !important;
+        }
+        .wv-front-user-menu .dropdown-item,
+        .wv-top-bar .wv-front-user-menu a.dropdown-item {
+            color: #f1f5f9 !important;
+            font-size: 13px !important;
+            font-weight: 700 !important;
+            padding: 9px 18px !important;
+            transition: all 0.2s ease !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 12px !important;
+            background: transparent !important;
+            text-decoration: none !important;
+        }
+        .wv-front-user-menu .dropdown-item i,
+        .wv-top-bar .wv-front-user-menu a.dropdown-item i {
+            width: 18px !important;
+            text-align: center !important;
+            font-size: 14.5px !important;
+            display: inline-block !important;
+            flex-shrink: 0 !important;
+        }
+        .wv-front-user-menu .dropdown-item span,
+        .wv-top-bar .wv-front-user-menu a.dropdown-item span {
+            color: #f1f5f9 !important;
+            transition: color 0.2s ease !important;
+        }
+        .wv-front-user-menu .dropdown-item:hover,
+        .wv-front-user-menu .dropdown-item:focus,
+        .wv-top-bar .wv-front-user-menu a.dropdown-item:hover,
+        .wv-top-bar .wv-front-user-menu a.dropdown-item:focus {
+            background: rgba(124, 249, 255, 0.12) !important;
+            color: #7cf9ff !important;
+            transform: translateX(3px);
+        }
+        .wv-front-user-menu .dropdown-item:hover span,
+        .wv-top-bar .wv-front-user-menu a.dropdown-item:hover span {
+            color: #7cf9ff !important;
+        }
+        .wv-front-user-menu .dropdown-item.wv-logout-link,
+        .wv-top-bar .wv-front-user-menu a.dropdown-item.wv-logout-link {
+            color: #ff6b8b !important;
+        }
+        .wv-front-user-menu .dropdown-item.wv-logout-link span,
+        .wv-top-bar .wv-front-user-menu a.dropdown-item.wv-logout-link span,
+        .wv-front-user-menu .dropdown-item.wv-logout-link i,
+        .wv-top-bar .wv-front-user-menu a.dropdown-item.wv-logout-link i {
+            color: #ff6b8b !important;
+        }
+        .wv-front-user-menu .dropdown-item.wv-logout-link:hover,
+        .wv-front-user-menu .dropdown-item.wv-logout-link:focus,
+        .wv-top-bar .wv-front-user-menu a.dropdown-item.wv-logout-link:hover,
+        .wv-top-bar .wv-front-user-menu a.dropdown-item.wv-logout-link:focus {
+            background: rgba(209, 18, 66, 0.22) !important;
+            color: #ffffff !important;
+            transform: translateX(3px);
+        }
+        .wv-front-user-menu .dropdown-item.wv-logout-link:hover span,
+        .wv-front-user-menu .dropdown-item.wv-logout-link:hover i {
+            color: #ffffff !important;
+        }
+        .wv-front-user-menu .dropdown-divider {
+            border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
+            margin: 6px 0 !important;
+            opacity: 1 !important;
+        }
+        .wv-header-dashboard-btn {
+            background: rgba(7, 21, 42, 0.90);
+            border: 1.5px solid rgba(124, 249, 255, 0.45);
+            border-radius: 999px;
+            padding: 4px 12px 4px 4px;
+            text-decoration: none !important;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
+            backdrop-filter: blur(6px);
+        }
+        .wv-header-dashboard-btn:hover {
+            background: #07152a;
+            border-color: #ff0a46;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(255, 10, 70, 0.25);
+        }
+        .wv-header-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border: 2px solid #7cf9ff;
+            display: inline-block;
+            flex-shrink: 0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+        .wv-header-badge {
+            background: rgba(255, 10, 70, 0.9);
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            text-transform: uppercase;
+        }
+
         /* =========================================================================
            INNER PAGES HARMONIZATION (APPLIES ONLY WHEN REAL ESTATE THEME IS ACTIVE)
            ========================================================================= */
@@ -1199,9 +1436,58 @@ $siteFaviconFile = !empty($siteFavicon) ? $siteFavicon : '';
                 <div class="d-flex align-items-center gap-3">
                     <a href="<?php echo $this->Html->url('/Properties'); ?>"><i class="fa fa-building-o"></i> Properties</a>
                     <a href="<?php echo $this->Html->url('/paymentplans'); ?>"><i class="fa fa-calculator"></i> Payment Plans</a>
-                    <a href="<?php echo $this->Html->url('/clients/login'); ?>" class="btn btn-sm text-white px-3" style="background-color: #d11242; border: none; font-size: 11px; font-weight: 700; border-radius: 3px;">
-                        <i class="fa fa-user-circle"></i> CLIENT PORTAL
-                    </a>
+                    <?php if (!empty($frontIsClientLogged)): ?>
+                        <div class="dropdown wv-front-user-dropdown d-inline-block">
+                            <a href="javascript:void(0);" class="wv-front-user-pill dropdown-toggle d-inline-flex align-items-center gap-2" id="wvClientTopDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="wv-front-user-avatar" style="background-image: url('<?php echo h($frontClientPhoto); ?>');"></span>
+                                <span class="wv-front-user-name fw-bold"><?php echo h($frontClientName); ?></span>
+                                <i class="fa fa-caret-down text-white-50" style="font-size: 11px;"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end shadow border-0 wv-front-user-menu" aria-labelledby="wvClientTopDropdown">
+                                <li class="wv-front-user-head">
+                                    <strong class="wv-user-title"><?php echo h($frontClientName); ?></strong>
+                                    <span class="wv-user-sub"><?php echo !empty($frontClientEmail) ? h($frontClientEmail) : (!empty($frontIsAdminLogged) ? __('System Administrator') : __('Verified Portal User')); ?></span>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item wv-dropdown-link" href="<?php echo h($frontDashboardUrl); ?>">
+                                        <i class="fa fa-th-large text-danger"></i>
+                                        <span><?php echo !empty($frontIsAdminLogged) ? __('Admin Dashboard') : __('Client Dashboard'); ?></span>
+                                    </a>
+                                </li>
+                                <?php if (empty($frontIsAdminLogged)): ?>
+                                    <li>
+                                        <a class="dropdown-item wv-dropdown-link" href="<?php echo $this->Html->url('/MyProfiles'); ?>">
+                                            <i class="fa fa-user-circle text-info"></i>
+                                            <span><?php echo __('My Profile'); ?></span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item wv-dropdown-link" href="<?php echo $this->Html->url('/MyDeals'); ?>">
+                                            <i class="fa fa-handshake-o text-success"></i>
+                                            <span><?php echo h(__('My Deals & Files')); ?></span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item wv-dropdown-link" href="<?php echo $this->Html->url('/ClientNotifications'); ?>">
+                                            <i class="fa fa-bell text-warning"></i>
+                                            <span><?php echo __('Notifications'); ?></span>
+                                        </a>
+                                    </li>
+                                <?php endif; ?>
+                                <li><hr class="dropdown-divider my-1"></li>
+                                <li>
+                                    <a class="dropdown-item wv-dropdown-link wv-logout-link" href="<?php echo h($frontLogoutUrl); ?>">
+                                        <i class="fa fa-sign-out"></i>
+                                        <span><?php echo __('Sign Out'); ?></span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    <?php else: ?>
+                        <a href="<?php echo $this->Html->url('/clients/login'); ?>" class="btn btn-sm text-white px-3" style="background-color: #d11242; border: none; font-size: 11px; font-weight: 700; border-radius: 3px;">
+                            <i class="fa fa-user-circle"></i> CLIENT PORTAL
+                        </a>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -1246,8 +1532,15 @@ $siteFaviconFile = !empty($siteFavicon) ? $siteFavicon : '';
                     </a>
                 </div>
 
-                <!-- Right: Red BOOK NOW Button -->
-                <div>
+                <!-- Right: Red BOOK NOW Button & Logged-In Client Dashboard Button -->
+                <div class="d-flex align-items-center gap-2">
+                    <?php if (!empty($frontIsClientLogged)): ?>
+                        <a href="<?php echo h($frontDashboardUrl); ?>" class="wv-header-dashboard-btn d-inline-flex align-items-center gap-2" title="<?php echo h($frontClientName); ?> — <?php echo !empty($frontIsAdminLogged) ? __('Open Admin Dashboard') : __('Open Client Dashboard'); ?>">
+                            <span class="wv-header-avatar" style="background-image: url('<?php echo h($frontClientPhoto); ?>');"></span>
+                            <span class="d-none d-sm-inline fw-bold text-white font-spartan text-uppercase" style="font-size: 12px; letter-spacing: 0.5px;"><?php echo h($frontClientShortName); ?></span>
+                            <span class="wv-header-badge d-none d-md-inline-block"><?php echo __('Dashboard'); ?></span>
+                        </a>
+                    <?php endif; ?>
                     <a href="<?php echo h($bookNowLink); ?>" class="btn-r-book" target="<?php echo h($bookNowTarget); ?>">
                         <span><?php echo h($bookNowText); ?></span>
                     </a>
@@ -1310,9 +1603,36 @@ $siteFaviconFile = !empty($siteFavicon) ? $siteFavicon : '';
                 <a href="<?php echo $this->Html->url('/bills/check_online'); ?>" class="wv-offcanvas-client-btn mb-1" style="background: linear-gradient(135deg, #064e3b 0%, #047857 100%); border-color: #047857; color: #ffffff;">
                     <i class="fa fa-file-text-o"></i> CHECK BILL / بل چیک کریں
                 </a>
-                <a href="<?php echo $this->Html->url('/clients/login'); ?>" class="wv-offcanvas-client-btn">
-                    <i class="fa fa-sign-in"></i> CLIENT PORTAL LOGIN
-                </a>
+                <?php if (!empty($frontIsClientLogged)): ?>
+                    <div class="wv-offcanvas-client-card p-3 mb-2" style="background: linear-gradient(135deg, #07152a 0%, #102746 100%); border-radius: 12px; border: 1px solid rgba(124, 249, 255, 0.25);">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <span class="wv-header-avatar" style="width: 44px; height: 44px; border: 2px solid #7cf9ff; border-radius: 50%; display: inline-block; background-size: cover; background-position: center; background-image: url('<?php echo h($frontClientPhoto); ?>');"></span>
+                            <div>
+                                <strong class="d-block text-white" style="font-size: 14px; line-height: 1.2;"><?php echo h($frontClientName); ?></strong>
+                                <span class="text-white-50 d-block" style="font-size: 11px; margin-top: 2px;"><i class="fa fa-shield text-info"></i> <?php echo !empty($frontIsAdminLogged) ? __('Verified Administrator') : __('Verified Client Portal'); ?></span>
+                            </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <a href="<?php echo h($frontDashboardUrl); ?>" class="btn btn-sm btn-danger fw-bold py-2" style="border-radius: 8px; background: #d11242; border: none; font-size: 12px;">
+                                <i class="fa fa-th-large me-1"></i> <?php echo !empty($frontIsAdminLogged) ? __('Access Admin Dashboard') : __('Access Client Dashboard'); ?>
+                            </a>
+                            <div class="d-flex gap-2">
+                                <?php if (empty($frontIsAdminLogged)): ?>
+                                <a href="<?php echo $this->Html->url('/MyProfiles'); ?>" class="btn btn-sm btn-outline-light flex-fill py-1" style="font-size: 11px; border-radius: 6px;">
+                                    <i class="fa fa-user me-1"></i> <?php echo __('My Profile'); ?>
+                                </a>
+                                <?php endif; ?>
+                                <a href="<?php echo h($frontLogoutUrl); ?>" class="btn btn-sm btn-outline-danger flex-fill py-1" style="font-size: 11px; border-radius: 6px; border-color: rgba(255,255,255,0.25); color: #fca5a5;">
+                                    <i class="fa fa-sign-out me-1"></i> <?php echo __('Sign Out'); ?>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                <?php else: ?>
+                    <a href="<?php echo $this->Html->url('/clients/login'); ?>" class="wv-offcanvas-client-btn">
+                        <i class="fa fa-sign-in"></i> CLIENT PORTAL LOGIN
+                    </a>
+                <?php endif; ?>
                 <a href="tel:<?php echo h($phone); ?>" class="wv-offcanvas-call-btn">
                     <i class="fa fa-phone"></i> CALL: <?php echo h($phone); ?>
                 </a>
@@ -1397,7 +1717,11 @@ $siteFaviconFile = !empty($siteFavicon) ? $siteFavicon : '';
                     <ul class="list-unstyled d-flex flex-column gap-2">
                         <li><a href="<?php echo $this->Html->url('/Contents/pages/About-Us'); ?>">About Us</a></li>
                         <li><a href="<?php echo $this->Html->url('/Contacts'); ?>">Contact Us</a></li>
-                        <li><a href="<?php echo $this->Html->url('/clients/login'); ?>">Client Login</a></li>
+                        <?php if (!empty($frontIsClientLogged)): ?>
+                            <li><a href="<?php echo $this->Html->url('/Dashboards'); ?>" style="color: #7cf9ff; font-weight: 700;"><i class="fa fa-th-large me-1"></i> <?php echo __('Client Dashboard'); ?></a></li>
+                        <?php else: ?>
+                            <li><a href="<?php echo $this->Html->url('/clients/login'); ?>"><?php echo __('Client Login'); ?></a></li>
+                        <?php endif; ?>
                         <li><a href="<?php echo $this->Html->url('/Registers/index'); ?>">Register Account</a></li>
                     </ul>
                 </div>
@@ -1425,7 +1749,7 @@ $siteFaviconFile = !empty($siteFavicon) ? $siteFavicon : '';
     <!-- jQuery & Core Framework Scripts -->
     <script>if(typeof jQuery === 'undefined'){ document.write('<script src="<?php echo $this->Html->url('/design1000/assets/js/jquery.js'); ?>"><\/script>'); }</script>
     <?php echo $this->fetch('script'); ?>
-    <?php echo $this->Js->writeBuffer(); ?>
+    <?php echo (isset($this->Js) && is_object($this->Js)) ? $this->Js->writeBuffer() : ''; ?>
 
     <!-- Bootstrap 5 JS Bundle & Header Scroll Script -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

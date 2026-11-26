@@ -610,7 +610,9 @@ class AppController extends Controller
         $this->captchaType="math";
         $this->set('captchaType',$this->captchaType);
         $menuArr=array(array('Page'=>array('model_name'=>__('Dashboard'),'controller_name'=>'Dashboards','action_name'=>'index','icon'=>'fa fa-dashboard','sel_name'=>'')),
+                       array('Page'=>array('model_name'=>__('Notifications'),'controller_name'=>'ClientNotifications','action_name'=>'index','icon'=>'fa fa-bell','sel_name'=>'clientnotifications,client_notifications')),
                        array('Page'=>array('model_name'=>__('My Deals'),'controller_name'=>'MyDeals','action_name'=>'index','icon'=>'fa fa-thumbs-up','sel_name'=>'')),
+                       array('Page'=>array('model_name'=>__('e-Balloting Results'),'controller_name'=>'BallotingResults','action_name'=>'index','icon'=>'fa fa-cube','sel_name'=>'ballotingresults,balloting_results,myballoting')),
                        array('Page'=>array('model_name'=>__('Utility Bills'),'controller_name'=>'UtilityBills','action_name'=>'index','icon'=>'fa fa-bolt','sel_name'=>'utilitybills,utility_bills,myutilitybills,my_utility_bills,myutilitybill,billingportals')),
                        array('Page'=>array('model_name'=>__('My Payments'),'controller_name'=>'MyPayments','action_name'=>'index','icon'=>'fa fa-dollar','sel_name'=>'')),
                        array('Page'=>array('model_name'=>__('Overdue Installments'),'controller_name'=>'MyInvpastdues','action_name'=>'index','icon'=>'fa fa-thumb-tack','sel_name'=>'')),
@@ -618,7 +620,7 @@ class AppController extends Controller
                        array('Page'=>array('model_name'=>__('My Rentals'),'controller_name'=>'MyRentals','action_name'=>'index','icon'=>'fa fa-key','sel_name'=>'')),
                        array('Page'=>array('model_name'=>__('Refund Requests'),'controller_name'=>'MyRefundrequests','action_name'=>'index','icon'=>'fa fa-undo','sel_name'=>'')),
                        array('Page'=>array('model_name'=>__('Search Properties'),'controller_name'=>'Properties','action_name'=>'index','icon'=>'fa fa-building','sel_name'=>'')),
-                       array('Page'=>array('model_name'=>__('Favourite Properties'),'controller_name'=>'Favouriteproperties','action_name'=>'index','icon'=>'fa fa-heart','sel_name'=>'')),
+                       array('Page'=>array('model_name'=>__('Favourite Properties'),'controller_name'=>'Favouriteproperties','action_name'=>'index','icon'=>'fa fa-heart','sel_name'=>'favouriteproperties,favourite_properties')),
                        array('Page'=>array('model_name'=>__('My Profile'),'controller_name'=>'MyProfiles','action_name'=>'index','icon'=>'fa fa-user','sel_name'=>'')),
                        array('Page'=>array('model_name'=>__('Change Password'),'controller_name'=>'Changepasswords','action_name'=>'index','icon'=>'fa fa-cog','sel_name'=>'')),
                        array('Page'=>array('model_name'=>__('Signout'),'controller_name'=>'Clients','action_name'=>'logout','icon'=>'fa fa-power-off','sel_name'=>'')),
@@ -670,6 +672,31 @@ class AppController extends Controller
                 }
                 $menuArr = array_values($menuArr);
             }
+            // Check if Balloting is enabled for any of client's projects
+            $hasBallotingAccess = $this->_frontClientHasBallotingAccess($clientId);
+            if(!$hasBallotingAccess)
+            {
+                foreach($menuArr as $menuIndex => $menuItem)
+                {
+                    if(!empty($menuItem['Page']['controller_name']) && strcasecmp($menuItem['Page']['controller_name'], 'BallotingResults') === 0)
+                    {
+                        unset($menuArr[$menuIndex]);
+                    }
+                }
+                $menuArr = array_values($menuArr);
+            }
+
+            // Client Unread Notification Count for Bell & Activity Stream
+            $clientUnreadNotifCount = 0;
+            try {
+                $this->loadModel('ClientNotification');
+                $clientUnreadNotifCount = (int)$this->ClientNotification->find('count', array(
+                    'conditions' => array('ClientNotification.client_id' => $clientId, 'ClientNotification.is_read' => 0),
+                    'recursive' => -1
+                ));
+            } catch(Exception $eNotif) {}
+            $this->set('clientUnreadNotifCount', $clientUnreadNotifCount);
+
             $this->set('frontBillingAccess', $frontBillingAccess);
         }
         $this->set('menuArr', $menuArr);
@@ -783,6 +810,40 @@ class AppController extends Controller
                 ),
                 'recursive' => -1
             )) > 0;
+        }
+        catch(Exception $e)
+        {
+            return true;
+        }
+    }
+
+    protected function _frontClientHasBallotingAccess($clientId)
+    {
+        $clientId = (int)$clientId;
+        if($clientId <= 0)
+        {
+            return false;
+        }
+        try
+        {
+            $this->loadModel('Admin.BallotingSetting');
+            $this->loadModel('Admin.BallotingAllotment');
+
+            // If client has an allotted unit, always grant access
+            $allotmentCount = (int)$this->BallotingAllotment->find('count', array(
+                'conditions' => array('BallotingAllotment.client_id' => $clientId),
+                'recursive' => -1
+            ));
+            if ($allotmentCount > 0) {
+                return true;
+            }
+
+            // Otherwise check if portal balloting is enabled for any active project
+            $activePortalCount = (int)$this->BallotingSetting->find('count', array(
+                'conditions' => array('BallotingSetting.status' => 'Active', 'BallotingSetting.portal_enabled' => 1),
+                'recursive' => -1
+            ));
+            return ($activePortalCount > 0);
         }
         catch(Exception $e)
         {
@@ -985,9 +1046,17 @@ class AppController extends Controller
             'myinvpastdues', 'my_invpastdues', 'mydocuments', 'my_documents',
             'myrentals', 'my_rentals', 'myrefundrequests', 'my_refundrequests',
             'myprofiles', 'my_profiles', 'changepasswords', 'change_passwords',
-            'utilitybills', 'utility_bills', 'myutilitybills', 'my_utility_bills', 'myutilitybill', 'my_utility_bill'
+            'utilitybills', 'utility_bills', 'myutilitybills', 'my_utility_bills', 'myutilitybill', 'my_utility_bill',
+            'clientnotifications', 'client_notifications',
+            'ballotingresults', 'balloting_results', 'myballoting',
+            'favouriteproperties', 'favourite_properties'
         );
-        $isPortalCtrl = in_array($controllerName, $clientPortalControllers, true) || (strpos($controllerName, 'my') === 0) || (strpos($controllerName, 'utility') === 0);
+        $isPortalCtrl = in_array($controllerName, $clientPortalControllers, true) 
+            || (strpos($controllerName, 'my') === 0) 
+            || (strpos($controllerName, 'utility') === 0)
+            || (strpos($controllerName, 'clientnotif') === 0)
+            || (strpos($controllerName, 'ballot') === 0)
+            || (strpos($controllerName, 'favourite') === 0);
         if ($isPortalCtrl) {
             return;
         }

@@ -61,13 +61,26 @@ $portalControllers = array(
     'myutilitybills',
     'my_utility_bills',
     'myutilitybill',
-    'my_utility_bill'
+    'my_utility_bill',
+    'clientnotifications',
+    'client_notifications',
+    'ballotingresults',
+    'balloting_results',
+    'myballoting',
+    'favouriteproperties',
+    'favourite_properties'
 );
 
 $currentLayoutCtrl = !empty($this->params['controller']) ? strtolower(trim((string)$this->params['controller'])) : (!empty($this->name) ? strtolower(trim((string)$this->name)) : '');
-$isPortalPage = in_array($currentLayoutCtrl, $portalControllers, true) || (strpos($currentLayoutCtrl, 'my') === 0) || ($currentLayoutCtrl === 'dashboards') || ($currentLayoutCtrl === 'changepasswords');
+$isPortalPage = in_array($currentLayoutCtrl, $portalControllers, true) 
+    || (strpos($currentLayoutCtrl, 'my') === 0) 
+    || ($currentLayoutCtrl === 'dashboards') 
+    || ($currentLayoutCtrl === 'changepasswords')
+    || (strpos($currentLayoutCtrl, 'clientnotif') === 0)
+    || (strpos($currentLayoutCtrl, 'ballot') === 0)
+    || (strpos($currentLayoutCtrl, 'favourite') === 0);
 $hasFrontClientSession = ($isPortalPage || $this->Session->check('frontUser') || !empty($UserArr['Client']['id']) || !empty($frontUser['Client']['id']) || !empty($portalClient['id']) || $this->Session->check('Impersonation.front'));
-$isFrontPublicController = in_array($currentLayoutCtrl, array('properties','fronts','registers','clients','agents','favouriteproperties','contents','contacts','agencies','paymentplans'), true) && !$isPortalPage;
+$isFrontPublicController = in_array($currentLayoutCtrl, array('properties','fronts','registers','clients','agents','contents','contacts','agencies','paymentplans'), true) && !$isPortalPage;
 
 if(($isPortalPage || $hasFrontClientSession) && !$isFrontPublicController){?>
 <!DOCTYPE html>
@@ -418,8 +431,48 @@ function googleTranslateElementInit() {
 
 			<div class="dashboard-content">	
 				<div class="container-fluid">
-					<div class="dashboard-header">
-						
+					<div class="dashboard-header wv-client-top-bar">
+						<div class="wv-client-top-left">
+							<button class="wv-mobile-menu-trigger hidden-lg-up" type="button" id="wvMobileMenuTrigger" aria-label="<?php echo __('Toggle Navigation'); ?>">
+								<i class="fa fa-bars"></i>
+							</button>
+							<span class="wv-portal-badge"><i class="fa fa-shield"></i> <?php echo __('White Villas Client Portal'); ?></span>
+						</div>
+						<div class="wv-client-top-right">
+							<!-- In-Portal Notification Bell Dropdown -->
+							<div class="wv-client-notif-dropdown dropdown" id="wvClientNotifDropdown">
+								<a href="javascript:void(0);" class="wv-client-bell-btn dropdown-toggle" id="wvNotifBellBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="<?php echo __('Notifications'); ?>">
+									<i class="fa fa-bell-o"></i>
+									<?php $unreadNotifDisplay = !empty($clientUnreadNotifCount) ? (int)$clientUnreadNotifCount : 0; ?>
+									<span class="wv-bell-badge <?php echo ($unreadNotifDisplay > 0) ? 'has-unread' : ''; ?>" id="wvBellBadge" style="<?php echo ($unreadNotifDisplay > 0) ? '' : 'display:none;'; ?>">
+										<?php echo $unreadNotifDisplay; ?>
+									</span>
+								</a>
+								<div class="dropdown-menu dropdown-menu-right wv-notif-menu" aria-labelledby="wvNotifBellBtn">
+									<div class="wv-notif-menu-header">
+										<div class="wv-notif-menu-title">
+											<i class="fa fa-bell text-warning"></i> <?php echo __('Notifications'); ?>
+										</div>
+										<a href="javascript:void(0);" id="wvMarkAllReadBtn" class="wv-notif-mark-read">
+											<i class="fa fa-check"></i> <?php echo __('Mark all read'); ?>
+										</a>
+									</div>
+									<div class="wv-notif-items-wrap" id="wvNotifItemsWrap">
+										<div class="wv-notif-loading"><i class="fa fa-spinner fa-spin"></i> <?php echo __('Loading updates...'); ?></div>
+									</div>
+									<div class="wv-notif-menu-footer">
+										<a href="<?php echo $this->Html->url(array('controller' => 'ClientNotifications', 'action' => 'index')); ?>" class="wv-notif-see-all">
+											<?php echo __('View All Notifications'); ?> <i class="fa fa-arrow-right"></i>
+										</a>
+									</div>
+								</div>
+							</div>
+
+							<div class="wv-client-user-pill hidden-xs-down">
+								<i class="fa fa-user-circle"></i>
+								<span><?php echo h(!empty($currentClientArr['name']) ? $currentClientArr['name'] : __('Client')); ?></span>
+							</div>
+						</div>
 					</div><!-- /.dashboard-header -->
                                        <?php echo $this->fetch('content');?>
 <style type="text/css" id="wv-client-readable-style">
@@ -668,10 +721,36 @@ body.wv-client-theme .dashboard-content table.table strong{
   font-weight:900!important;
 }
 body.wv-client-theme .dashboard-content .btn{
+  align-items:center!important;
   border-radius:999px!important;
+  box-shadow:0 2px 6px rgba(15,23,42,.08)!important;
+  display:inline-flex!important;
+  font-size:13px!important;
   font-weight:900!important;
+  gap:6px!important;
+  justify-content:center!important;
   line-height:1.2!important;
+  padding:8px 16px!important;
   text-decoration:none!important;
+  transition:all .18s ease!important;
+}
+body.wv-client-theme .dashboard-content .btn:hover{
+  box-shadow:0 6px 14px rgba(15,23,42,.14)!important;
+  transform:translateY(-1px)!important;
+}
+body.wv-client-theme .dashboard-content .btn-xs{
+  font-size:11px!important;
+  min-height:26px!important;
+  padding:4px 10px!important;
+}
+body.wv-client-theme .dashboard-content .btn-sm{
+  font-size:12px!important;
+  min-height:32px!important;
+  padding:6px 12px!important;
+}
+body.wv-client-theme .dashboard-content .btn-lg{
+  font-size:15px!important;
+  padding:12px 24px!important;
 }
 body.wv-client-theme .dashboard-content .btn-info{
   background:#0f4c81!important;
@@ -693,10 +772,58 @@ body.wv-client-theme .dashboard-content .btn-primary{
   border-color:#ff0a46!important;
   color:#ffffff!important;
 }
+body.wv-client-theme .dashboard-content .btn-danger{
+  background:#dc2626!important;
+  border-color:#dc2626!important;
+  color:#ffffff!important;
+}
 body.wv-client-theme .dashboard-content .btn-default{
   background:#ffffff!important;
   border-color:#cbd5e1!important;
   color:#07152a!important;
+}
+/* Absolute universal high contrast text and icon color guarantee */
+body.wv-client-theme .dashboard-content .btn-primary,
+body.wv-client-theme .dashboard-content .btn-primary *,
+body.wv-client-theme .dashboard-content .btn-danger,
+body.wv-client-theme .dashboard-content .btn-danger *,
+body.wv-client-theme .dashboard-content .btn-success,
+body.wv-client-theme .dashboard-content .btn-success *,
+body.wv-client-theme .dashboard-content .btn-info,
+body.wv-client-theme .dashboard-content .btn-info *{
+  color:#ffffff!important;
+}
+body.wv-client-theme .dashboard-content .btn-default,
+body.wv-client-theme .dashboard-content .btn-default *,
+body.wv-client-theme .dashboard-content .btn-warning,
+body.wv-client-theme .dashboard-content .btn-warning *{
+  color:#07152a!important;
+}
+.wv-mobile-menu-trigger{
+  align-items:center!important;
+  background:#07152a!important;
+  border:0!important;
+  border-radius:8px!important;
+  color:#7cf9ff!important;
+  cursor:pointer!important;
+  display:inline-flex!important;
+  font-size:16px!important;
+  height:36px!important;
+  justify-content:center!important;
+  margin-right:10px!important;
+  transition:all .18s ease!important;
+  width:36px!important;
+}
+.wv-mobile-menu-trigger:hover,
+.wv-mobile-menu-trigger:focus{
+  background:#ff0a46!important;
+  color:#ffffff!important;
+  outline:none!important;
+}
+@media(min-width:992px){
+  .wv-mobile-menu-trigger{
+    display:none!important;
+  }
 }
 body.wv-client-theme .dashboard-content .table-responsive,
 body.wv-client-theme .dashboard-content .client-scroll-wrap,
@@ -893,7 +1020,7 @@ body.wv-client-theme .dashboard-content .wv-client-table-wrap{
       $('body').append('<div class="client-sidebar-backdrop"></div>');
     }
     var $backdrop = $('.client-sidebar-backdrop');
-    var $toggle = $('.dashboard-title .navbar-toggler');
+    var $toggle = $('.dashboard-title .navbar-toggler, #wvMobileMenuTrigger');
 
     function isMobileView(){
       return window.matchMedia('(max-width: 991px)').matches;
@@ -970,6 +1097,267 @@ body.wv-client-theme .dashboard-content .wv-client-table-wrap{
   });
   $(document).ajaxComplete(function(){
     ensureClientTableScroll();
+  });
+})(jQuery);
+</script>
+<style type="text/css">
+.wv-client-top-bar {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border: 1px solid #dfe9f5;
+  border-radius: 12px;
+  padding: 10px 18px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+}
+@media(max-width:767px){
+  .wv-client-top-bar {
+    padding: 8px 12px !important;
+    margin-bottom: 14px !important;
+  }
+  .wv-portal-badge {
+    font-size: 11px !important;
+  }
+  .wv-client-user-pill {
+    display: none !important;
+  }
+  .wv-notif-menu {
+    position: fixed !important;
+    top: 56px !important;
+    right: 12px !important;
+    left: 12px !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+}
+.wv-client-top-left {
+  display: flex;
+  align-items: center;
+}
+.wv-portal-badge {
+  font-size: 13px;
+  font-weight: 800;
+  color: #07152a;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.wv-client-top-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.wv-client-bell-btn {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #07152a !important;
+  font-size: 18px;
+  text-decoration: none !important;
+  transition: all 0.2s ease;
+}
+.wv-client-bell-btn:hover {
+  background: #fff1f4;
+  color: #ff0a46 !important;
+  border-color: #ffd6df;
+}
+.wv-bell-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #ff0a46;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 900;
+  min-width: 18px;
+  height: 18px;
+  line-height: 18px;
+  border-radius: 999px;
+  text-align: center;
+  padding: 0 4px;
+  box-shadow: 0 2px 6px rgba(255, 10, 70, 0.4);
+}
+.wv-bell-badge.has-unread {
+  animation: pulse-ring 2s infinite;
+}
+@keyframes pulse-ring {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+.wv-client-user-pill {
+  font-size: 13px;
+  font-weight: 800;
+  color: #334155;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 6px 14px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.wv-notif-menu {
+  width: 340px;
+  max-width: 90vw;
+  border-radius: 14px;
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.16);
+  border: 1px solid #dfe9f5;
+  padding: 0;
+  margin-top: 10px;
+  right: 0;
+  left: auto !important;
+  overflow: hidden;
+  z-index: 1080;
+}
+.wv-notif-menu-header {
+  background: #07152a;
+  color: #ffffff;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.wv-notif-menu-title {
+  font-size: 13px;
+  font-weight: 800;
+}
+.wv-notif-mark-read {
+  font-size: 11px;
+  color: #7cf9ff !important;
+  font-weight: 700;
+  text-decoration: none !important;
+}
+.wv-notif-items-wrap {
+  max-height: 320px;
+  overflow-y: auto;
+  background: #ffffff;
+}
+.wv-notif-item {
+  padding: 12px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  text-decoration: none !important;
+  transition: background 0.15s;
+}
+.wv-notif-item:hover {
+  background: #f8fafc;
+}
+.wv-notif-item.unread {
+  background: #fbfdff;
+}
+.wv-notif-item-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex: 0 0 32px;
+}
+.wv-notif-item-body {
+  flex: 1 1 auto;
+}
+.wv-notif-item-title {
+  font-size: 12px;
+  font-weight: 800;
+  color: #07152a;
+  margin: 0 0 2px;
+}
+.wv-notif-item-msg {
+  font-size: 11.5px;
+  color: #64748b;
+  margin: 0 0 4px;
+  line-height: 1.35;
+}
+.wv-notif-item-time {
+  font-size: 10px;
+  color: #94a3b8;
+  font-weight: 700;
+}
+.wv-notif-menu-footer {
+  background: #f8fafc;
+  padding: 10px;
+  text-align: center;
+  border-top: 1px solid #edf2f7;
+}
+.wv-notif-see-all {
+  font-size: 12px;
+  font-weight: 800;
+  color: #ff0a46 !important;
+  text-decoration: none !important;
+}
+.wv-notif-loading, .wv-notif-none {
+  padding: 20px;
+  text-align: center;
+  font-size: 12px;
+  color: #94a3b8;
+}
+</style>
+
+<script type="text/javascript">
+(function($){
+  var notifPollUrl = '<?php echo $this->Html->url(array("controller" => "ClientNotifications", "action" => "poll")); ?>';
+  var markAllUrl = '<?php echo $this->Html->url(array("controller" => "ClientNotifications", "action" => "mark_all_read")); ?>';
+
+  function fetchNotifications() {
+    $.getJSON(notifPollUrl, function(data){
+      if (data && data.status === 'success') {
+        var count = parseInt(data.unread_count, 10) || 0;
+        var $badge = $('#wvBellBadge');
+        if (count > 0) {
+          $badge.text(count).show().addClass('has-unread');
+        } else {
+          $badge.text(0).hide().removeClass('has-unread');
+        }
+
+        var $wrap = $('#wvNotifItemsWrap');
+        if (data.items && data.items.length > 0) {
+          var html = '';
+          $.each(data.items, function(i, item){
+            html += '<a href="' + item.action_url + '" class="wv-notif-item ' + (item.is_read ? '' : 'unread') + '">';
+            html += '<div class="wv-notif-item-icon" style="background:' + item.badge_color + '18; color:' + item.badge_color + ';"><i class="fa ' + item.icon + '"></i></div>';
+            html += '<div class="wv-notif-item-body">';
+            html += '<div class="wv-notif-item-title">' + item.title + '</div>';
+            html += '<div class="wv-notif-item-msg">' + item.message + '</div>';
+            html += '<div class="wv-notif-item-time">' + item.time_ago + '</div>';
+            html += '</div></a>';
+          });
+          $wrap.html(html);
+        } else {
+          $wrap.html('<div class="wv-notif-none"><i class="fa fa-bell-slash-o"></i> <?php echo __("No recent notifications"); ?></div>');
+        }
+      }
+    });
+  }
+
+  $(function(){
+    $('#wvClientNotifDropdown').on('show.bs.dropdown', function(){
+      fetchNotifications();
+    });
+
+    $('#wvMarkAllReadBtn').on('click', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      $.post(markAllUrl, function(){
+        $('#wvBellBadge').hide().removeClass('has-unread');
+        $('.wv-notif-item').removeClass('unread');
+      });
+    });
+
+    setTimeout(fetchNotifications, 1000);
+    setInterval(fetchNotifications, 60000);
   });
 })(jQuery);
 </script>

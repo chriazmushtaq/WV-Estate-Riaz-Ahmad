@@ -100,6 +100,47 @@ jQuery(document).ready(function(){
                 </div>
             </div>
         </div>
+
+        <!-- Client Portal & Digital Allotment Hub Settings -->
+        <div class="panel" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; margin-top:20px; padding:18px;">
+            <h4 style="margin:0 0 16px; font-weight:800; color:#0f172a; display:flex; align-items:center; gap:8px;">
+                <i class="fa fa-desktop text-primary"></i> <?php echo __('Client Portal & Digital e-Balloting Hub Settings (Project-Specific)'); ?>
+            </h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label"><?php echo __('Enable e-Balloting in Client Portal'); ?></label>
+                        <div class="col-sm-6" style="padding-top:7px;">
+                            <?php echo $this->Form->checkbox('portal_enabled', array('hiddenField' => true, 'checked' => !empty($this->request->data['BallotingSetting']['portal_enabled']))); ?>
+                            <span class="help-block" style="font-size:11px; margin-top:2px;"><?php echo __('Allow clients of this project to view balloting status & allotted plots.'); ?></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label"><?php echo __('Enable Live Allotment Search'); ?></label>
+                        <div class="col-sm-6" style="padding-top:7px;">
+                            <?php echo $this->Form->checkbox('portal_live_results', array('hiddenField' => true, 'checked' => !empty($this->request->data['BallotingSetting']['portal_live_results']))); ?>
+                            <span class="help-block" style="font-size:11px; margin-top:2px;"><?php echo __('Let clients & file holders search live by Deal No / CNIC / Reg No.'); ?></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label"><?php echo __('Downloadable Plot Certificate'); ?></label>
+                        <div class="col-sm-6" style="padding-top:7px;">
+                            <?php echo $this->Form->checkbox('portal_certificate_enabled', array('hiddenField' => true, 'checked' => !empty($this->request->data['BallotingSetting']['portal_certificate_enabled']))); ?>
+                            <span class="help-block" style="font-size:11px; margin-top:2px;"><?php echo __('Enable QR-coded verifiable digital plot allocation certificate.'); ?></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><?php echo __('Portal Notice / Announcement'); ?></label>
+                        <div class="col-sm-8">
+                            <?php echo $this->Form->textarea('portal_announcement', array('class' => 'form-control', 'rows' => 3, 'placeholder' => __('e.g. Official Phase 1 Balloting completed. Check your allotted plot details below.'))); ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="form-group">
             <div class="col-sm-12">
                 <button type="submit" class="btn btn-success"><span class="fa fa-save"></span>&nbsp;<?php echo __('Save Settings');?></button>

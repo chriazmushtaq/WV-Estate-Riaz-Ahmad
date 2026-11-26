@@ -2532,6 +2532,15 @@ HTML;
         }
         $this->_sendLetterEmailNotification($letterRow, $event);
         $this->_sendLetterSmsNotification($letterRow, $event);
+
+        // Automated WhatsApp & In-Portal Letter Notification Delivery
+        if ($event === 'issue' && !empty($letterRow['Realestateletter']['id'])) {
+            try {
+                App::uses('WhatsAppAutomationComponent', 'Controller/Component');
+                $waLetter = new WhatsAppAutomationComponent(new ComponentCollection());
+                $waLetter->sendLetterIssuedAlert((int)$letterRow['Realestateletter']['id']);
+            } catch (Exception $eWaLet) {}
+        }
     }
 
     protected function _letterNotificationEventByStatus($statusText)

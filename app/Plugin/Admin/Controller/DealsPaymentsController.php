@@ -4645,6 +4645,16 @@ class DealsPaymentsController extends AdminAppController {
                     }
                 }
                 $transactionActive = false;
+
+                // Automated WhatsApp & In-Portal Payment Receipt Delivery
+                if ($primaryPaymentId !== null) {
+                    try {
+                        App::uses('WhatsAppAutomationComponent', 'Controller/Component');
+                        $waReceipt = new WhatsAppAutomationComponent(new ComponentCollection());
+                        $waReceipt->sendPaymentReceiptAlert((int)$primaryPaymentId);
+                    } catch (Exception $eWaPay) {}
+                }
+
                 if($primaryPaymentId!==null && !empty($slipMeta['file']))
                 {
                     try

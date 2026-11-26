@@ -567,7 +567,11 @@ class BallotingController extends AdminAppController
                 'max_overdue_days' => 9999,
                 'require_active_deal' => 1,
                 'selection_order' => 'booking_oldest',
-                'status' => 'Active'
+                'status' => 'Active',
+                'portal_enabled' => 1,
+                'portal_live_results' => 1,
+                'portal_certificate_enabled' => 1,
+                'portal_announcement' => 'Official balloting results are live. Allotted clients can view their unit specifications and download the verified allocation certificate.'
             )
         );
     }
@@ -1379,6 +1383,10 @@ class BallotingController extends AdminAppController
             $saveData['require_active_deal'] = !empty($saveData['require_active_deal']) ? 1 : 0;
             $saveData['selection_order'] = isset($this->_selectionOrderArr[$saveData['selection_order']]) ? $saveData['selection_order'] : 'booking_oldest';
             $saveData['status'] = (!empty($saveData['status']) && $saveData['status'] === 'Inactive') ? 'Inactive' : 'Active';
+            $saveData['portal_enabled'] = !empty($saveData['portal_enabled']) ? 1 : 0;
+            $saveData['portal_live_results'] = !empty($saveData['portal_live_results']) ? 1 : 0;
+            $saveData['portal_certificate_enabled'] = !empty($saveData['portal_certificate_enabled']) ? 1 : 0;
+            $saveData['portal_announcement'] = isset($saveData['portal_announcement']) ? trim($saveData['portal_announcement']) : '';
             if (!empty($existing['BallotingSetting']['id'])) {
                 $saveData['id'] = (int)$existing['BallotingSetting']['id'];
             } else {
