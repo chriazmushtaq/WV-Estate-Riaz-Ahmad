@@ -44,6 +44,10 @@ Router::connect('/facebook_integrations/webhook', array('plugin' => 'admin', 'co
 Router::connect('/cron/facebook_leads', array('plugin' => 'admin', 'controller' => 'facebook_integrations', 'action' => 'cron_autofetch'));
 Router::connect('/cron/facebook_autofetch', array('plugin' => 'admin', 'controller' => 'facebook_integrations', 'action' => 'cron_autofetch'));
 
+// Portal Menus Route Aliases
+Router::connect('/admin/agency_portal_menus', array('plugin' => 'admin', 'controller' => 'portalmenus', 'action' => 'index'));
+Router::connect('/admin/agency_portal_menus/:action/*', array('plugin' => 'admin', 'controller' => 'portalmenus'));
+
 Router::connect('/bills', array('controller' => 'bills', 'action' => 'check_online'));
 Router::connect('/Bills', array('controller' => 'bills', 'action' => 'check_online'));
 Router::connect('/bills/check_online', array('controller' => 'bills', 'action' => 'check_online'));

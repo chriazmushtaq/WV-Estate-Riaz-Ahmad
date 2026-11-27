@@ -643,8 +643,134 @@ class AppController extends Controller
         $this->set('userValue', $frontUser);
         $this->set('frontUser', $frontUser);
 
+        $agencyMenuSettings = array();
+        $clientNotificationsEnabled = true;
+
         if($clientId > 0)
         {
+            // 1. Agency-based Portal Menu Settings (Sidebar Filtering & Strict Direct URL Guard)
+            try
+            {
+                $this->loadModel('AgencyPortalMenu');
+                $clientAgencyId = !empty($frontUser['Client']['project_id']) ? (int)$frontUser['Client']['project_id'] : 0;
+                $agencyMenuSettings = $this->AgencyPortalMenu->getSettingsForAgency($clientAgencyId);
+
+                // Check notifications toggle
+                if(isset($agencyMenuSettings['clientnotifications']) && empty($agencyMenuSettings['clientnotifications']['is_enabled']))
+                {
+                    $clientNotificationsEnabled = false;
+                }
+
+                // Filter $menuArr: exclude disabled menus, apply custom labels, and attach dynamic ordering
+                foreach($menuArr as $menuIndex => $menuItem)
+                {
+                    $ctrl = !empty($menuItem['Page']['controller_name']) ? $menuItem['Page']['controller_name'] : '';
+                    $mKey = $this->AgencyPortalMenu->controllerToMenuKey($ctrl);
+                    if($mKey)
+                    {
+                        if(isset($agencyMenuSettings[$mKey]) && empty($agencyMenuSettings[$mKey]['is_enabled']))
+                        {
+                            unset($menuArr[$menuIndex]);
+                            continue;
+                        }
+                        if(!empty($agencyMenuSettings[$mKey]['custom_label']))
+                        {
+                            $menuArr[$menuIndex]['Page']['model_name'] = $agencyMenuSettings[$mKey]['custom_label'];
+                        }
+                        $menuArr[$menuIndex]['Page']['ordering'] = isset($agencyMenuSettings[$mKey]['ordering']) ? (int)$agencyMenuSettings[$mKey]['ordering'] : 99;
+                    }
+                    else
+                    {
+                        // Items like Signout stay at the very end
+                        $menuArr[$menuIndex]['Page']['ordering'] = 9999;
+                    }
+                }
+                $menuArr = array_values($menuArr);
+
+                // Sort $menuArr by ordering ASC
+                usort($menuArr, function($a, $b) {
+                    $oa = isset($a['Page']['ordering']) ? (int)$a['Page']['ordering'] : 99;
+                    $ob = isset($b['Page']['ordering']) ? (int)$b['Page']['ordering'] : 99;
+                    if ($oa === $ob) {
+                        return 0;
+                    }
+                    return ($oa < $ob) ? -1 : 1;
+                });
+
+                // Update frontmenuArr if dashboard is disabled
+                if(isset($agencyMenuSettings['dashboards']) && empty($agencyMenuSettings['dashboards']['is_enabled']))
+                {
+                    $frontmenuArr = array();
+                    $this->set('frontmenuArr', $frontmenuArr);
+                }
+
+                // Strict Direct URL Guard: prevent client from accessing disabled portal controller pages
+                $currentPlugin = !empty($this->params['plugin']) ? (string)$this->params['plugin'] : '';
+                $isAdminPrefix = !empty($this->params['admin']) || (!empty($this->params['prefix']) && $this->params['prefix'] === 'admin');
+
+                if(empty($isAdminPrefix) && strcasecmp($currentPlugin, 'Admin') !== 0)
+                {
+                    $currCtrl = !empty($this->params['controller']) ? (string)$this->params['controller'] : '';
+                    $currAction = !empty($this->params['action']) ? (string)$this->params['action'] : '';
+                    $currMenuKey = $this->AgencyPortalMenu->controllerToMenuKey($currCtrl);
+
+                    $isAuthAction = (strcasecmp($currCtrl, 'Clients') === 0 && in_array(strtolower($currAction), array('login', 'logout', 'signout')));
+
+                    if($currMenuKey && !$isAuthAction && isset($agencyMenuSettings[$currMenuKey]) && empty($agencyMenuSettings[$currMenuKey]['is_enabled']))
+                    {
+                        $definitions = $this->AgencyPortalMenu->getMenuDefinitions();
+                        $featureName = isset($definitions[$currMenuKey]['name']) ? $definitions[$currMenuKey]['name'] : ucfirst($currMenuKey);
+
+                        if($this->request->is('ajax'))
+                        {
+                            $this->autoRender = false;
+                            $this->response->statusCode(403);
+                            $this->response->type('json');
+                            echo json_encode(array(
+                                'status' => 'error',
+                                'message' => sprintf(__('The "%s" feature is disabled for your agency account.'), $featureName)
+                            ));
+                            return $this->response;
+                        }
+
+                        $this->Session->setFlash(
+                            sprintf(__('The "%s" section is currently disabled for your agency account. Please contact management if you require access.'), $featureName),
+                            'flash',
+                            array('alert' => 'warning')
+                        );
+
+                        // Find fallback redirect target
+                        $fallbackRedirect = null;
+                        if(!empty($agencyMenuSettings['dashboards']['is_enabled']) && strcasecmp($currMenuKey, 'dashboards') !== 0)
+                        {
+                            $fallbackRedirect = array('controller' => 'Dashboards', 'action' => 'index');
+                        }
+                        else
+                        {
+                            foreach($agencyMenuSettings as $fbKey => $fbItem)
+                            {
+                                if(!empty($fbItem['is_enabled']) && strcasecmp($fbKey, $currMenuKey) !== 0 && !empty($fbItem['controller']))
+                                {
+                                    $fallbackRedirect = array('controller' => $fbItem['controller'], 'action' => 'index');
+                                    break;
+                                }
+                            }
+                        }
+
+                        if(!$fallbackRedirect)
+                        {
+                            $fallbackRedirect = array('controller' => 'Clients', 'action' => 'logout');
+                        }
+
+                        return $this->redirect($fallbackRedirect);
+                    }
+                }
+            }
+            catch(Exception $eAgencyPortal)
+            {
+                // Continue gracefully if schema is being initialized
+            }
+
             if(!$this->_frontClientHasRentalAccess($clientId))
             {
                 foreach($menuArr as $menuIndex => $menuItem)
@@ -699,6 +825,8 @@ class AppController extends Controller
 
             $this->set('frontBillingAccess', $frontBillingAccess);
         }
+        $this->set('agencyMenuSettings', $agencyMenuSettings);
+        $this->set('clientNotificationsEnabled', $clientNotificationsEnabled);
         $this->set('menuArr', $menuArr);
 
         $this->set('frontClientPhotoUrl', $this->_frontResolveClientPhotoUrl(isset($frontUser['Client']) ? $frontUser['Client'] : array()));

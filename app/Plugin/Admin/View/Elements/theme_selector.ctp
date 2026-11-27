@@ -13,6 +13,7 @@ $compact = !empty($compact);
         <button type="button" class="wv-admin-theme-chip<?php echo $adminThemeClass === $themeKey ? ' active' : '';?>" data-theme-value="<?php echo h($themeKey);?>" title="<?php echo h($themeLabel);?>">
             <span class="wv-admin-theme-dot theme-dot-<?php echo h(str_replace('theme-', '', $themeKey));?>"></span>
             <span class="wv-admin-theme-chip-label"><?php echo h($themeLabel);?></span>
+            <span class="wv-admin-theme-check"><i class="fa fa-check"></i></span>
         </button>
     <?php } ?>
 </div>

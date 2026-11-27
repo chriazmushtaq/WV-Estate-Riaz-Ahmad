@@ -59,10 +59,38 @@ class RaastEmvcoQr
     }
 
     /**
-     * Generate QR Code Image URL
+     * Generate QR Code Image URL (Offline-Safe Embedded Data URI or Remote Fallback)
      */
     public static function getQrImageUrl($payload, $size = 200)
     {
+        // 1. Attempt pure local offline Base64 PNG generation (zero network latency, never empty in PDF/print)
+        $appDir = defined('APP') ? APP : (dirname(dirname(dirname(__DIR__))) . DIRECTORY_SEPARATOR);
+        $vendorQrPath = $appDir . 'Vendor' . DIRECTORY_SEPARATOR . 'php-qrcode' . DIRECTORY_SEPARATOR . 'qrcode.php';
+        
+        if (file_exists($vendorQrPath)) {
+            require_once $vendorQrPath;
+            if (class_exists('QRCode') && extension_loaded('gd')) {
+                try {
+                    $qr = new QRCode($payload, array('w' => $size, 'h' => $size, 's' => 'qrl'));
+                    $img = $qr->render_image();
+                    if ($img) {
+                        ob_start();
+                        imagepng($img);
+                        $png = ob_get_clean();
+                        if (function_exists('imagedestroy')) {
+                            @imagedestroy($img);
+                        }
+                        if (!empty($png)) {
+                            return 'data:image/png;base64,' . base64_encode($png);
+                        }
+                    }
+                } catch (Exception $e) {
+                    // Fall through to external URL fallback
+                }
+            }
+        }
+
+        // 2. Fallback to external API if local GD is unavailable
         $encoded = urlencode($payload);
         return "https://api.qrserver.com/v1/create-qr-code/?size={$size}x{$size}&data={$encoded}";
     }

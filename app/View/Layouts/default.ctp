@@ -417,6 +417,7 @@ function googleTranslateElementInit() {
 					</div><!-- /.dashboar-user-image -->
 					<div class="wv-sidebar-user-row">
 						<strong class="wv-sidebar-user-name" title="<?php echo h(!empty($currentClientArr['name']) ? $currentClientArr['name'] : __('Client'));?>"><?php echo h(!empty($currentClientArr['name']) ? $currentClientArr['name'] : __('Client'));?></strong>
+						<?php if (!isset($clientNotificationsEnabled) || $clientNotificationsEnabled): ?>
 						<!-- In-Portal Notification Bell Dropdown (In Sidebar after Client Name) -->
 						<div class="wv-client-notif-dropdown dropdown" id="wvClientNotifDropdown">
 							<a href="javascript:void(0);" class="wv-client-bell-btn" id="wvNotifBellBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="<?php echo __('Notifications'); ?>">
@@ -445,6 +446,7 @@ function googleTranslateElementInit() {
 								</div>
 							</div>
 						</div>
+						<?php endif; ?>
 					</div>
 				</div><!-- /.dashboard-user -->
 
@@ -470,6 +472,7 @@ function googleTranslateElementInit() {
 							<span class="wv-portal-badge"><i class="fa fa-shield"></i> <?php echo __('White Villas Client Portal'); ?></span>
 						</div>
 						<div class="wv-client-top-right">
+							<?php if (!isset($clientNotificationsEnabled) || $clientNotificationsEnabled): ?>
 							<!-- In-Portal Notification Bell (Visible in top bar on mobile/tablet < 992px) -->
 							<div class="wv-client-notif-dropdown dropdown hidden-lg-up" id="wvClientNotifDropdownMobile">
 								<a href="javascript:void(0);" class="wv-client-bell-btn" id="wvNotifBellBtnMobile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="<?php echo __('Notifications'); ?>">
@@ -498,6 +501,7 @@ function googleTranslateElementInit() {
 									</div>
 								</div>
 							</div>
+							<?php endif; ?>
 						</div>
 					</div><!-- /.dashboard-header -->
                                        <?php echo $this->fetch('content');?>

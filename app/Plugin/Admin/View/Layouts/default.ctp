@@ -315,61 +315,79 @@ body.wv-admin-theme .wv-admin-topbar #navbarNav {
 }
 
 /* Quick Page Search in Topbar */
-.wv-admin-quick-search {
+.wv-admin-quick-search,
+body.wv-admin-theme .wv-admin-quick-search {
     align-items: center !important;
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid rgba(255, 255, 255, 0.10) !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
     border-radius: 999px !important;
     box-sizing: border-box !important;
     display: inline-flex !important;
     gap: 8px !important;
     height: 35px !important;
     min-height: 35px !important;
-    padding: 0 10px 0 12px !important;
+    padding: 0 10px 0 13px !important;
     transition: all 0.22s ease !important;
     width: 200px !important;
 }
 
-.wv-admin-quick-search:focus-within {
-    background: rgba(255, 255, 255, 0.09) !important;
-    border-color: #3b82f6 !important;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25) !important;
+.wv-admin-quick-search:hover,
+body.wv-admin-theme .wv-admin-quick-search:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(255, 255, 255, 0.28) !important;
+}
+
+.wv-admin-quick-search:focus-within,
+body.wv-admin-theme .wv-admin-quick-search:focus-within {
+    background: rgba(255, 255, 255, 0.14) !important;
+    border-color: rgba(255, 255, 255, 0.45) !important;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.12) !important;
     width: 245px !important;
 }
 
-.wv-admin-quick-search i {
-    color: #94a3b8 !important;
-    font-size: 12px !important;
+.wv-admin-quick-search i,
+body.wv-admin-theme .wv-admin-quick-search i {
+    color: #ffffff !important;
+    opacity: 0.85 !important;
+    font-size: 13px !important;
 }
 
-.wv-admin-quick-search:focus-within i {
-    color: #60a5fa !important;
+.wv-admin-quick-search:focus-within i,
+body.wv-admin-theme .wv-admin-quick-search:focus-within i {
+    opacity: 1 !important;
 }
 
-.wv-admin-quick-search input {
+.wv-admin-quick-search input,
+body.wv-admin-theme input#adminTopbarSearch,
+body.wv-admin-theme .wv-admin-quick-search input {
     background: transparent !important;
+    background-color: transparent !important;
     border: 0 !important;
+    border-radius: 0 !important;
     box-shadow: none !important;
     color: #ffffff !important;
     font-size: 12.5px !important;
     height: 100% !important;
+    line-height: 35px !important;
     margin: 0 !important;
     outline: none !important;
     padding: 0 !important;
     width: 100% !important;
 }
 
-.wv-admin-quick-search input::placeholder {
-    color: #64748b !important;
+.wv-admin-quick-search input::placeholder,
+body.wv-admin-theme input#adminTopbarSearch::placeholder {
+    color: rgba(255, 255, 255, 0.65) !important;
     font-size: 12px !important;
 }
 
-.wv-admin-quick-search-btn {
+.wv-admin-quick-search-btn,
+body.wv-admin-theme .wv-admin-quick-search-btn {
     align-items: center !important;
     background: transparent !important;
     border: 0 !important;
     border-radius: 50% !important;
-    color: #94a3b8 !important;
+    color: #ffffff !important;
     cursor: pointer !important;
     display: inline-flex !important;
     flex: 0 0 22px !important;
@@ -378,22 +396,33 @@ body.wv-admin-theme .wv-admin-topbar #navbarNav {
     padding: 0 !important;
     transition: all 0.15s ease !important;
     width: 22px !important;
+    opacity: 0.85 !important;
 }
 
-.wv-admin-quick-search-btn:hover {
-    background: rgba(255, 255, 255, 0.12) !important;
+.wv-admin-quick-search-btn:hover,
+body.wv-admin-theme .wv-admin-quick-search-btn:hover {
+    background: rgba(255, 255, 255, 0.18) !important;
     color: #ffffff !important;
+    opacity: 1 !important;
 }
 
-/* Icon Buttons */
+/* Icon Buttons: Professional Borderless Flat with High-Contrast Pure White Icons */
 .wv-admin-icon-btn,
-.wv-admin-theme-dropdown > a.wv-admin-icon-btn {
+.wv-admin-theme-dropdown > a.wv-admin-icon-btn,
+.wv-admin-notif-dropdown > a.wv-admin-icon-btn,
+body.wv-admin-theme .wv-admin-icon-btn,
+body.wv-admin-theme .wv-admin-theme-dropdown > a.wv-admin-icon-btn,
+body.wv-admin-theme .wv-admin-notif-dropdown > a.wv-admin-icon-btn,
+body.wv-admin-theme #toggle-sidebar,
+body.wv-admin-theme #toggle-sidebar-desktop {
     align-items: center !important;
-    background: rgba(255, 255, 255, 0.04) !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: 0 !important;
+    border-color: transparent !important;
     border-radius: 8px !important;
     box-shadow: none !important;
-    color: #cbd5e1 !important;
+    color: #ffffff !important;
     cursor: pointer !important;
     display: inline-flex !important;
     flex: 0 0 35px !important;
@@ -412,31 +441,264 @@ body.wv-admin-theme .wv-admin-topbar #navbarNav {
 .wv-admin-icon-btn:hover,
 .wv-admin-icon-btn:focus,
 .wv-admin-theme-dropdown > a.wv-admin-icon-btn:hover,
-.wv-admin-theme-dropdown > a.wv-admin-icon-btn:focus {
+.wv-admin-theme-dropdown > a.wv-admin-icon-btn:focus,
+.wv-admin-notif-dropdown > a.wv-admin-icon-btn:hover,
+.wv-admin-notif-dropdown > a.wv-admin-icon-btn:focus,
+body.wv-admin-theme .wv-admin-icon-btn:hover,
+body.wv-admin-theme .wv-admin-icon-btn:focus,
+body.wv-admin-theme #toggle-sidebar:hover,
+body.wv-admin-theme #toggle-sidebar-desktop:hover {
     background: rgba(255, 255, 255, 0.12) !important;
-    border-color: rgba(255, 255, 255, 0.20) !important;
+    background-color: rgba(255, 255, 255, 0.12) !important;
+    border: 0 !important;
+    border-color: transparent !important;
     color: #ffffff !important;
     transform: translateY(-1px);
 }
 
-.wv-admin-icon-btn i {
-    color: #94a3b8 !important;
-    font-size: 13.5px !important;
+.wv-admin-icon-btn i,
+.wv-admin-theme-dropdown > a.wv-admin-icon-btn i,
+.wv-admin-notif-dropdown > a.wv-admin-icon-btn i,
+body.wv-admin-theme .wv-admin-icon-btn i,
+body.wv-admin-theme #toggle-sidebar i,
+body.wv-admin-theme #toggle-sidebar-desktop i {
+    color: #ffffff !important;
+    font-size: 15px !important;
+    opacity: 0.95 !important;
+    transition: all 0.18s ease !important;
 }
 
-.wv-admin-icon-btn:hover i {
+.wv-admin-icon-btn:hover i,
+.wv-admin-theme-dropdown > a.wv-admin-icon-btn:hover i,
+.wv-admin-notif-dropdown > a.wv-admin-icon-btn:hover i,
+body.wv-admin-theme .wv-admin-icon-btn:hover i,
+body.wv-admin-theme #toggle-sidebar:hover i,
+body.wv-admin-theme #toggle-sidebar-desktop:hover i {
+    color: #ffffff !important;
+    opacity: 1 !important;
+}
+
+.wv-admin-icon-btn i.fa-trash-o,
+.wv-admin-icon-btn .text-danger,
+body.wv-admin-theme .wv-admin-icon-btn i.fa-trash-o,
+body.wv-admin-theme .wv-admin-icon-btn .text-danger {
     color: #ffffff !important;
 }
 
-.wv-admin-icon-btn i.fa-trash-o {
+.wv-admin-icon-btn:hover i.fa-trash-o,
+body.wv-admin-theme .wv-admin-icon-btn:hover i.fa-trash-o {
     color: #f87171 !important;
 }
 
-.wv-admin-icon-btn:hover i.fa-trash-o {
-    color: #ef4444 !important;
+/* Luxury Modern Dropdown Menus */
+.wv-admin-theme-menu {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 14px !important;
+    box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.22), 0 0 0 1px rgba(226, 232, 240, 0.6) !important;
+    box-sizing: border-box !important;
+    margin-top: 10px !important;
+    min-width: 320px !important;
+    padding: 12px 14px !important;
+    width: 320px !important;
+    z-index: 1080 !important;
 }
 
-/* User Profile Badge (Topbar Avatar) */
+.wv-theme-menu-header {
+    align-items: center !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    margin-bottom: 10px !important;
+    padding-bottom: 8px !important;
+}
+
+.wv-theme-header-left {
+    align-items: center !important;
+    display: inline-flex !important;
+    gap: 8px !important;
+}
+
+.wv-theme-header-icon {
+    align-items: center !important;
+    background: #eff6ff !important;
+    border: 1px solid #dbeafe !important;
+    border-radius: 6px !important;
+    color: #2563eb !important;
+    display: inline-flex !important;
+    font-size: 11px !important;
+    height: 24px !important;
+    justify-content: center !important;
+    width: 24px !important;
+}
+
+.wv-theme-header-title {
+    color: #0f172a !important;
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.01em !important;
+}
+
+.wv-theme-header-badge {
+    background: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    color: #475569 !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    padding: 2px 7px !important;
+}
+
+/* Theme Selector Grid */
+.wv-admin-theme-selector {
+    display: grid !important;
+    gap: 8px !important;
+    grid-template-columns: 1fr 1fr !important;
+    padding: 2px 0 !important;
+    width: 100% !important;
+}
+
+.wv-admin-theme-chip {
+    align-items: center !important;
+    background: #ffffff !important;
+    border: 1.5px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    box-sizing: border-box !important;
+    color: #334155 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    gap: 8px !important;
+    height: 38px !important;
+    justify-content: flex-start !important;
+    min-height: 38px !important;
+    padding: 0 8px 0 10px !important;
+    position: relative !important;
+    text-align: left !important;
+    transition: all 0.15s ease !important;
+    width: 100% !important;
+}
+
+.wv-admin-theme-chip:hover {
+    background: #f8fafc !important;
+    border-color: #cbd5e1 !important;
+    color: #0f172a !important;
+    transform: translateY(-1px) !important;
+}
+
+.wv-admin-theme-chip.active {
+    background: #eff6ff !important;
+    border-color: #2563eb !important;
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.15) !important;
+    color: #1e40af !important;
+}
+
+.wv-admin-theme-dot {
+    border-radius: 50% !important;
+    display: inline-block !important;
+    flex-shrink: 0 !important;
+    height: 14px !important;
+    width: 14px !important;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.12) !important;
+}
+
+.theme-dot-light {
+    background: linear-gradient(135deg, #ffffff 45%, #2563eb 45%) !important;
+    border: 1.5px solid #94a3b8 !important;
+}
+.theme-dot-dark {
+    background: linear-gradient(135deg, #0f172a 50%, #3b82f6 50%) !important;
+    border: 1.5px solid #334155 !important;
+}
+.theme-dot-gold {
+    background: linear-gradient(135deg, #fef3c7 45%, #d97706 45%) !important;
+    border: 1.5px solid #d97706 !important;
+}
+.theme-dot-green {
+    background: linear-gradient(135deg, #d1fae5 45%, #059669 45%) !important;
+    border: 1.5px solid #059669 !important;
+}
+
+.wv-admin-theme-chip-label {
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    flex: 1 !important;
+}
+
+.wv-admin-theme-chip.active .wv-admin-theme-chip-label {
+    font-weight: 800 !important;
+    color: #1e3a8a !important;
+}
+
+.wv-admin-theme-check {
+    display: none !important;
+    color: #2563eb !important;
+    font-size: 10px !important;
+    flex-shrink: 0 !important;
+}
+
+.wv-admin-theme-chip.active .wv-admin-theme-check {
+    display: inline-block !important;
+}
+
+.wv-theme-menu-divider {
+    border-top: 1px solid #f1f5f9 !important;
+    margin: 10px 0 !important;
+}
+
+.wv-theme-menu-settings-btn {
+    align-items: center !important;
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    color: #1e293b !important;
+    display: flex !important;
+    font-size: 11.5px !important;
+    font-weight: 700 !important;
+    gap: 8px !important;
+    justify-content: flex-start !important;
+    padding: 8px 12px !important;
+    text-decoration: none !important;
+    transition: all 0.15s ease !important;
+}
+
+.wv-theme-menu-settings-btn i.fa-sliders {
+    color: #2563eb !important;
+    font-size: 12px !important;
+}
+
+.wv-theme-menu-settings-btn .wv-theme-arrow {
+    color: #94a3b8 !important;
+    font-size: 13px !important;
+    margin-left: auto !important;
+    transition: transform 0.15s ease !important;
+}
+
+.wv-theme-menu-settings-btn:hover {
+    background: #0f172a !important;
+    border-color: #0f172a !important;
+    color: #ffffff !important;
+    text-decoration: none !important;
+}
+
+.wv-theme-menu-settings-btn:hover i.fa-sliders,
+.wv-theme-menu-settings-btn:hover .wv-theme-arrow {
+    color: #ffffff !important;
+}
+
+.wv-theme-menu-settings-btn:hover .wv-theme-arrow {
+    transform: translateX(3px) !important;
+}
+
+/* User Profile Trigger & Online Dot */
+.wv-admin-user-dropdown,
+body.wv-admin-theme .wv-admin-user-dropdown {
+    position: relative !important;
+}
+
+.wv-admin-user-trigger,
 #navbarDropdownMenuLink {
     align-items: center !important;
     background: transparent !important;
@@ -458,13 +720,33 @@ body.wv-admin-theme .wv-admin-topbar #navbarNav {
     display: none !important;
 }
 
+.wv-user-avatar-wrap {
+    position: relative !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.wv-user-online-dot {
+    position: absolute !important;
+    bottom: -1px !important;
+    right: -1px !important;
+    width: 10px !important;
+    height: 10px !important;
+    background: #22c55e !important;
+    border: 2px solid #070d19 !important;
+    border-radius: 50% !important;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25) !important;
+    z-index: 2 !important;
+}
+
 .wv-admin-profile-badge {
     align-items: center !important;
     background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%) !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
     background-size: cover !important;
-    border: 2px solid rgba(255, 255, 255, 0.35) !important;
+    border: 2px solid rgba(255, 255, 255, 0.5) !important;
     border-radius: 50% !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
     box-sizing: border-box !important;
@@ -485,10 +767,259 @@ body.wv-admin-theme .wv-admin-topbar #navbarNav {
     font-size: 0 !important;
 }
 
-.wv-admin-profile-badge:hover {
-    border-color: #60a5fa !important;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3), 0 3px 10px rgba(0, 0, 0, 0.3) !important;
-    transform: scale(1.04);
+.wv-admin-profile-badge:hover,
+#navbarDropdownMenuLink:hover .wv-admin-profile-badge {
+    border-color: #ffffff !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4), 0 3px 10px rgba(0, 0, 0, 0.3) !important;
+    transform: scale(1.05);
+}
+
+/* =========================================================================
+   LUXURY PROFESSIONAL USER PROFILE DROPDOWN
+   ========================================================================= */
+.wv-admin-user-menu {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 14px !important;
+    box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.22), 0 0 0 1px rgba(226, 232, 240, 0.6) !important;
+    box-sizing: border-box !important;
+    margin-top: 10px !important;
+    min-width: 280px !important;
+    padding: 10px !important;
+    width: 280px !important;
+    z-index: 1080 !important;
+}
+
+.wv-user-menu-header {
+    align-items: center !important;
+    background: #f8fafc !important;
+    border: 1px solid #f1f5f9 !important;
+    border-radius: 10px !important;
+    display: flex !important;
+    gap: 10px !important;
+    padding: 10px 12px !important;
+}
+
+.wv-user-menu-avatar {
+    flex-shrink: 0 !important;
+}
+
+.wv-admin-profile-badge.sm {
+    height: 38px !important;
+    width: 38px !important;
+    min-height: 38px !important;
+    min-width: 38px !important;
+    font-size: 14px !important;
+    font-weight: 800 !important;
+    border: 2px solid rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+.wv-user-menu-details {
+    flex: 1 !important;
+    min-width: 0 !important;
+}
+
+.wv-user-menu-name {
+    color: #0f172a !important;
+    font-size: 13.5px !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.01em !important;
+    line-height: 1.2 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+}
+
+.wv-user-menu-meta {
+    align-items: center !important;
+    display: flex !important;
+    gap: 6px !important;
+    margin-top: 3px !important;
+    flex-wrap: wrap !important;
+}
+
+.wv-user-role-pill {
+    background: #eff6ff !important;
+    border: 1px solid #dbeafe !important;
+    border-radius: 4px !important;
+    color: #1d4ed8 !important;
+    font-size: 9.5px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.3px !important;
+    padding: 1px 6px !important;
+    text-transform: uppercase !important;
+}
+
+.wv-user-status-text {
+    align-items: center !important;
+    color: #64748b !important;
+    display: inline-flex !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    gap: 4px !important;
+}
+
+.wv-user-status-text .dot-green {
+    background: #22c55e !important;
+    border-radius: 50% !important;
+    display: inline-block !important;
+    height: 6px !important;
+    width: 6px !important;
+}
+
+.wv-user-menu-divider {
+    border-top: 1px solid #f1f5f9 !important;
+    margin: 8px 0 !important;
+}
+
+.wv-user-menu-nav {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+}
+
+.wv-user-nav-link {
+    align-items: center !important;
+    border-radius: 8px !important;
+    color: #334155 !important;
+    display: flex !important;
+    gap: 10px !important;
+    padding: 7px 10px !important;
+    text-decoration: none !important;
+    transition: all 0.15s ease !important;
+}
+
+.wv-user-nav-link:hover {
+    background: #f8fafc !important;
+    color: #0f172a !important;
+    text-decoration: none !important;
+    transform: translateX(2px) !important;
+}
+
+.wv-user-nav-link .nav-icon-box {
+    align-items: center !important;
+    background: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 6px !important;
+    color: #64748b !important;
+    display: inline-flex !important;
+    flex-shrink: 0 !important;
+    font-size: 13px !important;
+    height: 30px !important;
+    justify-content: center !important;
+    transition: all 0.15s ease !important;
+    width: 30px !important;
+}
+
+.wv-user-nav-link:hover .nav-icon-box {
+    background: #eff6ff !important;
+    border-color: #bfdbfe !important;
+    color: #2563eb !important;
+}
+
+.wv-user-nav-link .nav-icon-box.cache {
+    background: #fef2f2 !important;
+    border-color: #fee2e2 !important;
+    color: #ef4444 !important;
+}
+
+.wv-user-nav-link:hover .nav-icon-box.cache {
+    background: #fee2e2 !important;
+    border-color: #fca5a5 !important;
+    color: #dc2626 !important;
+}
+
+.wv-user-nav-link .nav-label-box {
+    display: flex !important;
+    flex: 1 !important;
+    flex-direction: column !important;
+    min-width: 0 !important;
+}
+
+.wv-user-nav-link .nav-title {
+    color: #1e293b !important;
+    font-size: 12.5px !important;
+    font-weight: 700 !important;
+    line-height: 1.2 !important;
+}
+
+.wv-user-nav-link .nav-sub {
+    color: #94a3b8 !important;
+    font-size: 10px !important;
+    font-weight: 500 !important;
+    line-height: 1.2 !important;
+    margin-top: 1px !important;
+}
+
+.wv-user-nav-link .nav-arrow {
+    color: #cbd5e1 !important;
+    font-size: 13px !important;
+    margin-left: auto !important;
+    transition: all 0.15s ease !important;
+}
+
+.wv-user-nav-link:hover .nav-arrow {
+    color: #2563eb !important;
+    transform: translateX(2px) !important;
+}
+
+/* Logout Footer */
+.wv-user-menu-footer {
+    padding-top: 2px !important;
+}
+
+.wv-user-logout-btn {
+    align-items: center !important;
+    background: #fef2f2 !important;
+    border: 1px solid #fee2e2 !important;
+    border-radius: 8px !important;
+    color: #dc2626 !important;
+    display: flex !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    gap: 8px !important;
+    padding: 8px 12px !important;
+    text-decoration: none !important;
+    transition: all 0.15s ease !important;
+}
+
+.wv-user-logout-btn .logout-icon-box {
+    align-items: center !important;
+    background: #fee2e2 !important;
+    border-radius: 5px !important;
+    color: #dc2626 !important;
+    display: inline-flex !important;
+    font-size: 11px !important;
+    height: 24px !important;
+    justify-content: center !important;
+    width: 24px !important;
+}
+
+.wv-user-logout-btn .logout-arrow {
+    font-size: 12px !important;
+    margin-left: auto !important;
+    opacity: 0.7 !important;
+    transition: all 0.15s ease !important;
+}
+
+.wv-user-logout-btn:hover {
+    background: #dc2626 !important;
+    border-color: #dc2626 !important;
+    color: #ffffff !important;
+    text-decoration: none !important;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25) !important;
+}
+
+.wv-user-logout-btn:hover .logout-icon-box {
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: #ffffff !important;
+}
+
+.wv-user-logout-btn:hover .logout-arrow {
+    color: #ffffff !important;
+    opacity: 1 !important;
+    transform: translateX(2px) !important;
 }
 
 /* Luxury Modern Dropdown Menus */

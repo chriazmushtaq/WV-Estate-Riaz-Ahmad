@@ -657,6 +657,11 @@ class ConfigurationsController extends AdminAppController {
         $this->set(compact('agencyOptions','projectId','isSuperAdminSession','amountPlans','publicUrl'));
     }
 
+    public function portalmenus()
+    {
+        return $this->redirect(array('controller' => 'Portalmenus', 'action' => 'index'));
+    }
+
     public function backups($id = null)
     {
         return $this->redirect(array('controller' => 'Ardaccounts', 'action' => 'backups', $id));

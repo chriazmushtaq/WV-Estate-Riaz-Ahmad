@@ -55,7 +55,8 @@
 .wv-col-seq{color:#64748b;font-weight:700;text-align:center;width:45px;}
 .wv-prop-name{color:#0f172a;font-size:13px;font-weight:700;}
 .wv-deal-inv{color:#64748b;font-size:11px;}
-.wv-remarks-2line{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis;line-height:1.4;max-height:2.8em;font-size:11px;color:#475569;word-break:break-word;}
+.wv-col-remarks{width:210px;min-width:170px;max-width:240px;white-space:normal!important;}
+.wv-remarks-2line{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis;white-space:normal;line-height:1.4;max-height:2.8em;font-size:11.5px;color:#475569;font-weight:600;word-break:break-word;overflow-wrap:anywhere;}
 
 /* Buttons - Clean Dark Icons, No Background */
 .wv-print-btn{align-items:center;justify-content:center;background:transparent!important;border:0!important;border-radius:6px;box-shadow:none!important;color:#1e293b!important;display:inline-flex;font-size:15px;padding:4px 6px;text-decoration:none!important;transition:all .15s ease-in-out;}
@@ -190,7 +191,7 @@
                             <th><?php echo __('Payment / Installment'); ?></th>
                             <th style="text-align:right;"><?php echo __('Amount Paid'); ?></th>
                             <th><?php echo __('Payment Method'); ?></th>
-                            <th><?php echo __('Transaction Ref / Remarks'); ?></th>
+                            <th class="wv-col-remarks"><?php echo __('Transaction Ref / Remarks'); ?></th>
                             <th style="text-align:center;width:65px;"><?php echo __('Action'); ?></th>
                         </tr>
                     </thead>
@@ -239,7 +240,7 @@
                                 <td>
                                     <?php echo h($rcp['payment_type']); ?>
                                 </td>
-                                <td>
+                                <td class="wv-col-remarks">
                                     <?php if(!empty($rcp['remarks'])){ ?>
                                         <div class="wv-remarks-2line" title="<?php echo h($rcp['remarks']); ?>"><?php echo h($rcp['remarks']); ?></div>
                                     <?php } else { ?>

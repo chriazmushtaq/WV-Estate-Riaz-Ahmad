@@ -518,6 +518,7 @@ class BillsController extends AppController
             'water_charges'          => 1200.00,
             'arrears_amount'         => $arrears,
             'late_payment_surcharge' => $lateFee,
+            'total_amount'           => $totalPayable,
             'payable_within_due'     => $totalPayable,
             'payable_after_due'      => $afterDue,
             'paid_amount'            => !empty($b['paid_amount']) ? (float)$b['paid_amount'] : 0.00,

@@ -1451,6 +1451,128 @@ td.actions-col,
   z-index: 1050 !important;
 }
 
+/* Contacts Module Light Page Header */
+.wv-contacts-hero {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.05) !important;
+  border-radius: 12px !important;
+}
+.wv-contacts-hero:before,
+.wv-contacts-hero:after {
+  display: none !important;
+}
+.wv-contacts-title-icon {
+  background: #eff6ff !important;
+  border: 1px solid #dbeafe !important;
+  color: #2563eb !important;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.12) !important;
+}
+.wv-contacts-title-icon .fa {
+  color: #2563eb !important;
+  text-shadow: none !important;
+}
+.wv-contacts-title h1 {
+  color: #0f172a !important;
+  text-shadow: none !important;
+}
+.wv-contacts-title p {
+  color: #64748b !important;
+  text-shadow: none !important;
+}
+.wv-contacts-count {
+  background: #f1f5f9 !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #334155 !important;
+}
+
+/* Contacts Module Light View & Address Auto-Wrap */
+.wv-contacts-table thead tr {
+  background-color: #f8fafc !important;
+  border-bottom: 2px solid #e2e8f0 !important;
+}
+
+.table.wv-contacts-table > thead > tr > th,
+.wv-contacts-table th {
+  background-color: #f8fafc !important;
+  border-top: 0 !important;
+  border-bottom: 2px solid #e2e8f0 !important;
+  border-left: 0 !important;
+  border-right: 0 !important;
+  color: #475569 !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.4px !important;
+  padding: 13px 14px !important;
+  text-transform: uppercase !important;
+  white-space: nowrap !important;
+  vertical-align: middle !important;
+}
+
+.table.wv-contacts-table > thead > tr > th a,
+.wv-contacts-table th a {
+  color: #334155 !important;
+  font-weight: 800 !important;
+  text-decoration: none !important;
+  transition: color 0.15s ease;
+}
+
+.table.wv-contacts-table > thead > tr > th a:hover,
+.wv-contacts-table th a:hover {
+  color: #2563eb !important;
+}
+
+.table.wv-contacts-table > tbody > tr > td.wv-address-cell,
+.table td.wv-address-cell,
+.wv-contacts-table td.wv-address-cell {
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  word-break: normal !important;
+  min-width: 220px !important;
+  max-width: 320px !important;
+  width: 260px !important;
+  line-height: 1.45 !important;
+  color: #334155 !important;
+  font-size: 12px !important;
+}
+
+.table.wv-contacts-table > thead > tr > th.wv-address-head,
+.table th.wv-address-head,
+.wv-contacts-table th.wv-address-head {
+  min-width: 220px !important;
+  max-width: 320px !important;
+  width: 260px !important;
+  white-space: nowrap !important;
+}
+
+.table.wv-contacts-table > tbody > tr > td.wv-district-cell,
+.table td.wv-district-cell,
+.wv-contacts-table td.wv-district-cell {
+  min-width: 120px !important;
+  white-space: nowrap !important;
+  color: #475569 !important;
+  font-weight: 700 !important;
+}
+
+.table.wv-contacts-table > thead > tr > th.wv-district-head,
+.table th.wv-district-head,
+.wv-contacts-table th.wv-district-head {
+  min-width: 120px !important;
+  white-space: nowrap !important;
+}
+
+.table.wv-contacts-table > tbody > tr > td.wv-email-cell,
+.table td.wv-email-cell,
+.wv-contacts-table td.wv-email-cell {
+  min-width: 180px !important;
+  max-width: 240px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
 /* Unified Deal Control Status Button & Cell Styling */
 .table th.deal-control-col,
 .table td.deal-control-cell,

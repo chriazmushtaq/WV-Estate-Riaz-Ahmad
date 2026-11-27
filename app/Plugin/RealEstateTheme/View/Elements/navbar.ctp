@@ -63,42 +63,106 @@ $topbarReleaseName = Configure::read('App.releaseName') ? Configure::read('App.r
                     <i class="fa fa-paint-brush"></i>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right wv-admin-theme-menu" aria-labelledby="adminTopbarThemeDropdown">
-                    <div class="dropdown-item-text wv-admin-theme-menu-title" style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #edf2f7; padding-bottom: 6px; margin-bottom: 10px;">
-                        <span><i class="fa fa-paint-brush text-primary"></i> <?php echo __('Select Theme');?></span>
-                        <span class="badge badge-default" style="font-size: 9.5px; background: #e2e8f0; color: #334155; font-weight: 700;"><?php echo __('Appearance'); ?></span>
+                    <div class="wv-theme-menu-header">
+                        <div class="wv-theme-header-left">
+                            <span class="wv-theme-header-icon"><i class="fa fa-paint-brush"></i></span>
+                            <span class="wv-theme-header-title"><?php echo __('Appearance & Theme');?></span>
+                        </div>
+                        <span class="wv-theme-header-badge"><?php echo __('Presets'); ?></span>
                     </div>
                     <?php echo $this->element('theme_selector', array(
                         'adminThemeClass' => !empty($adminThemeClass) ? $adminThemeClass : 'theme-light',
                         'adminThemeOptions' => !empty($adminThemeOptions) ? $adminThemeOptions : array(),
                         'compact' => true
                     ));?>
-                    <div class="dropdown-divider" style="margin: 12px 0;"></div>
-                    <a href="<?php echo $this->Html->url('/admin/Themesettings'); ?>" class="dropdown-item" style="display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700; font-size: 12.5px; color: #1e293b; padding: 8px 12px; border-radius: 8px; background: #f8fafc; border: 1px solid #e2e8f0; text-align: center;">
-                        <i class="fa fa-cog text-primary"></i> <?php echo __('Theme Settings'); ?>
+                    <div class="wv-theme-menu-divider"></div>
+                    <a href="<?php echo $this->Html->url('/admin/Themesettings'); ?>" class="wv-theme-menu-settings-btn">
+                        <i class="fa fa-sliders"></i>
+                        <span><?php echo __('Theme & Style Settings'); ?></span>
+                        <i class="fa fa-angle-right wv-theme-arrow"></i>
                     </a>
                 </div>
             </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle dropdown-has-after" href="javascript:void(0);" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
+            <li class="nav-item dropdown wv-admin-user-dropdown">
+                <a class="nav-link dropdown-toggle wv-admin-user-trigger dropdown-has-after" href="javascript:void(0);" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
                     aria-expanded="false" title="<?php echo h($adminUserName);?>">
-                    <span class="wv-admin-profile-badge <?php echo $adminUserPhoto!=='' ? 'has-photo' : '';?>" <?php if($adminUserPhoto!==''){ ?>style="background-image:url('<?php echo h($adminUserPhoto);?>');"<?php } ?>><?php echo h($adminUserInitial);?></span>
+                    <div class="wv-user-avatar-wrap">
+                        <span class="wv-admin-profile-badge <?php echo $adminUserPhoto!=='' ? 'has-photo' : '';?>" <?php if($adminUserPhoto!==''){ ?>style="background-image:url('<?php echo h($adminUserPhoto);?>');"<?php } ?>><?php echo h($adminUserInitial);?></span>
+                        <span class="wv-user-online-dot" title="<?php echo __('Online'); ?>"></span>
+                    </div>
                 </a>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                    <?php if($loggedInUserLevelName!==''){ ?>
-                        <div class="dropdown-item-text"><strong><?php echo __('User Level');?>:</strong> <?php echo h($loggedInUserLevelName);?></div>
-                    <?php } ?>
-                    <div class="dropdown-item-text"><strong><?php echo __('Signed In');?>:</strong> <?php echo h($adminUserName);?></div>
-                    <?php echo $this->Html->link('<i class="fa fa-pencil"></i>&nbsp;'.__('Profile'),array('controller' => 'Users','action' => 'myProfile'),array('escape' => false,'class'=>'dropdown-item'));?>
-                    <?php echo $this->Html->link('<i class="fa fa-cog"></i>&nbsp;'.__('Password'),array('controller' => 'Users','action' => 'changePass'),array('escape' => false,'class'=>'dropdown-item'));?>
-                    <?php echo $this->Html->link('<i class="fa fa-paint-brush"></i>&nbsp;'.__('Appearance'),array('controller' => 'Themesettings','action' => 'index'),array('escape' => false,'class'=>'dropdown-item'));?>
-                    <?php
-                        $adminImpMeta = (array)$this->Session->read('Impersonation.admin');
-                        if(!empty($adminImpMeta['original_user']['User']['id']))
-                        {
-                            echo $this->Form->postLink('<i class="fa fa-user-secret"></i>&nbsp;'.__('Stop Impersonation'),array('controller' => 'Users','action' => 'stopimpersonation'),array('escape' => false,'class'=>'dropdown-item'),__('Stop impersonation and return to Super Admin?'));
-                        }
-                    ?>
-                    <?php echo $this->Html->link('<i class="fa fa-power-off"></i>&nbsp;'.__('Logout'),array('controller' => 'Users','action' => 'logout'),array('escape' => false,'class'=>'dropdown-item'));?>
+                <div class="dropdown-menu dropdown-menu-right wv-admin-user-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <!-- USER DOSSIER HEADER -->
+                    <div class="wv-user-menu-header">
+                        <div class="wv-user-menu-avatar">
+                            <span class="wv-admin-profile-badge sm <?php echo $adminUserPhoto!=='' ? 'has-photo' : '';?>" <?php if($adminUserPhoto!==''){ ?>style="background-image:url('<?php echo h($adminUserPhoto);?>');"<?php } ?>><?php echo h($adminUserInitial);?></span>
+                        </div>
+                        <div class="wv-user-menu-details">
+                            <div class="wv-user-menu-name" title="<?php echo h($adminUserName); ?>"><?php echo h($adminUserName); ?></div>
+                            <div class="wv-user-menu-meta">
+                                <?php if($loggedInUserLevelName!==''){ ?>
+                                    <span class="wv-user-role-pill"><?php echo h($loggedInUserLevelName); ?></span>
+                                <?php } ?>
+                                <span class="wv-user-status-text"><span class="dot-green"></span> <?php echo __('Active Session'); ?></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="wv-user-menu-divider"></div>
+
+                    <!-- NAVIGATION ITEMS -->
+                    <div class="wv-user-menu-nav">
+                        <a href="<?php echo $this->Html->url(array('controller' => 'Users', 'action' => 'myProfile')); ?>" class="wv-user-nav-link">
+                            <span class="nav-icon-box"><i class="fa fa-user-circle-o"></i></span>
+                            <span class="nav-label-box">
+                                <span class="nav-title"><?php echo __('My Profile'); ?></span>
+                                <span class="nav-sub"><?php echo __('Account settings & info'); ?></span>
+                            </span>
+                            <i class="fa fa-angle-right nav-arrow"></i>
+                        </a>
+
+                        <a href="<?php echo $this->Html->url(array('controller' => 'Users', 'action' => 'changePass')); ?>" class="wv-user-nav-link">
+                            <span class="nav-icon-box"><i class="fa fa-lock"></i></span>
+                            <span class="nav-label-box">
+                                <span class="nav-title"><?php echo __('Change Password'); ?></span>
+                                <span class="nav-sub"><?php echo __('Update security credentials'); ?></span>
+                            </span>
+                            <i class="fa fa-angle-right nav-arrow"></i>
+                        </a>
+
+                        <a href="<?php echo $this->Html->url(array('controller' => 'Themesettings', 'action' => 'index')); ?>" class="wv-user-nav-link">
+                            <span class="nav-icon-box"><i class="fa fa-paint-brush"></i></span>
+                            <span class="nav-label-box">
+                                <span class="nav-title"><?php echo __('Theme Settings'); ?></span>
+                                <span class="nav-sub"><?php echo __('Colors, branding & layout'); ?></span>
+                            </span>
+                            <i class="fa fa-angle-right nav-arrow"></i>
+                        </a>
+
+                        <?php
+                            $adminImpMeta = (array)$this->Session->read('Impersonation.admin');
+                            if(!empty($adminImpMeta['original_user']['User']['id']))
+                            {
+                                echo $this->Form->postLink(
+                                    '<span class="nav-icon-box"><i class="fa fa-user-secret"></i></span><span class="nav-label-box"><span class="nav-title">'.__('Stop Impersonation').'</span><span class="nav-sub">'.__('Return to Super Admin').'</span></span><i class="fa fa-angle-right nav-arrow"></i>',
+                                    array('controller' => 'Users', 'action' => 'stopimpersonation'),
+                                    array('escape' => false, 'class' => 'wv-user-nav-link impersonate'),
+                                    __('Stop impersonation and return to Super Admin?')
+                                );
+                            }
+                        ?>
+                    </div>
+
+                    <div class="wv-user-menu-divider"></div>
+
+                    <!-- LOGOUT ACTION -->
+                    <div class="wv-user-menu-footer">
+                        <a href="<?php echo $this->Html->url(array('controller' => 'Users', 'action' => 'logout')); ?>" class="wv-user-logout-btn">
+                            <span class="logout-icon-box"><i class="fa fa-power-off"></i></span>
+                            <span class="logout-text"><?php echo __('Sign Out / Logout'); ?></span>
+                            <i class="fa fa-sign-out logout-arrow"></i>
+                        </a>
+                    </div>
                 </div>
             </li>
         </ul>

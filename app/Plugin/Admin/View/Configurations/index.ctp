@@ -40,7 +40,8 @@ $printDateChecked = !empty($this->request->data['Configuration']['show_receipt_p
             <h2><?php echo __('Configuration Options');?></h2>
             <p><?php echo __('Manage core website, portal, map, notification, and receipt settings.');?></p>
         </div>
-        <div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <?php echo $this->Html->link('<span class="fa fa-sliders"></span> '.__('Client Portal Menus'), array('controller'=>'Portalmenus','action'=>'index'), array('escape'=>false,'class'=>'btn btn-success', 'style'=>'font-weight:700;'));?>
             <?php echo $this->Html->link('<span class="fa fa-map-marker"></span> '.__('Pakistan Address Hierarchy'), array('controller'=>'Addresshierarchies','action'=>'index'), array('escape'=>false,'class'=>'btn btn-info'));?>
         </div>
     </div>

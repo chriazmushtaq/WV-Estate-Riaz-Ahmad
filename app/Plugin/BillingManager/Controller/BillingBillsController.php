@@ -3340,7 +3340,16 @@ protected function _calculateLateFee($principal, $socId = 1)
             foreach ($bankAccounts as $ba) {
                 $bTitle = !empty($ba['title']) ? h($ba['title']) : 'Bank Account';
                 $bDetails = !empty($ba['details']) ? str_replace(array('font-size:10x', 'text-align:center', 'text-align: center'), array('font-size:10px', 'text-align:left', 'text-align:left'), $ba['details']) : '';
-                $bQr = !empty($ba['qr']) ? h($ba['qr']) : '';
+                $bQr = !empty($ba['qr']) ? trim($ba['qr']) : '';
+
+                // Ensure bank QR is always an embedded local Base64 Data URI (prevents empty box in PDF/print)
+                if (empty($bQr) || strpos($bQr, 'whitevillas.com.pk') !== false || strpos($bQr, 'api.qrserver.com') !== false) {
+                    if ($isJazz) {
+                        $bQr = RaastEmvcoQr::getQrImageUrl("jazzcash://pay?till=981452707&title=WHITE+VILLAS&amount=" . $totalAmt . "&ref=" . $billNo, 140);
+                    } else {
+                        $bQr = RaastEmvcoQr::getQrImageUrl("raast://pay?iban=" . $iban . "&title=WHITE+VILLAS&amount=" . $totalAmt . "&ref=" . $billNo, 140);
+                    }
+                }
 
                 $isJazz = (strpos(strtoupper($bTitle), 'JAZZ') !== false);
                 $cardBg = $isJazz ? '#fffbeb' : '#f8fafc';
@@ -3593,7 +3602,8 @@ protected function _calculateLateFee($principal, $socId = 1)
             '{{bill_notice}}' => $billNoticeHtml,
             '{{notice}}' => $billNoticeHtml,
             '{{preview_caution}}' => $billNoticeHtml,
-            '{{qr_code}}' => 'https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=' . urlencode($billNo),
+            '{{qr_code}}' => RaastEmvcoQr::getQrImageUrl($billNo, 120),
+            '{{portal_qr}}' => RaastEmvcoQr::getQrImageUrl('https://whitevillas.com.pk/billing/?q=' . urlencode($billNo), 100),
             '{{adjustment_note}}' => h($adjNoteStr),
             '{{adjustment_debit}}' => number_format($adjDebit, 2),
             '{{adjustment_credit}}' => number_format($adjCredit, 2),
@@ -3612,7 +3622,20 @@ protected function _calculateLateFee($principal, $socId = 1)
             '{{advertisement_mini}}' => ''
         );
 
-        return str_replace(array_keys($replacements), array_values($replacements), $html);
+        $rendered = str_replace(array_keys($replacements), array_values($replacements), $html);
+        
+        // Auto-replace any hardcoded external QR URLs with embedded offline Base64 Data URI to prevent blank boxes in PDF/print
+        $portalQrDataUri = RaastEmvcoQr::getQrImageUrl('https://whitevillas.com.pk/billing/?q=' . urlencode($billNo), 100);
+        $rendered = str_replace(
+            array(
+                'https://whitevillas.com.pk/wp-content/uploads/2026/02/qr-code.png',
+                'http://whitevillas.com.pk/wp-content/uploads/2026/02/qr-code.png'
+            ),
+            $portalQrDataUri,
+            $rendered
+        );
+
+        return $rendered;
     }
 
     public function print_receipt($id = null)

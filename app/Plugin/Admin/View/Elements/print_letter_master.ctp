@@ -16,6 +16,7 @@ $showWatermark = !empty($clientWatermark) || !empty($showClientDuplicateWatermar
 // Detection of booking / welcome letters to preserve their exact view styles
 $isBookingOrWelcome = (
     in_array($letterType, array('RLT_BOOKING', 'RLT_WELCOME'), true) ||
+    stripos($renderedDescription, '13in') !== false ||
     stripos($renderedDescription, '12.18in') !== false ||
     stripos($renderedDescription, 'form-container') !== false ||
     stripos($renderedDescription, 'wv-welcome') !== false
@@ -25,8 +26,8 @@ $isBookingOrWelcome = (
 $requestedPaper = isset($_GET['paper']) ? strtolower(trim($_GET['paper'])) : '';
 if ($isBookingOrWelcome) {
     $currentPaper = 'booking';
-    $pageRule = '@page { size: 8.5in 12.18in; margin: 0; }';
-    $jsPdfFormat = array(8.5, 12.18);
+    $pageRule = '@page { size: 8.5in 13in; margin: 0; }';
+    $jsPdfFormat = array(8.5, 13);
 } elseif ($requestedPaper === 'a4') {
     $currentPaper = 'a4';
     $pageRule = '@page { size: A4 portrait; margin: 12mm 14mm; }';
@@ -116,9 +117,60 @@ CSS;
     $watermarkHtml = '<div class="wv-client-duplicate-watermark"><span>DUPLICATE COPY</span></div>';
 }
 
-// Interactive Smart Toolbar for Preview & Print
+// Interactive Smart Toolbar Styles & HTML for Preview & Print
+$toolbarCss = <<<CSS
+<style type="text/css" id="wv-smart-toolbar-global-style">
+#wv-smart-toolbar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    min-height: 44px !important;
+    background: #0b192c !important;
+    color: #ffffff !important;
+    padding: 8px 18px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+    z-index: 2147483647 !important;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.3) !important;
+    font-family: Arial, sans-serif !important;
+    font-size: 13px !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+}
+@media screen {
+    body {
+        padding-top: 54px !important;
+    }
+}
+@media print {
+    #wv-smart-toolbar,
+    .no-print,
+    .wv-smart-toolbar {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        width: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+    }
+    body {
+        padding-top: 0 !important;
+        margin: 0 !important;
+    }
+}
+</style>
+CSS;
+
 $toolbarHtml = <<<HTML
-<div class="no-print wv-smart-toolbar" id="wv-smart-toolbar" style="background:#0b192c;color:#fff;padding:10px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;position:sticky;top:0;left:0;right:0;z-index:99999;box-shadow:0 4px 14px rgba(0,0,0,0.3);font-family:Arial,sans-serif;font-size:13px;">
+<div class="no-print wv-smart-toolbar" id="wv-smart-toolbar" style="background:#0b192c;color:#fff;padding:8px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;position:fixed;top:0;left:0;right:0;width:100%;z-index:2147483647;box-shadow:0 4px 14px rgba(0,0,0,0.3);font-family:Arial,sans-serif;font-size:13px;box-sizing:border-box;margin:0;">
     <div style="display:flex;align-items:center;gap:12px;">
         <strong style="color:#7cf9ff;font-size:14px;letter-spacing:0.5px;">White Villas Letter System</strong>
         <span style="background:rgba(255,255,255,0.12);padding:3px 8px;border-radius:4px;font-size:12px;">{$letterTitle}</span>
@@ -186,43 +238,69 @@ $masterScript = <<<JS
             alert('PDF generator library is loading, please wait a moment...');
             return;
         }
-        var node = document.querySelector('.letter-master-wrapper') ||
+        var node = document.querySelector('.form-container') ||
+                   document.querySelector('.letter-master-wrapper') ||
                    document.querySelector('#letter-pdf-export-root') ||
                    document.querySelector('.letter-preview-print') ||
                    document.querySelector('.page') ||
                    document.querySelector('.ashtam-page') ||
-                   document.querySelector('.form-container') ||
                    document.body;
 
-        var canvasWidth = Math.max(node.scrollWidth || 0, document.documentElement.scrollWidth || 0, 1150);
+        var isCustomInches = Array.isArray(currentFormat);
+
+        if (typeof window.scrollTo === 'function') {
+            window.scrollTo(0, 0);
+        }
+
         var opt = {
-            margin: [12, 14, 12, 14], // [top, left, bottom, right] mm (standardized 12mm 14mm)
+            margin: isCustomInches ? 0 : [12, 14, 12, 14], // [top, left, bottom, right] mm (standardized 12mm 14mm)
             filename: pdfName,
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: {
                 scale: 2,
                 useCORS: true,
                 letterRendering: true,
+                backgroundColor: '#ffffff',
                 scrollX: 0,
                 scrollY: 0,
-                windowWidth: canvasWidth,
-                backgroundColor: '#ffffff'
+                onclone: function(clonedDoc) {
+                    var tb = clonedDoc.querySelector('#wv-smart-toolbar');
+                    if (tb && tb.parentNode) {
+                        tb.parentNode.removeChild(tb);
+                    }
+                    var tbs = clonedDoc.querySelectorAll('.no-print, .wv-smart-toolbar');
+                    for (var i = 0; i < tbs.length; i++) {
+                        if (tbs[i] && tbs[i].parentNode) {
+                            tbs[i].parentNode.removeChild(tbs[i]);
+                        }
+                    }
+                    if (clonedDoc.documentElement) {
+                        clonedDoc.documentElement.style.margin = '0';
+                        clonedDoc.documentElement.style.padding = '0';
+                    }
+                    if (clonedDoc.body) {
+                        clonedDoc.body.style.padding = '0';
+                        clonedDoc.body.style.margin = '0';
+                        clonedDoc.body.style.backgroundColor = '#ffffff';
+                        clonedDoc.body.style.display = 'block';
+                    }
+                    var formEl = clonedDoc.querySelector('.form-container') || clonedDoc.querySelector('.letter-master-wrapper');
+                    if (formEl) {
+                        formEl.style.margin = '0';
+                        formEl.style.boxShadow = 'none';
+                    }
+                }
             },
             pagebreak: {
                 mode: ['avoid-all', 'css', 'legacy'],
-                avoid: ['.sign-area', '.sign-box', '.witness-area', '.signatures-section', '.table-container', '.alert-box', 'table', 'tr']
+                avoid: ['.sign-area', '.sign-box', '.witness-area', '.signatures-section', '.table-container', '.alert-box', 'table', 'tr', '.form-container']
             },
             jsPDF: {
-                unit: 'mm',
+                unit: isCustomInches ? 'in' : 'mm',
                 format: currentFormat,
                 orientation: 'portrait'
             }
         };
-
-        if (Array.isArray(currentFormat)) {
-            opt.jsPDF.unit = 'in';
-            opt.margin = 0;
-        }
 
         html2pdf().set(opt).from(node).save();
     };
@@ -259,7 +337,13 @@ if ($isFullDoc) {
     $out = $renderedDescription;
 
     // Inject styles in <head>
-    $headInjections = $fontFaceCss . "\n" . $pageSizeCss . "\n" . $inlineMasterCss . "\n" . ($watermarkCss ? $watermarkCss . "\n" : '') . '<link rel="stylesheet" type="text/css" href="' . $cssUrl . '">' . "\n";
+    // For booking & welcome letters, avoid injecting print_letter.css to preserve their exact tailored layout
+    if ($isBookingOrWelcome) {
+        $headInjections = $fontFaceCss . "\n" . $pageSizeCss . "\n" . $toolbarCss . "\n" . ($watermarkCss ? $watermarkCss . "\n" : '');
+    } else {
+        $headInjections = $fontFaceCss . "\n" . $pageSizeCss . "\n" . $inlineMasterCss . "\n" . $toolbarCss . "\n" . ($watermarkCss ? $watermarkCss . "\n" : '') . '<link rel="stylesheet" type="text/css" href="' . $cssUrl . '">' . "\n";
+    }
+
     if (stripos($out, '</head>') !== false) {
         $out = str_ireplace('</head>', $headInjections . '</head>', $out);
     } else {
@@ -293,6 +377,7 @@ if ($isFullDoc) {
     <?php echo $fontFaceCss; ?>
     <?php echo $pageSizeCss; ?>
     <?php echo $inlineMasterCss; ?>
+    <?php echo $toolbarCss; ?>
     <?php if ($watermarkCss) { echo $watermarkCss; } ?>
     <link rel="stylesheet" type="text/css" href="<?php echo $cssUrl; ?>">
 </head>

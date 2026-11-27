@@ -878,12 +878,28 @@ body {
     <?php } ?>
 
     <!-- Hero Action Buttons Card (Professional Light Theme) -->
+    <?php
+    $portalMenuAllowed = function($mKey) use ($agencyMenuSettings) {
+        if (empty($agencyMenuSettings) || !isset($agencyMenuSettings[$mKey])) {
+            return true;
+        }
+        return !empty($agencyMenuSettings[$mKey]['is_enabled']);
+    };
+    ?>
     <div class="wv-client-hero">
         <div class="wv-client-actions">
-            <?php echo $this->Html->link('<i class="fa fa-handshake-o"></i> '.__('My Deals'), array('plugin'=>false,'admin'=>false,'controller'=>'MyDeals','action'=>'index'), array('class'=>'btn btn-deals','escape'=>false)); ?>
-            <?php echo $this->Html->link('<i class="fa fa-credit-card"></i> '.__('Payments'), array('plugin'=>false,'admin'=>false,'controller'=>'MyPayments','action'=>'index'), array('class'=>'btn btn-payments','escape'=>false)); ?>
-            <?php echo $this->Html->link('<i class="fa fa-folder-open-o"></i> '.__('Documents'), array('plugin'=>false,'admin'=>false,'controller'=>'MyDocuments','action'=>'index'), array('class'=>'btn btn-docs','escape'=>false)); ?>
-            <?php echo $this->Html->link('<i class="fa fa-building-o"></i> '.__('Properties'), array('plugin'=>false,'admin'=>false,'controller'=>'Properties','action'=>'index'), array('class'=>'btn btn-props','escape'=>false)); ?>
+            <?php if ($portalMenuAllowed('mydeals')): ?>
+                <?php echo $this->Html->link('<i class="fa fa-handshake-o"></i> '.__('My Deals'), array('plugin'=>false,'admin'=>false,'controller'=>'MyDeals','action'=>'index'), array('class'=>'btn btn-deals','escape'=>false)); ?>
+            <?php endif; ?>
+            <?php if ($portalMenuAllowed('mypayments')): ?>
+                <?php echo $this->Html->link('<i class="fa fa-credit-card"></i> '.__('Payments'), array('plugin'=>false,'admin'=>false,'controller'=>'MyPayments','action'=>'index'), array('class'=>'btn btn-payments','escape'=>false)); ?>
+            <?php endif; ?>
+            <?php if ($portalMenuAllowed('mydocuments')): ?>
+                <?php echo $this->Html->link('<i class="fa fa-folder-open-o"></i> '.__('Documents'), array('plugin'=>false,'admin'=>false,'controller'=>'MyDocuments','action'=>'index'), array('class'=>'btn btn-docs','escape'=>false)); ?>
+            <?php endif; ?>
+            <?php if ($portalMenuAllowed('properties')): ?>
+                <?php echo $this->Html->link('<i class="fa fa-building-o"></i> '.__('Properties'), array('plugin'=>false,'admin'=>false,'controller'=>'Properties','action'=>'index'), array('class'=>'btn btn-props','escape'=>false)); ?>
+            <?php endif; ?>
         </div>
     </div>
 
@@ -1106,31 +1122,41 @@ body {
                 <?php } ?>
 
                 <div class="wv-quick-links">
+                    <?php if ($portalMenuAllowed('mydeals')): ?>
                     <?php echo $this->Html->link(
                         '<i class="fa fa-handshake-o link-icon"></i><span>'.__('View My Deals').'</span><i class="fa fa-angle-right"></i>',
                         array('plugin'=>false,'admin'=>false,'controller'=>'MyDeals','action'=>'index'),
                         array('class'=>'wv-quick-link','escape'=>false)
                     ); ?>
+                    <?php endif; ?>
+                    <?php if ($portalMenuAllowed('mypayments')): ?>
                     <?php echo $this->Html->link(
                         '<i class="fa fa-credit-card link-icon"></i><span>'.__('Payment Receipts').'</span><i class="fa fa-angle-right"></i>',
                         array('plugin'=>false,'admin'=>false,'controller'=>'MyPayments','action'=>'index'),
                         array('class'=>'wv-quick-link','escape'=>false)
                     ); ?>
+                    <?php endif; ?>
+                    <?php if ($portalMenuAllowed('mydocuments')): ?>
                     <?php echo $this->Html->link(
                         '<i class="fa fa-folder-open-o link-icon"></i><span>'.__('My Documents & Vault').'</span><i class="fa fa-angle-right"></i>',
                         array('plugin'=>false,'admin'=>false,'controller'=>'MyDocuments','action'=>'index'),
                         array('class'=>'wv-quick-link','escape'=>false)
                     ); ?>
+                    <?php endif; ?>
+                    <?php if ($portalMenuAllowed('myinvpastdues')): ?>
                     <?php echo $this->Html->link(
                         '<i class="fa fa-clock-o link-icon"></i><span>'.__('Invoices Past Due').'</span><i class="fa fa-angle-right"></i>',
                         array('plugin'=>false,'admin'=>false,'controller'=>'MyInvpastdues','action'=>'index'),
                         array('class'=>'wv-quick-link','escape'=>false)
                     ); ?>
+                    <?php endif; ?>
+                    <?php if ($portalMenuAllowed('myprofiles')): ?>
                     <?php echo $this->Html->link(
                         '<i class="fa fa-user-circle-o link-icon"></i><span>'.__('My Profile').'</span><i class="fa fa-angle-right"></i>',
                         array('plugin'=>false,'admin'=>false,'controller'=>'MyProfiles','action'=>'index'),
                         array('class'=>'wv-quick-link','escape'=>false)
                     ); ?>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

@@ -6274,6 +6274,19 @@ HTML;
                 $rendered
             );
         }
+
+        if ($cFull !== '')
+        {
+            // Ensure Urdu declaration displays full client name with relation/father name
+            $rendered = str_replace('{{client_name_with_father}}', $cFull, $rendered);
+            $rendered = preg_replace_callback(
+                '/(<div[^>]*class=["\'][^"\']*urdu-declaration[^"\']*["\'][^>]*>.*?میں\s*<span[^>]*>)(.*?)(<\/span>.*?اس فارم کی پشت پر درج)/isu',
+                function($m) use ($cFull) {
+                    return $m[1] . $cFull . $m[3];
+                },
+                $rendered
+            );
+        }
         $letterType = isset($letterRow['Realestateletter']['letter_type']) ? trim((string)$letterRow['Realestateletter']['letter_type']) : '';
         if ($letterType === 'RLT_REFUND' || stripos($rendered, 'DEAL PAYMENT REFUND FORM') !== false)
         {
@@ -6300,12 +6313,68 @@ HTML;
             $rendered = preg_replace('/(<div\s+class=["\'][^"\']*form-container[^"\']*["\'][^>]*>)/i', "$1\n" . $this->_floralBorderFrameSvg() . "\n", $rendered, 1);
         }
 
+        // Ensure outer border line is present outside the stars
+        if (strpos($rendered, '<div class="wv-outer-border-line"') === false && strpos($rendered, 'form-container') !== false)
+        {
+            $rendered = preg_replace('/(<div\s+class=["\'][^"\']*form-container[^"\']*["\'][^>]*>)/i', "$1\n        <div class=\"wv-outer-border-line\"></div>", $rendered, 1);
+        }
+
+        // Ensure inner border line is present inside the stars
+        if (strpos($rendered, '<div class="wv-inner-border-line"') === false && strpos($rendered, 'form-container') !== false)
+        {
+            if (strpos($rendered, 'wv-floral-border-frame') !== false) {
+                $rendered = preg_replace('/(<div\s+class=["\'][^"\']*wv-floral-border-frame[^"\']*["\'][^>]*>.*?<\/div>\s*<\/div>)/is', "$1\n        <div class=\"wv-inner-border-line\"></div>\n", $rendered, 1);
+            } else {
+                $rendered = preg_replace('/(<div\s+class=["\'][^"\']*form-container[^"\']*["\'][^>]*>)/i', "$1\n        <div class=\"wv-inner-border-line\"></div>\n", $rendered, 1);
+            }
+        }
+        if ((strpos($rendered, '.wv-outer-border-line') === false || strpos($rendered, '.wv-inner-border-line') === false) && strpos($rendered, 'form-container') !== false)
+        {
+            $borderLinesCss = "\n        .wv-outer-border-line { position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px; border: 1.5px solid #064e3b; pointer-events: none; z-index: 52; box-sizing: border-box; }\n        .wv-inner-border-line { position: absolute; top: 31px; left: 31px; right: 31px; bottom: 31px; border: 1.5px solid #064e3b; pointer-events: none; z-index: 52; box-sizing: border-box; }\n";
+            $rendered = preg_replace('/(<\/style>)/i', $borderLinesCss . '$1', $rendered, 1);
+        }
+
         $isBookingOrWelcome = (
             in_array($letterType, array('RLT_BOOKING', 'RLT_WELCOME'), true) ||
+            stripos($rendered, '13in') !== false ||
             stripos($rendered, '12.18in') !== false ||
             stripos($rendered, 'form-container') !== false ||
             stripos($rendered, 'wv-welcome') !== false
         );
+
+        if ($letterType === 'RLT_BOOKING' || stripos($rendered, 'BOOKING') !== false)
+        {
+            $rendered = preg_replace('/padding\s*:\s*(?:30px\s+24px|44px\s+42px\s+38px\s+42px|44px\s+44px\s+38px\s+44px|24px|28px\s+24px)(?:\s*!important)?/i', 'padding: 60px 44px 38px 44px', $rendered);
+            $rendered = preg_replace('/(<div[^>]*class=["\']col-span-)4(\s+space-y-3\s+flex\s+flex-col\s+justify-center["\']>)/i', '$13$2', $rendered);
+            $rendered = preg_replace('/(<div[^>]*class=["\']col-span-)6(\s+flex\s+justify-center\s+items-stretch\s+p-0\.5\s+pt-0["\']>)/i', '$17$2', $rendered);
+
+            $rendered = preg_replace(
+                '/<span\b([^>]*\bid=["\']display-date["\'][^>]*)>(.*?)<\/span>/i',
+                '<span class="block text-emerald-950 font-black text-sm mt-0.5 tracking-wide" id="display-date" style="font-size:13px;font-weight:900;color:#064e3b;line-height:1.2;">$2</span>',
+                $rendered
+            );
+            $rendered = preg_replace('/<body\b([^>]*\bclass=["\'][^"\']*)flex justify-center([^"\']*["\'][^>]*)>/i', '<body$1flex flex-col items-center$2>', $rendered);
+
+            // Move microprint security line after signatures if still positioned above barcode
+            if (stripos($rendered, 'microprint-security-line') !== false && strpos($rendered, 'border-top:1px dashed rgba(6,78,59,0.25)') === false)
+            {
+                $microRegex = '/\s*<!-- Anti-Forgery Microprint Security Line[^>]*-->\s*<div class="select-none overflow-hidden h-2\.5 flex items-center justify-center text-center w-full"[^>]*>.*?<\/div>/s';
+                if (preg_match($microRegex, $rendered)) {
+                    $rendered = preg_replace($microRegex, '', $rendered);
+                    $newMicroprintBottom = "\n                <!-- Anti-Forgery Microprint Security Line at the very end after signatures -->\n" .
+                    '                <div class="select-none overflow-hidden h-2.5 flex items-center justify-center text-center w-full mt-1 pt-0.5" style="border-top:1px dashed rgba(6,78,59,0.25);">' . "\n" .
+                    '                    <span class="microprint-security-line truncate w-full text-[6px] tracking-wider text-emerald-950/70" style="font-size:6.5px;letter-spacing:0.04em;">' . "\n" .
+                    '                        * SECURE DOCUMENT * ORIGINAL BOOKING COPY * ID: {{deal_invoice_no}} * VERIFY VIA SYSTEM QR CODE * NOT FOR RE-EXCHANGE * VALID STAMPED COPY * SECURE DOCUMENT * ORIGINAL BOOKING COPY * ID: {{deal_invoice_no}} * VERIFY VIA SYSTEM QR CODE * NOT FOR RE-EXCHANGE * VALID STAMPED COPY *' . "\n" .
+                    '                    </span>' . "\n" .
+                    '                </div>' . "\n";
+                    $footerClose = '</footer>';
+                    $posFooter = strrpos($rendered, $footerClose);
+                    if ($posFooter !== false) {
+                        $rendered = substr_replace($rendered, $newMicroprintBottom . '            ' . $footerClose, $posFooter, strlen($footerClose));
+                    }
+                }
+            }
+        }
 
         if (!$isBookingOrWelcome)
         {
@@ -6705,9 +6774,9 @@ HTML;
             return 'a4';
         }
         $html = strtolower((string)$renderedDescription);
-        if (strpos($html, '12.18in') !== false || strpos($html, '8.5in 12.18in') !== false || strpos($html, 'form-container') !== false || strpos($html, 'wv-welcome') !== false)
+        if (strpos($html, '13in') !== false || strpos($html, '8.5in 13in') !== false || strpos($html, '12.18in') !== false || strpos($html, '8.5in 12.18in') !== false || strpos($html, 'form-container') !== false || strpos($html, 'wv-welcome') !== false)
         {
-            return array(8.5, 12.18);
+            return array(8.5, 13);
         }
         if (strpos($html, 'paper-a4') !== false)
         {
@@ -6718,7 +6787,8 @@ HTML;
 
     protected function _floralBorderFrameSvg()
     {
-        return '<div class="wv-floral-border-frame" style="position:absolute;top:-24px;left:-24px;right:-24px;bottom:-24px;pointer-events:none;z-index:25;">
+        return '<div class="wv-outer-border-line" style="position:absolute;top:5px;left:5px;right:5px;bottom:5px;border:1.5px solid #064e3b;pointer-events:none;z-index:52;box-sizing:border-box;"></div>
+        <div class="wv-floral-border-frame" style="position:absolute;top:6px;left:6px;right:6px;bottom:6px;pointer-events:none;z-index:50;box-sizing:border-box;">
             <div style="position:absolute;top:0;left:0;width:24px;height:24px;background-image:url(\'data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2724%27%20height%3D%2724%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cdefs%3E%3Cg%20id%3D%27flower%27%3E%3Ccircle%20cx%3D%2712%27%20cy%3D%2712%27%20r%3D%273.5%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C10%2C9%2010%2C4%2012%2C4%20C14%2C4%2014%2C9%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C10%2C15%2010%2C20%2012%2C20%20C14%2C20%2014%2C15%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C9%2C10%204%2C10%204%2C12%20C4%2C14%209%2C14%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C15%2C10%2020%2C10%2020%2C12%20C20%2C14%2015%2C14%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C10%2C11%206.5%2C7.5%207.5%2C6.5%20C8.5%2C5.5%2011%2C10%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C11%2C10%2014.5%2C6.5%2015.5%2C7.5%20C16.5%2C8.5%2012%2C11%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C11%2C14%207.5%2C15.5%206.5%2C14.5%20C5.5%2C13.5%2010%2C11%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C13%2C14%2016.5%2C14.5%2015.5%2C15.5%20C14.5%2C16.5%2011%2C13%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3C%2Fg%3E%3C%2Fdefs%3E%3Cpath%20d%3D%27M24%2C2%20L2%2C2%20L2%2C24%27%20fill%3D%27none%27%20stroke%3D%27%2523064e3b%27%20stroke-width%3D%271.5%27%2F%3E%3Cpath%20d%3D%27M24%2C22%20L22%2C22%20L22%2C24%27%20fill%3D%27none%27%20stroke%3D%27%2523064e3b%27%20stroke-width%3D%271.5%27%2F%3E%3Cuse%20href%3D%27%23flower%27%20x%3D%270%27%20y%3D%270%27%2F%3E%3C%2Fsvg%3E\');background-repeat:no-repeat;background-size:24px 24px;"></div>
             <div style="position:absolute;top:0;left:24px;right:24px;height:24px;background-image:url(\'data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2724%27%20height%3D%2724%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cdefs%3E%3Cg%20id%3D%27flower%27%3E%3Ccircle%20cx%3D%2712%27%20cy%3D%2712%27%20r%3D%273.5%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C10%2C9%2010%2C4%2012%2C4%20C14%2C4%2014%2C9%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C10%2C15%2010%2C20%2012%2C20%20C14%2C20%2014%2C15%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C9%2C10%204%2C10%204%2C12%20C4%2C14%209%2C14%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C15%2C10%2020%2C10%2020%2C12%20C20%2C14%2015%2C14%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C10%2C11%206.5%2C7.5%207.5%2C6.5%20C8.5%2C5.5%2011%2C10%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C11%2C10%2014.5%2C6.5%2015.5%2C7.5%20C16.5%2C8.5%2012%2C11%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C11%2C14%207.5%2C15.5%206.5%2C14.5%20C5.5%2C13.5%2010%2C11%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C13%2C14%2016.5%2C14.5%2015.5%2C15.5%20C14.5%2C16.5%2011%2C13%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3C%2Fg%3E%3C%2Fdefs%3E%3Cline%20x1%3D%270%27%20y1%3D%272%27%20x2%3D%2724%27%20y2%3D%272%27%20stroke%3D%27%2523064e3b%27%20stroke-width%3D%271.5%27%2F%3E%3Cline%20x1%3D%270%27%20y1%3D%2722%27%20x2%3D%2724%27%20y2%3D%2722%27%20stroke%3D%27%2523064e3b%27%20stroke-width%3D%271.5%27%2F%3E%3Cuse%20href%3D%27%23flower%27%20x%3D%270%27%20y%3D%270%27%2F%3E%3C%2Fsvg%3E\');background-repeat:repeat-x;background-size:24px 24px;"></div>
             <div style="position:absolute;top:0;right:0;width:24px;height:24px;background-image:url(\'data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2724%27%20height%3D%2724%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cdefs%3E%3Cg%20id%3D%27flower%27%3E%3Ccircle%20cx%3D%2712%27%20cy%3D%2712%27%20r%3D%273.5%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C10%2C9%2010%2C4%2012%2C4%20C14%2C4%2014%2C9%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C10%2C15%2010%2C20%2012%2C20%20C14%2C20%2014%2C15%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C9%2C10%204%2C10%204%2C12%20C4%2C14%209%2C14%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C15%2C10%2020%2C10%2020%2C12%20C20%2C14%2015%2C14%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C10%2C11%206.5%2C7.5%207.5%2C6.5%20C8.5%2C5.5%2011%2C10%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C11%2C10%2014.5%2C6.5%2015.5%2C7.5%20C16.5%2C8.5%2012%2C11%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C11%2C14%207.5%2C15.5%206.5%2C14.5%20C5.5%2C13.5%2010%2C11%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C13%2C14%2016.5%2C14.5%2015.5%2C15.5%20C14.5%2C16.5%2011%2C13%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3C%2Fg%3E%3C%2Fdefs%3E%3Cpath%20d%3D%27M0%2C2%20L22%2C2%20L22%2C24%27%20fill%3D%27none%27%20stroke%3D%27%2523064e3b%27%20stroke-width%3D%271.5%27%2F%3E%3Cpath%20d%3D%27M0%2C22%20L2%2C22%20L2%2C24%27%20fill%3D%27none%27%20stroke%3D%27%2523064e3b%27%20stroke-width%3D%271.5%27%2F%3E%3Cuse%20href%3D%27%23flower%27%20x%3D%270%27%20y%3D%270%27%2F%3E%3C%2Fsvg%3E\');background-repeat:no-repeat;background-size:24px 24px;"></div>
@@ -6727,7 +6797,8 @@ HTML;
             <div style="position:absolute;bottom:0;left:0;width:24px;height:24px;background-image:url(\'data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2724%27%20height%3D%2724%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cdefs%3E%3Cg%20id%3D%27flower%27%3E%3Ccircle%20cx%3D%2712%27%20cy%3D%2712%27%20r%3D%273.5%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C10%2C9%2010%2C4%2012%2C4%20C14%2C4%2014%2C9%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C10%2C15%2010%2C20%2012%2C20%20C14%2C20%2014%2C15%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C9%2C10%204%2C10%204%2C12%20C4%2C14%209%2C14%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C15%2C10%2020%2C10%2020%2C12%20C20%2C14%2015%2C14%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C10%2C11%206.5%2C7.5%207.5%2C6.5%20C8.5%2C5.5%2011%2C10%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C11%2C10%2014.5%2C6.5%2015.5%2C7.5%20C16.5%2C8.5%2012%2C11%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C11%2C14%207.5%2C15.5%206.5%2C14.5%20C5.5%2C13.5%2010%2C11%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C13%2C14%2016.5%2C14.5%2015.5%2C15.5%20C14.5%2C16.5%2011%2C13%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3C%2Fg%3E%3C%2Fdefs%3E%3Cpath%20d%3D%27M2%2C0%20L2%2C22%20L24%2C22%27%20fill%3D%27none%27%20stroke%3D%27%2523064e3b%27%20stroke-width%3D%271.5%27%2F%3E%3Cpath%20d%3D%27M22%2C0%20L22%2C2%20L24%2C2%27%20fill%3D%27none%27%20stroke%3D%27%2523064e3b%27%20stroke-width%3D%271.5%27%2F%3E%3Cuse%20href%3D%27%23flower%27%20x%3D%270%27%20y%3D%270%27%2F%3E%3C%2Fsvg%3E\');background-repeat:no-repeat;background-size:24px 24px;"></div>
             <div style="position:absolute;bottom:0;left:24px;right:24px;height:24px;background-image:url(\'data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2724%27%20height%3D%2724%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cdefs%3E%3Cg%20id%3D%27flower%27%3E%3Ccircle%20cx%3D%2712%27%20cy%3D%2712%27%20r%3D%273.5%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C10%2C9%2010%2C4%2012%2C4%20C14%2C4%2014%2C9%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C10%2C15%2010%2C20%2012%2C20%20C14%2C20%2014%2C15%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C9%2C10%204%2C10%204%2C12%20C4%2C14%209%2C14%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C15%2C10%2020%2C10%2020%2C12%20C20%2C14%2015%2C14%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C10%2C11%206.5%2C7.5%207.5%2C6.5%20C8.5%2C5.5%2011%2C10%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C11%2C10%2014.5%2C6.5%2015.5%2C7.5%20C16.5%2C8.5%2012%2C11%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C11%2C14%207.5%2C15.5%206.5%2C14.5%20C5.5%2C13.5%2010%2C11%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C13%2C14%2016.5%2C14.5%2015.5%2C15.5%20C14.5%2C16.5%2011%2C13%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3C%2Fg%3E%3C%2Fdefs%3E%3Cline%20x1%3D%270%27%20y1%3D%272%27%20x2%3D%2724%27%20y2%3D%272%27%20stroke%3D%27%2523064e3b%27%20stroke-width%3D%271.5%27%2F%3E%3Cline%20x1%3D%270%27%20y1%3D%2722%27%20x2%3D%2724%27%20y2%3D%2722%27%20stroke%3D%27%2523064e3b%27%20stroke-width%3D%271.5%27%2F%3E%3Cuse%20href%3D%27%23flower%27%20x%3D%270%27%20y%3D%270%27%2F%3E%3C%2Fsvg%3E\');background-repeat:repeat-x;background-size:24px 24px;"></div>
             <div style="position:absolute;bottom:0;right:0;width:24px;height:24px;background-image:url(\'data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2724%27%20height%3D%2724%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cdefs%3E%3Cg%20id%3D%27flower%27%3E%3Ccircle%20cx%3D%2712%27%20cy%3D%2712%27%20r%3D%273.5%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C10%2C9%2010%2C4%2012%2C4%20C14%2C4%2014%2C9%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C10%2C15%2010%2C20%2012%2C20%20C14%2C20%2014%2C15%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C9%2C10%204%2C10%204%2C12%20C4%2C14%209%2C14%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C15%2C10%2020%2C10%2020%2C12%20C20%2C14%2015%2C14%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C10%2C11%206.5%2C7.5%207.5%2C6.5%20C8.5%2C5.5%2011%2C10%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C11%2C10%2014.5%2C6.5%2015.5%2C7.5%20C16.5%2C8.5%2012%2C11%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C11%2C14%207.5%2C15.5%206.5%2C14.5%20C5.5%2C13.5%2010%2C11%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3Cpath%20d%3D%27M12%2C12%20C13%2C14%2016.5%2C14.5%2015.5%2C15.5%20C14.5%2C16.5%2011%2C13%2012%2C12%20Z%27%20fill%3D%27%2523064e3b%27%2F%3E%3C%2Fg%3E%3C%2Fdefs%3E%3Cpath%20d%3D%27M0%2C22%20L22%2C22%20L22%2C0%27%20fill%3D%27none%27%20stroke%3D%27%2523064e3b%27%20stroke-width%3D%271.5%27%2F%3E%3Cpath%20d%3D%27M0%2C2%20L2%2C2%20L2%2C0%27%20fill%3D%27none%27%20stroke%3D%27%2523064e3b%27%20stroke-width%3D%271.5%27%2F%3E%3Cuse%20href%3D%27%23flower%27%20x%3D%270%27%20y%3D%270%27%2F%3E%3C%2Fsvg%3E\');background-repeat:no-repeat;background-size:24px 24px;"></div>
-        </div>';
+        </div>
+        <div class="wv-inner-border-line" style="position:absolute;top:31px;left:31px;right:31px;bottom:31px;border:1.5px solid #064e3b;pointer-events:none;z-index:52;box-sizing:border-box;"></div>';
     }
 
     protected function _compactFullHtmlLetterHeader($html)
@@ -7859,10 +7930,21 @@ HTML;
         $typeCode = isset($template['type']) ? trim((string)$template['type']) : '';
         $isBookingOrWelcome = (
             in_array($typeCode, array('RLT_BOOKING', 'RLT_WELCOME'), true) ||
+            stripos($description, '13in') !== false ||
             stripos($description, '12.18in') !== false ||
             stripos($description, 'form-container') !== false ||
             stripos($description, 'wv-welcome') !== false
         );
+
+        if ($typeCode === 'RLT_BOOKING' || stripos($description, 'BOOKING') !== false)
+        {
+            $description = preg_replace(
+                '/<span\b([^>]*\bid=["\']display-date["\'][^>]*)>(.*?)<\/span>/i',
+                '<span class="block text-emerald-950 font-black text-sm mt-0.5 tracking-wide" id="display-date" style="font-size:13px;font-weight:900;color:#064e3b;line-height:1.2;">$2</span>',
+                $description
+            );
+            $description = preg_replace('/<body\b([^>]*\bclass=["\'][^"\']*)flex justify-center([^"\']*["\'][^>]*)>/i', '<body$1flex flex-col items-center$2>', $description);
+        }
 
         if (!$isBookingOrWelcome)
         {
@@ -7875,6 +7957,33 @@ HTML;
 
         $rendered = strtr($description, $this->_templatePreviewPlaceholderMap($template));
         $rendered = preg_replace('/\{\{\s*[^}]+\s*\}\}/', 'N/A', $rendered);
+
+        // Ensure universal floral border frame is present for single-page letters
+        if (strpos($rendered, 'wv-floral-border-frame') === false && (strpos($rendered, 'form-container') !== false || strpos($rendered, 'wv-welcome') !== false))
+        {
+            $rendered = preg_replace('/(<div\s+class=["\'][^"\']*form-container[^"\']*["\'][^>]*>)/i', "$1\n" . $this->_floralBorderFrameSvg() . "\n", $rendered, 1);
+        }
+
+        // Ensure outer border line is present outside the stars
+        if (strpos($rendered, '<div class="wv-outer-border-line"') === false && strpos($rendered, 'form-container') !== false)
+        {
+            $rendered = preg_replace('/(<div\s+class=["\'][^"\']*form-container[^"\']*["\'][^>]*>)/i', "$1\n        <div class=\"wv-outer-border-line\"></div>", $rendered, 1);
+        }
+
+        // Ensure inner border line is present inside the stars
+        if (strpos($rendered, '<div class="wv-inner-border-line"') === false && strpos($rendered, 'form-container') !== false)
+        {
+            if (strpos($rendered, 'wv-floral-border-frame') !== false) {
+                $rendered = preg_replace('/(<div\s+class=["\'][^"\']*wv-floral-border-frame[^"\']*["\'][^>]*>.*?<\/div>\s*<\/div>)/is', "$1\n        <div class=\"wv-inner-border-line\"></div>\n", $rendered, 1);
+            } else {
+                $rendered = preg_replace('/(<div\s+class=["\'][^"\']*form-container[^"\']*["\'][^>]*>)/i', "$1\n        <div class=\"wv-inner-border-line\"></div>\n", $rendered, 1);
+            }
+        }
+        if ((strpos($rendered, '.wv-outer-border-line') === false || strpos($rendered, '.wv-inner-border-line') === false) && strpos($rendered, 'form-container') !== false)
+        {
+            $borderLinesCss = "\n        .wv-outer-border-line { position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px; border: 1.5px solid #064e3b; pointer-events: none; z-index: 52; box-sizing: border-box; }\n        .wv-inner-border-line { position: absolute; top: 31px; left: 31px; right: 31px; bottom: 31px; border: 1.5px solid #064e3b; pointer-events: none; z-index: 52; box-sizing: border-box; }\n";
+            $rendered = preg_replace('/(<\/style>)/i', $borderLinesCss . '$1', $rendered, 1);
+        }
 
         if (!$isBookingOrWelcome)
         {

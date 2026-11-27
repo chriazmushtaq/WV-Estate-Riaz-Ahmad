@@ -19,29 +19,51 @@
     border: 1px solid #e2e8f0;
     border-top: 4px solid #0284c7;
     border-radius: 16px;
-    padding: 26px 30px;
+    padding: 24px 28px;
     margin-bottom: 24px;
     box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
     position: relative;
     overflow: hidden;
 }
+.wv-ballot-hero:after {
+    content: "";
+    position: absolute;
+    right: -60px;
+    top: -60px;
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle, rgba(2, 132, 199, 0.08) 0%, rgba(255, 255, 255, 0) 70%);
+    pointer-events: none;
+}
+.wv-ballot-hero-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    position: relative;
+    z-index: 2;
+}
+.wv-ballot-hero-content {
+    flex: 1 1 540px;
+}
 .wv-hero-badge {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: #eff6ff;
-    color: #0284c7;
-    border: 1px solid #bfdbfe;
+    background: #e0f2fe;
+    color: #0369a1;
+    border: 1px solid #bae6fd;
     font-size: 11px;
     font-weight: 800;
     padding: 4px 12px;
     border-radius: 999px;
     text-transform: uppercase;
     letter-spacing: 0.6px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 .wv-ballot-hero h1 {
-    font-size: 24px;
+    font-size: 25px;
     font-weight: 900;
     margin: 0 0 8px;
     color: #0f172a !important;
@@ -50,12 +72,83 @@
     gap: 12px;
     letter-spacing: -0.3px;
 }
+.wv-ballot-hero h1 i {
+    color: #0284c7;
+}
 .wv-ballot-hero p {
-    font-size: 14px;
+    font-size: 13.5px;
     color: #475569;
     margin: 0;
-    max-width: 760px;
-    line-height: 1.6;
+    max-width: 700px;
+    line-height: 1.55;
+    font-weight: 600;
+}
+.wv-ballot-hero-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+}
+.wv-hero-pill {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-size: 11.5px;
+    font-weight: 800;
+    color: #334155;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.wv-ballot-hero-metrics {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.wv-hero-metric-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px 18px;
+    min-width: 135px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    transition: all 0.2s ease;
+}
+.wv-hero-metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
+}
+.wv-hero-metric-card .lbl {
+    display: block;
+    font-size: 10.5px;
+    font-weight: 800;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 3px;
+}
+.wv-hero-metric-card .val {
+    display: block;
+    font-size: 26px;
+    font-weight: 900;
+    line-height: 1.1;
+    color: #0f172a;
+}
+.wv-hero-metric-card.metric-allotted .val {
+    color: #059669;
+}
+.wv-hero-metric-card.metric-queued .val {
+    color: #0284c7;
+}
+.wv-hero-metric-card .sub {
+    display: block;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #64748b;
+    margin-top: 3px;
 }
 .wv-announcement-box {
     background: #fffbeb;
@@ -354,22 +447,183 @@
     font-weight: 600;
 }
 
-/* Queued Bookings Cards */
+/* Queued Bookings Cards - Professional Redesign */
 .wv-queued-card {
     background: #ffffff;
     border: 1px solid #e2e8f0;
+    border-top: 3.5px solid #0284c7;
     border-radius: 14px;
-    padding: 18px;
-    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+    padding: 18px 20px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
     height: 100%;
-    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.22s ease;
 }
 .wv-queued-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.09);
+    border-color: #cbd5e1;
+}
+.wv-queued-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f1f5f9;
+}
+.wv-queued-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+.wv-queued-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #e0f2fe;
+    border: 1px solid #bae6fd;
+    color: #0284c7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+.wv-queued-proj {
+    display: block;
+    font-size: 10.5px;
+    font-weight: 800;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+    margin-bottom: 2px;
+}
+.wv-queued-name {
+    margin: 0;
+    font-size: 15.5px;
+    font-weight: 900;
+    color: #0f172a;
+    line-height: 1.25;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.wv-queued-badge {
+    background: #eff6ff;
+    color: #0284c7;
+    border: 1px solid #bfdbfe;
+    font-size: 10px;
+    font-weight: 900;
+    padding: 4px 10px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.wv-pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #0284c7;
+    display: inline-block;
+    box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2);
+}
+.wv-queued-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 10px;
+    margin-bottom: 12px;
+}
+.wv-queued-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 8px 10px;
+}
+.wv-queued-box .lbl {
+    display: block;
+    font-size: 10px;
+    font-weight: 800;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 3px;
+}
+.wv-queued-box .lbl i {
+    color: #0284c7;
+    margin-right: 3px;
+}
+.wv-queued-box .val {
+    display: block;
+    font-size: 12px;
+    font-weight: 800;
+    color: #0f172a;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.wv-queued-strip {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    padding: 7px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #166534;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+.wv-queued-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-top: 10px;
+    border-top: 1px solid #f1f5f9;
+}
+.wv-qbtn {
+    border: 1px solid #cbd5e1 !important;
+    background: #ffffff !important;
+    color: #334155 !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    border-radius: 6px !important;
+    padding: 5px 12px !important;
+    display: inline-flex !important;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.15s ease !important;
+    text-decoration: none !important;
+}
+.wv-qbtn:hover {
+    background: #f8fafc !important;
+    color: #0284c7 !important;
+    border-color: #0284c7 !important;
 }
 
 /* Responsive Breakpoints */
+@media (max-width: 991px) {
+    .wv-ballot-hero-inner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .wv-ballot-hero-metrics {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+}
 @media (max-width: 768px) {
     .wv-ballot-page {
         padding: 12px;
@@ -390,6 +644,9 @@
     .wv-plot-value {
         font-size: 24px;
     }
+    .wv-queued-grid {
+        grid-template-columns: 1fr;
+    }
 }
 </style>
 
@@ -398,9 +655,30 @@
 
     <!-- Executive Header Card -->
     <div class="wv-ballot-hero">
-        <span class="wv-hero-badge"><i class="fa fa-shield"></i> <?php echo __('Official Verification Portal'); ?></span>
-        <h1><i class="fa fa-cube text-primary"></i> <?php echo __('e-Balloting Results & Digital Plot Allocation'); ?></h1>
-        <p><?php echo __('Official digital allocation portal for White Villas. Verify your allotted plot coordinates, block and street dimensions, and download or print your official allotment letters with duplicate copy watermark and QR authentication.'); ?></p>
+        <div class="wv-ballot-hero-inner">
+            <div class="wv-ballot-hero-content">
+                <span class="wv-hero-badge"><i class="fa fa-shield"></i> <?php echo __('Official Verification Portal'); ?></span>
+                <h1><i class="fa fa-cube text-primary"></i> <?php echo __('e-Balloting Results & Digital Plot Allocation'); ?></h1>
+                <p><?php echo __('Official digital allocation portal for White Villas. Verify your allotted plot coordinates, block and street dimensions, and download or print your official allotment letters with duplicate copy watermark and QR authentication.'); ?></p>
+                <div class="wv-ballot-hero-pills">
+                    <span class="wv-hero-pill"><i class="fa fa-check-circle text-success"></i> <?php echo __('Verified Allocation Database'); ?></span>
+                    <span class="wv-hero-pill"><i class="fa fa-qrcode text-info"></i> <?php echo __('QR Code Secured Letters'); ?></span>
+                    <span class="wv-hero-pill"><i class="fa fa-shield text-warning"></i> <?php echo __('Watermark Authenticated'); ?></span>
+                </div>
+            </div>
+            <div class="wv-ballot-hero-metrics">
+                <div class="wv-hero-metric-card metric-allotted">
+                    <span class="lbl"><?php echo __('Allotted Units'); ?></span>
+                    <strong class="val"><?php echo count($allotments); ?></strong>
+                    <small class="sub"><i class="fa fa-check text-success"></i> <?php echo count($allotments) > 0 ? __('Plot Assigned') : __('Awaiting Draw'); ?></small>
+                </div>
+                <div class="wv-hero-metric-card metric-queued">
+                    <span class="lbl"><?php echo __('Queued Deals'); ?></span>
+                    <strong class="val"><?php echo count($clientDeals); ?></strong>
+                    <small class="sub"><i class="fa fa-hourglass-half text-primary"></i> <?php echo __('In Next Balloting'); ?></small>
+                </div>
+            </div>
+        </div>
 
         <?php if(!empty($announcements)): ?>
         <?php foreach($announcements as $ann): ?>
@@ -579,23 +857,69 @@
 
     <!-- Other Deals Pending Balloting -->
     <?php if(!empty($clientDeals)): ?>
-    <h3 class="wv-section-heading" style="font-size:16px;">
+    <h3 class="wv-section-heading" style="font-size:17px; margin-top:32px;">
         <i class="fa fa-hourglass-half text-primary"></i> <?php echo __('Other Bookings Queued for Next Balloting'); ?>
+        <span class="badge" style="background:#e0f2fe; color:#0284c7; font-size:11px; font-weight:800; border-radius:999px; padding:3px 10px; margin-left:6px;"><?php echo count($clientDeals); ?> <?php echo __('Bookings'); ?></span>
     </h3>
     <div class="row">
         <?php foreach($clientDeals as $cd):
             $d = $cd['MyDeal'];
+            $dealId = (int)$d['id'];
             $pName = !empty($cd['Property']['name']) ? $cd['Property']['name'] : 'Plot/Villa';
-            $invoice = !empty($d['invoice_no']) ? $d['invoice_no'] : ('DEAL-' . $d['id']);
+            $projName = !empty($cd['Project']['name']) ? $cd['Project']['name'] : 'White Villas';
+            $pType = !empty($cd['Property']['type']) ? $cd['Property']['type'] : (!empty($cd['Property']['property_type']) ? $cd['Property']['property_type'] : __('Standard Unit'));
+            $invoice = !empty($d['invoice_no']) ? $d['invoice_no'] : ('#' . $dealId);
+            $bookingDate = !empty($d['date']) ? date('d-M-Y', strtotime($d['date'])) : '-';
         ?>
-        <div class="col-md-4 col-sm-6" style="margin-bottom:18px;">
+        <div class="col-md-4 col-sm-6" style="margin-bottom:20px;">
             <div class="wv-queued-card">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                    <strong style="color:#0f172a; font-size:14.5px;"><?php echo h($pName); ?></strong>
-                    <span class="badge" style="background:#eff6ff; color:#0284c7; border:1px solid #bfdbfe; font-size:10px; font-weight:800;"><?php echo __('QUEUED'); ?></span>
+                <!-- Card Header -->
+                <div class="wv-queued-card-head">
+                    <div class="wv-queued-title-wrap">
+                        <div class="wv-queued-icon">
+                            <i class="fa fa-building-o"></i>
+                        </div>
+                        <div style="min-width:0;">
+                            <span class="wv-queued-proj"><?php echo h($projName); ?></span>
+                            <h4 class="wv-queued-name" title="<?php echo h($pName); ?>"><?php echo h($pName); ?></h4>
+                        </div>
+                    </div>
+                    <span class="wv-queued-badge">
+                        <span class="wv-pulse-dot"></span> <?php echo __('QUEUED'); ?>
+                    </span>
                 </div>
-                <div style="font-size:12.5px; color:#64748b; margin-bottom:6px;">Invoice: <strong style="color:#0f172a;"><?php echo h($invoice); ?></strong></div>
-                <div style="font-size:12.5px; color:#64748b;">Booking Date: <strong style="color:#0f172a;"><?php echo !empty($d['date']) ? date('d-M-Y', strtotime($d['date'])) : '-'; ?></strong></div>
+
+                <!-- 2x2 Key Data Grid -->
+                <div class="wv-queued-grid">
+                    <div class="wv-queued-box">
+                        <span class="lbl"><i class="fa fa-file-text-o"></i> <?php echo __('Invoice No'); ?></span>
+                        <strong class="val"><?php echo h($invoice); ?></strong>
+                    </div>
+                    <div class="wv-queued-box">
+                        <span class="lbl"><i class="fa fa-calendar"></i> <?php echo __('Booking Date'); ?></span>
+                        <strong class="val"><?php echo h($bookingDate); ?></strong>
+                    </div>
+                    <div class="wv-queued-box">
+                        <span class="lbl"><i class="fa fa-tag"></i> <?php echo __('Category / Type'); ?></span>
+                        <strong class="val"><?php echo h($pType); ?></strong>
+                    </div>
+                    <div class="wv-queued-box">
+                        <span class="lbl"><i class="fa fa-cube"></i> <?php echo __('Draw Priority'); ?></span>
+                        <strong class="val" style="color:#059669;"><i class="fa fa-check-circle"></i> <?php echo __('Active Queue'); ?></strong>
+                    </div>
+                </div>
+
+                <!-- Verified Queue Notification Strip -->
+                <div class="wv-queued-strip">
+                    <i class="fa fa-shield text-success"></i>
+                    <span><?php echo __('Installments Verified &bull; Queued for next plot allotment'); ?></span>
+                </div>
+
+                <!-- Action Toolbar -->
+                <div class="wv-queued-actions">
+                    <?php echo $this->Html->link('<i class="fa fa-eye"></i> ' . __('Deal Details'), array('plugin' => false, 'admin' => false, 'controller' => 'MyDeals', 'action' => 'index'), array('escape' => false, 'class' => 'wv-qbtn')); ?>
+                    <?php echo $this->Html->link('<i class="fa fa-dollar"></i> ' . __('Payment Ledger'), array('plugin' => false, 'admin' => false, 'controller' => 'MyPayments', 'action' => 'index'), array('escape' => false, 'class' => 'wv-qbtn')); ?>
+                </div>
             </div>
         </div>
         <?php endforeach; ?>
