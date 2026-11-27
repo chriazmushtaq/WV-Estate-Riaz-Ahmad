@@ -149,34 +149,56 @@ if ($qrContractTypeDisplay === '-' && $qrContractType !== '-') {
 }
 $qrContactParts = array();
 if (strlen(trim($agencyMobile)) > 0) {
-    $qrContactParts[] = __('Mobile') . ': ' . $agencyMobile;
+    $qrContactParts[] = 'Mobile: ' . $agencyMobile;
 }
 if (strlen(trim($agencyPhone)) > 0) {
-    $qrContactParts[] = __('Phone') . ': ' . $agencyPhone;
+    $qrContactParts[] = 'Phone: ' . $agencyPhone;
 }
 $qrContactLine = implode(' | ', $qrContactParts);
 if (strlen(trim($qrContactLine)) <= 0) {
     $qrContactLine = '-';
 }
 $dealQrLines = array(
-    strtoupper(__('Agency Details')),
+    'AGENCY DETAILS',
     $agencyName,
-    __('Contact') . ': ' . $qrContactLine,
+    'Contact: ' . $qrContactLine,
     '',
-    strtoupper(__('Deal Details')),
-    __('Membership No') . ': ' . $membershipNo,
-    __('Client Name') . ': ' . $clientName,
-    __('CNIC') . ': ' . $clientCnic,
-    __('Deal Status') . ': ' . $dealStatusLabel,
+    'DEAL DETAILS',
+    'Membership No: ' . $membershipNo,
+    'Client Name: ' . $clientName,
+    'CNIC: ' . $clientCnic,
+    'Deal Status: ' . $dealStatusLabel,
     '',
-    strtoupper(__('Property Details')),
-    __('Property File #') . ': ' . $qrPropertyFile,
-    __('Property Area') . ': ' . $qrPropertyArea,
-    __('Property Type') . ': ' . $qrPropertyTypeDisplay,
-    __('Contract Type') . ': ' . $qrContractTypeDisplay
+    'PROPERTY DETAILS',
+    'Property File #: ' . $qrPropertyFile,
+    'Property Area: ' . $qrPropertyArea,
+    'Property Type: ' . $qrPropertyTypeDisplay,
+    'Contract Type: ' . $qrContractTypeDisplay
 );
 $dealQrText = implode("\n", $dealQrLines);
 $dealQrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=600x600&ecc=L&qzone=2&margin=8&format=png&charset-source=UTF-8&charset-target=UTF-8&data=' . rawurlencode($dealQrText) . '&v=' . rawurlencode((string)$dealId) . '&cb=' . rawurlencode(date('YmdHis'));
+
+$dealQrDataUri = '';
+$qrVendorPath = APP . 'Vendor' . DS . 'php-qrcode' . DS . 'qrcode.php';
+if (file_exists($qrVendorPath)) {
+    require_once $qrVendorPath;
+    try {
+        $qrObj = new QRCode($dealQrText, array('s' => 'qrm'));
+        $qrImgResource = $qrObj->render_image();
+        if ($qrImgResource) {
+            ob_start();
+            imagepng($qrImgResource);
+            $qrPngBytes = ob_get_clean();
+            imagedestroy($qrImgResource);
+            if ($qrPngBytes && strlen($qrPngBytes) > 50) {
+                $dealQrDataUri = 'data:image/png;base64,' . base64_encode($qrPngBytes);
+            }
+        }
+    } catch (Exception $e) {
+        $dealQrDataUri = '';
+    }
+}
+$dealQrSrc = ($dealQrDataUri !== '') ? $dealQrDataUri : $dealQrUrl;
 
 $dealChargeSummary = (isset($dealChargeSummary) && is_array($dealChargeSummary)) ? $dealChargeSummary : array();
 $dealChargeCount = isset($dealChargeSummary['charge_count']) ? (int)$dealChargeSummary['charge_count'] : 0;
@@ -3187,8 +3209,8 @@ $(window).on('resize', function() {
                 </div>
                 <div class="deal-qr-col">
                     <div class="deal-qr-wrap">
-                        <div class="deal-qr-box">
-                            <img src="<?php echo h($dealQrUrl); ?>" alt="<?php echo __('Deal QR Code'); ?>">
+                        <div class="deal-qr-box" id="dealQrBox" data-qr-text="<?php echo h($dealQrText); ?>">
+                            <img id="dealQrImg" src="<?php echo h($dealQrSrc); ?>" alt="<?php echo __('Deal QR Code'); ?>" style="display:block;width:100%;height:100%;object-fit:contain;">
                         </div>
                         <div class="deal-qr-caption"><?php echo __('Scan Deal QR'); ?></div>
                     </div>
@@ -3655,3 +3677,58 @@ $(window).on('resize', function() {
 
 <?php echo $this->Form->input('dealId', array('type' => 'hidden', 'name' => 'dealId', 'value' => $dealId)); ?>
 <?php echo $this->Form->end(); ?>
+<script src="<?php echo $this->webroot;?>js/qrcode.min.js"></script>
+<script>if(typeof QRCode === 'undefined'){document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>');}</script>
+<script type="text/javascript">
+function renderDealQrFallback() {
+    var qrBox = document.getElementById('dealQrBox');
+    if (!qrBox || typeof QRCode === 'undefined') return;
+    var qrText = qrBox.getAttribute('data-qr-text') || '';
+    if (!qrText) return;
+
+    var existingImg = qrBox.querySelector('img#dealQrImg');
+    if (existingImg && existingImg.src && existingImg.src.indexOf('data:image/png') === 0 && existingImg.naturalWidth > 0) {
+        return;
+    }
+
+    try {
+        var tempDiv = document.createElement('div');
+        new QRCode(tempDiv, {
+            text: qrText,
+            width: 140,
+            height: 140,
+            correctLevel: (typeof QRCode.CorrectLevel !== 'undefined' ? QRCode.CorrectLevel.M : 0)
+        });
+
+        var canvas = tempDiv.querySelector('canvas');
+        var generatedImg = tempDiv.querySelector('img');
+        var src = '';
+        if (canvas && typeof canvas.toDataURL === 'function') {
+            try { src = canvas.toDataURL('image/png'); } catch (e) {}
+        }
+        if (!src && generatedImg && generatedImg.src) {
+            src = generatedImg.src;
+        }
+
+        if (src) {
+            qrBox.innerHTML = '';
+            var qrImg = document.createElement('img');
+            qrImg.id = 'dealQrImg';
+            qrImg.src = src;
+            qrImg.alt = 'Deal QR Code';
+            qrImg.style.width = '100%';
+            qrImg.style.height = '100%';
+            qrImg.style.objectFit = 'contain';
+            qrImg.style.display = 'block';
+            qrBox.appendChild(qrImg);
+        }
+    } catch (e) {
+        console.error('Deal QR code render error:', e);
+    }
+}
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderDealQrFallback);
+} else {
+    renderDealQrFallback();
+}
+</script>
