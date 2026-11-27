@@ -1155,6 +1155,27 @@ class DealtransfersController extends AdminAppController
                     $db->query("ALTER TABLE `{$tableName}` MODIFY `id` {$type} NOT NULL AUTO_INCREMENT");
                 }
             }
+
+            // 3. Ensure AUTO_INCREMENT counter is strictly > MAX(id)
+            $maxRow = $db->query("SELECT MAX(`id`) AS max_id FROM `{$tableName}`");
+            $maxId = 0;
+            if(!empty($maxRow[0][0]['max_id'])) { $maxId = (int)$maxRow[0][0]['max_id']; }
+            elseif(!empty($maxRow[0][$tableName]['max_id'])) { $maxId = (int)$maxRow[0][$tableName]['max_id']; }
+            if($maxId > 0)
+            {
+                try
+                {
+                    $st = $db->query("SHOW TABLE STATUS LIKE '{$tableName}'");
+                    $curAi = 0;
+                    if(!empty($st[0]['TABLES']['Auto_increment'])) { $curAi = (int)$st[0]['TABLES']['Auto_increment']; }
+                    elseif(!empty($st[0][0]['Auto_increment'])) { $curAi = (int)$st[0][0]['Auto_increment']; }
+                    if($curAi <= $maxId)
+                    {
+                        $db->query("ALTER TABLE `{$tableName}` AUTO_INCREMENT = " . ($maxId + 1));
+                    }
+                }
+                catch(Exception $eAi) {}
+            }
         }
         catch(Exception $e) {}
     }
@@ -1556,6 +1577,7 @@ class DealtransfersController extends AdminAppController
         {
             throw new Exception(__('Unable to create target merge credit plan.'));
         }
+        try { $this->PlansPayment->query("ALTER TABLE `plans_payments` AUTO_INCREMENT = " . ($nextPlanId + 1)); } catch(Exception $eAi) {}
         return !empty($this->PlansPayment->id) ? (int)$this->PlansPayment->id : $nextPlanId;
     }
 

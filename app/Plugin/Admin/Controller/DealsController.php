@@ -3413,13 +3413,70 @@ class DealsController extends AdminAppController {
             }
             return $left['_due_timestamp']<$right['_due_timestamp'] ? -1 : 1;
         });
+        // Clean up un-paid regular rows to avoid partial leftovers
+        try
+        {
+            $this->PlansPayment->deleteAll(array(
+                'PlansPayment.deal_id' => $dealId,
+                'OR' => array('PlansPayment.is_deal_charge' => 0, 'PlansPayment.is_deal_charge IS NULL')
+            ), false);
+        }
+        catch(Exception $delEx) {}
+
+        // Fetch MAX(id) and assign strictly ascending IDs to prevent duplicate key collisions
+        $maxIdRow = $this->PlansPayment->query("SELECT MAX(`id`) AS max_id FROM `plans_payments`");
+        $currentMaxId = 0;
+        if(!empty($maxIdRow[0][0]['max_id'])) { $currentMaxId = (int)$maxIdRow[0][0]['max_id']; }
+        elseif(!empty($maxIdRow[0]['plans_payments']['max_id'])) { $currentMaxId = (int)$maxIdRow[0]['plans_payments']['max_id']; }
+        $nextPlanId = $currentMaxId + 1;
+
         foreach($saveRows as $key=>$saveRow)
         {
             unset($saveRows[$key]['_due_timestamp'],$saveRows[$key]['_sort_index'],$saveRows[$key]['_payment_index']);
+            $saveRows[$key]['PlansPayment']['id'] = $nextPlanId++;
         }
-        $results = $this->PlansPayment->saveAll($saveRows,array('atomic'=>(bool)$atomic,'validate'=>false));
-        if($atomic) return (bool)$results;
-        return is_array($results) && !in_array(false,$results,true);
+
+        $savedOk = false;
+        try
+        {
+            $results = $this->PlansPayment->saveAll($saveRows,array('atomic'=>(bool)$atomic,'validate'=>false));
+            $savedOk = $atomic ? (bool)$results : (is_array($results) && !in_array(false,$results,true));
+        }
+        catch(Exception $saveEx)
+        {
+            $savedOk = false;
+        }
+
+        if(!$savedOk)
+        {
+            $savedOk = true;
+            foreach($saveRows as $sRow)
+            {
+                $rec = isset($sRow['PlansPayment']) ? $sRow['PlansPayment'] : $sRow;
+                $curMax = $this->PlansPayment->query("SELECT MAX(`id`) AS max_id FROM `plans_payments`");
+                $freshMax = !empty($curMax[0][0]['max_id']) ? (int)$curMax[0][0]['max_id'] : (int)$nextPlanId;
+                $rec['id'] = $freshMax + 1;
+                $this->PlansPayment->create();
+                if(!$this->PlansPayment->save(array('PlansPayment' => $rec), array('validate' => false, 'callbacks' => false)))
+                {
+                    $savedOk = false;
+                    break;
+                }
+            }
+        }
+
+        try
+        {
+            $finMax = $this->PlansPayment->query("SELECT MAX(`id`) AS max_id FROM `plans_payments`");
+            $finalMaxId = !empty($finMax[0][0]['max_id']) ? (int)$finMax[0][0]['max_id'] : 0;
+            if($finalMaxId > 0)
+            {
+                $this->PlansPayment->query("ALTER TABLE `plans_payments` AUTO_INCREMENT = " . ($finalMaxId + 1));
+            }
+        }
+        catch(Exception $aiEx) {}
+
+        return $savedOk;
     }
 
     protected function _dealAccountingProjectId($dealRow = array(), $propertyRow = array())
@@ -3866,16 +3923,53 @@ class DealsController extends AdminAppController {
                     $this->request->data['Deal']['evocate_date'] = null;
                 }
 
-                if($this->Deal->save($this->request->data))
+                $existingDeal = null;
+                if(!empty($this->request->data['Deal']['invoice_no']))
                 {
-                    $savedDealId = (int)$this->Deal->id;
+                    $existingDeal = $this->Deal->find('first', array(
+                        'conditions' => array('Deal.invoice_no' => $this->request->data['Deal']['invoice_no']),
+                        'recursive' => -1
+                    ));
+                }
+
+                $savedDealId = 0;
+                $isCompletingExisting = false;
+                if(!empty($existingDeal['Deal']['id']))
+                {
+                    $this->loadModel('DealsPayment');
+                    $paidCount = (int)$this->DealsPayment->find('count', array(
+                        'conditions' => array('DealsPayment.deal_id' => (int)$existingDeal['Deal']['id']),
+                        'recursive' => -1
+                    ));
+                    if($paidCount === 0)
+                    {
+                        $savedDealId = (int)$existingDeal['Deal']['id'];
+                        $this->request->data['Deal']['id'] = $savedDealId;
+                        $this->Deal->id = $savedDealId;
+                        $isCompletingExisting = true;
+                    }
+                }
+
+                if($savedDealId > 0 || $this->Deal->save($this->request->data))
+                {
+                    if($savedDealId <= 0)
+                    {
+                        $savedDealId = (int)$this->Deal->id;
+                    }
+                    else
+                    {
+                        $this->Deal->save($this->request->data, false);
+                    }
                     $autoScheduleCreated = false;
                     if(!empty($dealPlanTemplate['enabled']))
                     {
                         $savedDealDate = $this->Deal->field('date',array('Deal.id'=>$savedDealId));
                         if(!$this->_createDealScheduleFromTemplate($savedDealId,$dealPlanTemplate,$savedDealDate))
                         {
-                            $this->Deal->delete($savedDealId);
+                            if(!$isCompletingExisting)
+                            {
+                                $this->Deal->delete($savedDealId);
+                            }
                             throw new Exception(__('The deal was not created because its payment schedule could not be generated.'));
                         }
                         $autoScheduleCreated = true;
@@ -4287,6 +4381,7 @@ class DealsController extends AdminAppController {
         {
             throw new NotFoundException(__('Invalid post'));
         }
+        $this->_autoGenerateDealScheduleIfMissing((int)$id);
         if (!$this->_canAccessDealRecord($post))
         {
             $this->Session->setFlash(__('Access Denied. You do not have permission to access deals from other agencies.'),'flash',array('alert'=>'danger'));
