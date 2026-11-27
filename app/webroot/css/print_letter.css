@@ -391,7 +391,45 @@ table.ashtam-table th,
 }
 
 /* 8. PRESERVE BOOKING & WELCOME LETTERS (DO NOT CHANGE THEIR VIEW STYLE) */
-.form-container,
+.form-container {
+    width: 8.5in !important;
+    max-width: 8.5in !important;
+    margin: 0 auto !important;
+    box-shadow: none !important;
+    box-sizing: border-box !important;
+    position: relative !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    overflow: hidden !important;
+    padding: 60px 44px 36px 44px !important;
+    font-size: 11.5px !important;
+    line-height: 1.55 !important;
+}
+
+.wv-outer-border-line {
+    position: absolute !important;
+    top: 5px !important;
+    left: 5px !important;
+    right: 5px !important;
+    bottom: 5px !important;
+    border: 1.5px solid #022c22 !important;
+    pointer-events: none !important;
+    z-index: 52 !important;
+    box-sizing: border-box !important;
+}
+
+.wv-inner-border-line {
+    position: absolute !important;
+    top: 31px !important;
+    left: 31px !important;
+    right: 31px !important;
+    bottom: 31px !important;
+    border: 1.5px solid #022c22 !important;
+    pointer-events: none !important;
+    z-index: 52 !important;
+    box-sizing: border-box !important;
+}
+
 .wv-welcome-a4 {
     width: 8.5in !important;
     max-width: 8.5in !important;
