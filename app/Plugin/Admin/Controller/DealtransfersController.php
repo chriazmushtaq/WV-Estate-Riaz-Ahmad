@@ -111,8 +111,54 @@ class DealtransfersController extends AdminAppController
                 $this->Dealtransfer->create();
                 if($this->Dealtransfer->save(array('Dealtransfer' => $save['data']), array('validate' => false)))
                 {
-                    $id = (int)$this->Dealtransfer->id;
-                    $this->Session->setFlash(__('Deal transfer request saved successfully.'), 'flash', array('alert' => 'success'));
+                    $id = !empty($this->Dealtransfer->id) ? (int)$this->Dealtransfer->id : (int)$save['data']['id'];
+                    $savedRow = $this->Dealtransfer->find('first', array('conditions' => array('Dealtransfer.id' => $id), 'recursive' => -1));
+                    $tRow = !empty($savedRow['Dealtransfer']) ? $savedRow['Dealtransfer'] : $save['data'];
+                    $tRow['id'] = $id;
+
+                    // When Cash / Bank (Pay Separately) is selected and fee > 0, auto-generate voucher immediately
+                    $feeVoucherGenerated = false;
+                    $feeVoucherRef = '';
+                    if(!empty($tRow['fee_deduction_source']) && $tRow['fee_deduction_source'] === 'cash_separate' && (float)$tRow['processing_fee'] > 0)
+                    {
+                        try
+                        {
+                            $voucherInfo = $this->_createProcessingFeeVoucher($tRow, $defaultSettings);
+                            if(!empty($voucherInfo['id']))
+                            {
+                                $feeVoucherGenerated = true;
+                                $feeVoucherRef = $voucherInfo['ref_no'];
+                                $steps = $this->_decodeJson(isset($tRow['steps_json']) ? $tRow['steps_json'] : '');
+                                if(empty($steps) || !is_array($steps))
+                                {
+                                    $steps = $this->_defaultSteps($tRow['transfer_type'], (float)$tRow['processing_fee'], 'cash_separate');
+                                }
+                                if(isset($steps['step_2']))
+                                {
+                                    $steps['step_2']['voucher_id'] = (int)$voucherInfo['id'];
+                                    $steps['step_2']['voucher_ref'] = $voucherInfo['ref_no'];
+                                    $steps['step_2']['detail'] = __('Fee voucher #%s auto-generated for Cash/Bank payment.', $voucherInfo['ref_no']);
+                                }
+                                $this->Dealtransfer->id = $id;
+                                $this->Dealtransfer->save(array('Dealtransfer' => array(
+                                    'id' => $id,
+                                    'fee_voucher_transaction_id' => (int)$voucherInfo['id'],
+                                    'steps_json' => json_encode($steps)
+                                )), array('validate' => false));
+                            }
+                        }
+                        catch(Exception $vEx) {}
+                    }
+
+                    if($feeVoucherGenerated)
+                    {
+                        $this->Session->setFlash(sprintf(__('Deal transfer request saved. Processing fee voucher #%s generated successfully.'), $feeVoucherRef), 'flash', array('alert' => 'success'));
+                    }
+                    else
+                    {
+                        $this->Session->setFlash(__('Deal transfer request saved successfully.'), 'flash', array('alert' => 'success'));
+                    }
+
                     if(!empty($this->request->data['Dealtransfer']['finalize_now']))
                     {
                         return $this->redirect(array('action' => 'finalize', $id));
@@ -156,9 +202,56 @@ class DealtransfersController extends AdminAppController
             {
                 $save['data']['id'] = $id;
                 $save['data']['transfer_no'] = $row['Dealtransfer']['transfer_no'];
+                $this->Dealtransfer->id = $id;
                 if($this->Dealtransfer->save(array('Dealtransfer' => $save['data']), array('validate' => false)))
                 {
-                    $this->Session->setFlash(__('Deal transfer request updated successfully.'), 'flash', array('alert' => 'success'));
+                    $savedRow = $this->Dealtransfer->find('first', array('conditions' => array('Dealtransfer.id' => $id), 'recursive' => -1));
+                    $tRow = !empty($savedRow['Dealtransfer']) ? $savedRow['Dealtransfer'] : $save['data'];
+                    $tRow['id'] = $id;
+
+                    // When Cash / Bank (Pay Separately) is selected and fee > 0 and no voucher exists, auto-generate it
+                    $feeVoucherGenerated = false;
+                    $feeVoucherRef = '';
+                    $hasVoucher = $this->_voucherExists(isset($tRow['fee_voucher_transaction_id']) ? (int)$tRow['fee_voucher_transaction_id'] : 0);
+                    if(!empty($tRow['fee_deduction_source']) && $tRow['fee_deduction_source'] === 'cash_separate' && (float)$tRow['processing_fee'] > 0 && !$hasVoucher)
+                    {
+                        try
+                        {
+                            $voucherInfo = $this->_createProcessingFeeVoucher($tRow, $defaultSettings);
+                            if(!empty($voucherInfo['id']))
+                            {
+                                $feeVoucherGenerated = true;
+                                $feeVoucherRef = $voucherInfo['ref_no'];
+                                $steps = $this->_decodeJson(isset($tRow['steps_json']) ? $tRow['steps_json'] : '');
+                                if(empty($steps) || !is_array($steps))
+                                {
+                                    $steps = $this->_defaultSteps($tRow['transfer_type'], (float)$tRow['processing_fee'], 'cash_separate');
+                                }
+                                if(isset($steps['step_2']))
+                                {
+                                    $steps['step_2']['voucher_id'] = (int)$voucherInfo['id'];
+                                    $steps['step_2']['voucher_ref'] = $voucherInfo['ref_no'];
+                                    $steps['step_2']['detail'] = __('Fee voucher #%s auto-generated for Cash/Bank payment.', $voucherInfo['ref_no']);
+                                }
+                                $this->Dealtransfer->id = $id;
+                                $this->Dealtransfer->save(array('Dealtransfer' => array(
+                                    'id' => $id,
+                                    'fee_voucher_transaction_id' => (int)$voucherInfo['id'],
+                                    'steps_json' => json_encode($steps)
+                                )), array('validate' => false));
+                            }
+                        }
+                        catch(Exception $vEx) {}
+                    }
+
+                    if($feeVoucherGenerated)
+                    {
+                        $this->Session->setFlash(sprintf(__('Deal transfer request updated. Processing fee voucher #%s generated successfully.'), $feeVoucherRef), 'flash', array('alert' => 'success'));
+                    }
+                    else
+                    {
+                        $this->Session->setFlash(__('Deal transfer request updated successfully.'), 'flash', array('alert' => 'success'));
+                    }
                     return $this->redirect(array('action' => 'view', $id));
                 }
                 $this->Session->setFlash(__('Unable to update deal transfer request.'), 'flash', array('alert' => 'danger'));
@@ -810,7 +903,14 @@ class DealtransfersController extends AdminAppController
             'snapshot_json' => json_encode(array('sourceDeal' => $sourceDeal, 'targetDeal' => $targetDeal)),
             'created_by' => (int)$this->luserId
         );
-        if($id > 0) { unset($data['created_by']); }
+        if($id > 0)
+        {
+            unset($data['created_by']);
+        }
+        else
+        {
+            $data['id'] = $this->_nextAvailableId($this->Dealtransfer, 'deal_transfers', 'id');
+        }
         return array('ok' => true, 'data' => $data);
     }
 
@@ -934,9 +1034,13 @@ class DealtransfersController extends AdminAppController
             try { $db->rawQuery($qTransfers); } catch(Exception $e) { try { $db->query($qTransfers); } catch(Exception $e2) {} }
         }
 
+        $this->_repairTableAutoIncrement($db, 'deal_transfers', 'bigint(20)');
+        $this->_repairTableAutoIncrement($db, 'deal_transfer_settings', 'bigint(20)');
+        $this->_repairTableAutoIncrement($db, 'deals_payments', 'int(11)');
+        $this->_repairTableAutoIncrement($db, 'plans_payments', 'int(11)');
+        $this->_repairTableAutoIncrement($db, 'deal_charges', 'bigint(20)');
+
         $alters = array(
-            "ALTER TABLE `deal_transfers` MODIFY COLUMN `id` bigint(20) NOT NULL AUTO_INCREMENT",
-            "ALTER TABLE `deal_transfer_settings` MODIFY COLUMN `id` bigint(20) NOT NULL AUTO_INCREMENT",
             "ALTER TABLE `deal_transfers` ADD COLUMN `fee_deduction_source` varchar(30) NOT NULL DEFAULT 'file_paid' AFTER `processing_fee`",
             "ALTER TABLE `deal_transfers` ADD COLUMN `net_merge_amount` decimal(15,2) NOT NULL DEFAULT 0.00 AFTER `fee_deduction_source`",
             "ALTER TABLE `deal_transfers` ADD COLUMN `fee_voucher_transaction_id` bigint(20) NOT NULL DEFAULT 0 AFTER `fee_charge_id`",
@@ -951,6 +1055,87 @@ class DealtransfersController extends AdminAppController
             try { $db->rawQuery($q); } catch(Exception $e) { try { $db->query($q); } catch(Exception $e2) {} }
         }
         return true;
+    }
+
+    protected function _repairTableAutoIncrement($db, $tableName, $type = 'bigint(20)')
+    {
+        try
+        {
+            $tables = (array)$db->listSources();
+            if(!in_array($tableName, $tables, true))
+            {
+                return;
+            }
+            // 1. Clean id = 0 records if any exist
+            $chk = $db->query("SELECT COUNT(*) AS cnt FROM `{$tableName}` WHERE `id` = 0");
+            $zeroCount = !empty($chk[0][0]['cnt']) ? (int)$chk[0][0]['cnt'] : 0;
+            while($zeroCount > 0)
+            {
+                $maxRow = $db->query("SELECT MAX(`id`) AS max_id FROM `{$tableName}`");
+                $maxVal = !empty($maxRow[0][0]['max_id']) ? (int)$maxRow[0][0]['max_id'] : 0;
+                $newVal = $maxVal + 1;
+                $db->query("UPDATE `{$tableName}` SET `id` = {$newVal} WHERE `id` = 0 LIMIT 1");
+                $chk = $db->query("SELECT COUNT(*) AS cnt FROM `{$tableName}` WHERE `id` = 0");
+                $zeroCount = !empty($chk[0][0]['cnt']) ? (int)$chk[0][0]['cnt'] : 0;
+            }
+
+            // 2. Check if primary key and auto_increment exist on id
+            $cols = $db->query("SHOW FULL COLUMNS FROM `{$tableName}`");
+            $hasPk = false;
+            $isAi = false;
+            foreach((array)$cols as $col)
+            {
+                $f = isset($col['COLUMNS']) ? $col['COLUMNS'] : (isset($col['columns']) ? $col['columns'] : array());
+                if(!empty($f['Field']) && strtolower($f['Field']) === 'id')
+                {
+                    if(!empty($f['Key']) && $f['Key'] === 'PRI') { $hasPk = true; }
+                    if(!empty($f['Extra']) && strpos($f['Extra'], 'auto_increment') !== false) { $isAi = true; }
+                }
+            }
+
+            if(!$isAi)
+            {
+                if(!$hasPk)
+                {
+                    $db->query("ALTER TABLE `{$tableName}` MODIFY `id` {$type} NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY (`id`)");
+                }
+                else
+                {
+                    $db->query("ALTER TABLE `{$tableName}` MODIFY `id` {$type} NOT NULL AUTO_INCREMENT");
+                }
+            }
+        }
+        catch(Exception $e) {}
+    }
+
+    protected function _nextAvailableId($model, $tableName, $pk = 'id')
+    {
+        try
+        {
+            if(!empty($model) && is_object($model))
+            {
+                $row = $model->find('first', array(
+                    'fields' => array('MAX('.$model->alias.'.'.$pk.') AS max_id'),
+                    'recursive' => -1
+                ));
+                if(isset($row[0]['max_id']) && $row[0]['max_id'] !== null && (int)$row[0]['max_id'] > 0)
+                {
+                    return (int)$row[0]['max_id'] + 1;
+                }
+            }
+            App::uses('ConnectionManager', 'Model');
+            $db = ConnectionManager::getDataSource('default');
+            if($db && is_object($db))
+            {
+                $res = $db->query("SELECT MAX(`".$pk."`) AS max_id FROM `".$tableName."`");
+                $maxId = 0;
+                if(!empty($res[0][0]['max_id'])) { $maxId = (int)$res[0][0]['max_id']; }
+                elseif(!empty($res[0][$tableName]['max_id'])) { $maxId = (int)$res[0][$tableName]['max_id']; }
+                return $maxId + 1;
+            }
+        }
+        catch(Exception $e) {}
+        return 1;
     }
 
     protected function _refreshTransferModels()
@@ -1078,9 +1263,21 @@ class DealtransfersController extends AdminAppController
         if(!empty($row['Dealtransfersetting'])) { return array_merge($defaults, $row['Dealtransfersetting']); }
         if($create)
         {
-            $this->Dealtransfersetting->create();
-            $this->Dealtransfersetting->save(array('Dealtransfersetting' => $defaults), array('validate' => false));
-            $defaults['id'] = (int)$this->Dealtransfersetting->id;
+            try
+            {
+                $maxId = $this->_nextAvailableId($this->Dealtransfersetting, 'deal_transfer_settings', 'id');
+                $defaults['id'] = $maxId;
+                $this->Dealtransfersetting->create();
+                $this->Dealtransfersetting->save(array('Dealtransfersetting' => $defaults), array('validate' => false));
+                if(!empty($this->Dealtransfersetting->id))
+                {
+                    $defaults['id'] = (int)$this->Dealtransfersetting->id;
+                }
+            }
+            catch(Exception $e)
+            {
+                // Never crash page load if settings row fails to save
+            }
         }
         return $defaults;
     }
@@ -1175,8 +1372,10 @@ class DealtransfersController extends AdminAppController
 
         $paymentDate = $this->_normalizeDate(isset($row['request_date']) ? $row['request_date'] : date('Y-m-d'));
         $mergePlanId = $this->_createMergeCreditPlan($targetDealId, $mergeCredit, $paymentDate);
+        $nextPaymentId = $this->_nextAvailableId($this->DealsPayment, 'deals_payments', 'id');
         $this->DealsPayment->create();
         if(!$this->DealsPayment->save(array('DealsPayment' => array(
+            'id' => $nextPaymentId,
             'property_id' => $targetPropertyId,
             'deal_id' => $targetDealId,
             'paymenttype_id' => $paymentTypeId,
@@ -1195,7 +1394,7 @@ class DealtransfersController extends AdminAppController
         {
             throw new Exception(__('Unable to post merged payment on target deal.'));
         }
-        $createdPaymentId = (int)$this->DealsPayment->id;
+        $createdPaymentId = !empty($this->DealsPayment->id) ? (int)$this->DealsPayment->id : $nextPaymentId;
 
         return array(
             'amount' => $mergeCredit,
@@ -1294,8 +1493,10 @@ class DealtransfersController extends AdminAppController
         {
             throw new Exception(__('Unable to create target merge credit plan.'));
         }
+        $nextPlanId = $this->_nextAvailableId($this->PlansPayment, 'plans_payments', 'id');
         $this->PlansPayment->create();
         if(!$this->PlansPayment->save(array('PlansPayment' => array(
+            'id' => $nextPlanId,
             'deal_id' => (int)$targetDealId,
             'name' => __('Merged Transfer Credit'),
             'amount' => $amount,
@@ -1304,7 +1505,7 @@ class DealtransfersController extends AdminAppController
         {
             throw new Exception(__('Unable to create target merge credit plan.'));
         }
-        return (int)$this->PlansPayment->id;
+        return !empty($this->PlansPayment->id) ? (int)$this->PlansPayment->id : $nextPlanId;
     }
 
     protected function _mergePaymentTypeId($sourceRows)
@@ -1510,10 +1711,11 @@ class DealtransfersController extends AdminAppController
     {
         $this->loadModel('Admin.DealCharge');
         if((float)$fee <= 0) { return 0; }
+        $nextChargeId = $this->_nextAvailableId($this->DealCharge, 'deal_charges', 'id');
         $this->DealCharge->create();
-        if($this->DealCharge->save(array('DealCharge' => array('deal_id' => (int)$dealId, 'project_id' => (int)$projectId, 'charge_name' => 'Deal Transfer Processing Fee', 'cycle_type' => 'O', 'cycle_count' => 1, 'cycle_amount' => (float)$fee, 'total_amount' => (float)$fee, 'start_date' => date('Y-m-d'), 'status' => 1, 'created_by' => (int)$this->luserId)), array('validate' => false)))
+        if($this->DealCharge->save(array('DealCharge' => array('id' => $nextChargeId, 'deal_id' => (int)$dealId, 'project_id' => (int)$projectId, 'charge_name' => 'Deal Transfer Processing Fee', 'cycle_type' => 'O', 'cycle_count' => 1, 'cycle_amount' => (float)$fee, 'total_amount' => (float)$fee, 'start_date' => date('Y-m-d'), 'status' => 1, 'created_by' => (int)$this->luserId)), array('validate' => false)))
         {
-            return (int)$this->DealCharge->id;
+            return !empty($this->DealCharge->id) ? (int)$this->DealCharge->id : $nextChargeId;
         }
         return 0;
     }
@@ -1529,7 +1731,8 @@ class DealtransfersController extends AdminAppController
         if($projectId <= 0 || $ledgerId <= 0) { return array('id' => 0, 'ref_no' => '', 'ledger_id' => 0); }
         $refNo = $this->_nextVoucherReferenceNo($projectId, 'income');
         $dealId = ($row['transfer_type'] === 'Merge' && !empty($row['target_deal_id'])) ? (int)$row['target_deal_id'] : (int)$row['source_deal_id'];
-        $description = 'Deal transfer processing fee';
+        $feeSource = (!empty($row['fee_deduction_source']) && $row['fee_deduction_source'] === 'file_paid') ? ' (Deducted from Paid Balance)' : ' (Cash/Bank Separate)';
+        $description = 'Deal transfer processing fee' . $feeSource;
         if(!empty($row['transfer_no'])) { $description .= ' '.$row['transfer_no']; }
         if($dealId > 0) { $description .= ' - Deal #'.$dealId; }
         $txId = $this->_ardPostAutoVoucher(

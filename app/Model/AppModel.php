@@ -428,6 +428,59 @@ class AppModel extends Model {
     public function beforeSave($options = array())
     {
         $alias = $this->alias;
+        $pk = !empty($this->primaryKey) ? $this->primaryKey : 'id';
+
+        // Universal primary key auto-population for new records:
+        // Protects against MySQL error 1364 ("Field 'id' doesn't have a default value")
+        // when tables lack AUTO_INCREMENT or strict mode is enforced on live cPanel database.
+        if(!empty($this->useTable) && $this->useTable !== false && $this->useTable !== 'cake_sessions')
+        {
+            $hasIdInData = isset($this->data[$alias][$pk]) && (string)$this->data[$alias][$pk] !== '' && (string)$this->data[$alias][$pk] !== '0';
+            $hasModelId = !empty($this->id) && (string)$this->id !== '0';
+            if(!$hasIdInData && !$hasModelId)
+            {
+                try
+                {
+                    $db = $this->getDataSource();
+                    if($db && is_object($db))
+                    {
+                        $table = !empty($this->table) ? $this->table : $this->useTable;
+                        if(empty($table))
+                        {
+                            $table = Inflector::tableize($this->name);
+                        }
+                        if(!empty($table))
+                        {
+                            $res = $db->query("SELECT MAX(`" . $pk . "`) AS max_id FROM `" . $table . "`");
+                            $maxId = 0;
+                            if(!empty($res[0][0]['max_id']))
+                            {
+                                $maxId = (int)$res[0][0]['max_id'];
+                            }
+                            elseif(!empty($res[0][$table]['max_id']))
+                            {
+                                $maxId = (int)$res[0][$table]['max_id'];
+                            }
+                            elseif(isset($res[0]['max_id']))
+                            {
+                                $maxId = (int)$res[0]['max_id'];
+                            }
+                            $nextId = $maxId + 1;
+                            if(!isset($this->data[$alias]) || !is_array($this->data[$alias]))
+                            {
+                                $this->data[$alias] = array();
+                            }
+                            $this->data[$alias][$pk] = $nextId;
+                        }
+                    }
+                }
+                catch(Exception $e)
+                {
+                    // Fail gracefully and let database handle insert
+                }
+            }
+        }
+
         // Never hash credentials for SMTP, SMS, Facebook, or WhatsApp configuration models
         if(in_array($alias, array('Emailsetting', 'Smssetting', 'FacebookSetting', 'WhatsappSetting', 'WhatsappProjectGateway')))
         {
