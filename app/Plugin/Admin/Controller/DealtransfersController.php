@@ -7,6 +7,7 @@ class DealtransfersController extends AdminAppController
     public $helpers = array('Html', 'Form', 'Session', 'Paginator', 'Js' => array('Jquery'));
     public $components = array('Session', 'Paginator');
     public $paginate = array('page' => 1, 'order' => array('Dealtransfer.id' => 'desc'));
+    public $uses = array();
 
     protected $_transferTypes = array(
         'Transfer' => 'Transfer Deal',
@@ -20,11 +21,23 @@ class DealtransfersController extends AdminAppController
         'Custom' => 'Custom Amount'
     );
 
+    protected $_feeDeductionSources = array(
+        'file_paid' => 'Deduct from Paid Amount (From Property Paid Balance)',
+        'cash_separate' => 'Cash / Bank (Pay Separately)'
+    );
+
+    public function constructClasses()
+    {
+        $this->_ensureTransferSchema();
+        return parent::constructClasses();
+    }
+
     public function beforeFilter()
     {
-        parent::beforeFilter();
+        $this->_ensureTransferSchema();
         $this->loadModel('Admin.Dealtransfer');
         $this->loadModel('Admin.Dealtransfersetting');
+        parent::beforeFilter();
         if($this->_isSuperAdminSession((array)$this->adminValue))
         {
             $this->userPermissionArr = $this->_defaultFullPermission();
@@ -37,7 +50,7 @@ class DealtransfersController extends AdminAppController
         $runBootstrap = !$this->_transferTablesReady();
         if(method_exists($this, '_shouldRunControllerBootstrap'))
         {
-            $runBootstrap = $runBootstrap || $this->_shouldRunControllerBootstrap('dealtransfers.schema', '2026-06-02.1');
+            $runBootstrap = $runBootstrap || $this->_shouldRunControllerBootstrap('dealtransfers.schema', '2026-06-02.2');
         }
         if($runBootstrap)
         {
@@ -200,6 +213,7 @@ class DealtransfersController extends AdminAppController
                 'create_fee_voucher' => !empty($row['create_fee_voucher']) ? 1 : 0,
                 'fee_voucher_ledger_id' => max(0, (int)(isset($row['fee_voucher_ledger_id']) ? $row['fee_voucher_ledger_id'] : 0)),
                 'default_fee_type' => isset($row['default_fee_type']) && isset($this->_feeTypes[$row['default_fee_type']]) ? $row['default_fee_type'] : 'Fixed',
+                'default_fee_deduction_source' => isset($row['default_fee_deduction_source']) && isset($this->_feeDeductionSources[$row['default_fee_deduction_source']]) ? $row['default_fee_deduction_source'] : 'file_paid',
                 'default_transfer_fee' => max(0, (float)(isset($row['default_transfer_fee']) ? $row['default_transfer_fee'] : 0)),
                 'default_merge_fee' => max(0, (float)(isset($row['default_merge_fee']) ? $row['default_merge_fee'] : 0)),
                 'default_fee_percent' => max(0, (float)(isset($row['default_fee_percent']) ? $row['default_fee_percent'] : 0)),
@@ -221,8 +235,9 @@ class DealtransfersController extends AdminAppController
         $agencyOptions = $this->_agencyOptions(true);
         $feeLedgerOptions = $this->_feeVoucherLedgerOptions($projectId);
         $feeTypes = $this->_feeTypes;
+        $feeDeductionSources = $this->_feeDeductionSources;
         $canUseAgencyFilters = true;
-        $this->set(compact('projectId', 'agencyOptions', 'feeLedgerOptions', 'feeTypes', 'canUseAgencyFilters'));
+        $this->set(compact('projectId', 'agencyOptions', 'feeLedgerOptions', 'feeTypes', 'feeDeductionSources', 'canUseAgencyFilters'));
     }
 
     public function finalize($id = null)
@@ -252,7 +267,8 @@ class DealtransfersController extends AdminAppController
             $this->Session->setFlash($allowed['message'], 'flash', array('alert' => 'danger'));
             return $this->redirect(array('action' => 'view', $id));
         }
-        if((float)$row['processing_fee'] > 0 && !$this->_voucherExists(isset($row['fee_voucher_transaction_id']) ? (int)$row['fee_voucher_transaction_id'] : 0))
+        $isFeePaidMode = (!empty($row['fee_deduction_source']) && $row['fee_deduction_source'] === 'file_paid');
+        if((float)$row['processing_fee'] > 0 && !$isFeePaidMode && !$this->_voucherExists(isset($row['fee_voucher_transaction_id']) ? (int)$row['fee_voucher_transaction_id'] : 0))
         {
             $this->Session->setFlash(__('Please pay the processing fee before finalizing this deal transfer.'), 'flash', array('alert' => 'warning'));
             return $this->redirect(array('action' => 'view', $id));
@@ -300,6 +316,13 @@ class DealtransfersController extends AdminAppController
                 $feeChargeId = $this->_createProcessingFeeCharge($chargeDealId, $chargeProjectId, (float)$row['processing_fee']);
             }
             if((float)$row['processing_fee'] > 0 && empty($feeVoucher['id']))
+            {
+                if($isFeePaidMode || !empty($settings['create_fee_voucher']))
+                {
+                    $feeVoucher = $this->_createProcessingFeeVoucher($row, $settings);
+                }
+            }
+            if((float)$row['processing_fee'] > 0 && empty($feeVoucher['id']) && !$isFeePaidMode)
             {
                 throw new Exception(__('Please pay the processing fee before finalizing this deal transfer.'));
             }
@@ -621,6 +644,8 @@ class DealtransfersController extends AdminAppController
         return json_encode(array(
             'ok' => true,
             'deal_id' => (int)$deal['Deal']['id'],
+            'invoice_no' => isset($deal['Deal']['invoice_no']) ? $deal['Deal']['invoice_no'] : ('#'.$deal['Deal']['id']),
+            'property_name' => isset($deal['Property']['name']) ? $deal['Property']['name'] : '',
             'client_id' => (int)$deal['Deal']['client_id'],
             'client_name' => isset($deal['Client']['name']) ? $deal['Client']['name'] : '',
             'project_id' => $projectId,
@@ -629,6 +654,7 @@ class DealtransfersController extends AdminAppController
             'paid_amount' => $paid,
             'balance_amount' => max(0, $total - $paid),
             'default_fee_type' => $settings['default_fee_type'],
+            'default_fee_deduction_source' => isset($settings['default_fee_deduction_source']) ? $settings['default_fee_deduction_source'] : 'file_paid',
             'default_transfer_fee' => (float)$settings['default_transfer_fee'],
             'default_merge_fee' => (float)$settings['default_merge_fee'],
             'default_fee_percent' => (float)$settings['default_fee_percent']
@@ -690,7 +716,8 @@ class DealtransfersController extends AdminAppController
         $agencyOptions = $this->_agencyOptions(false);
         $typeOptions = $this->_transferTypes;
         $feeTypes = $this->_feeTypes;
-        $this->set(compact('dealOptions', 'clientOptions', 'agencyOptions', 'typeOptions', 'feeTypes', 'defaultSettings'));
+        $feeDeductionSources = $this->_feeDeductionSources;
+        $this->set(compact('dealOptions', 'clientOptions', 'agencyOptions', 'typeOptions', 'feeTypes', 'feeDeductionSources', 'defaultSettings'));
     }
 
     protected function _buildTransferSaveData($post, $id = 0)
@@ -737,6 +764,25 @@ class DealtransfersController extends AdminAppController
         if($feeType === 'Waived') { $fee = 0; $feePercent = 0; }
         if($feeType === 'Percent') { $fee = round(($total * $feePercent) / 100, 2); }
         if($fee <= 0 && $feeType === 'Fixed') { $fee = (float)($type === 'Merge' ? $settings['default_merge_fee'] : $settings['default_transfer_fee']); }
+
+        $feeDeductionSource = isset($row['fee_deduction_source']) && isset($this->_feeDeductionSources[$row['fee_deduction_source']]) ? $row['fee_deduction_source'] : (isset($settings['default_fee_deduction_source']) ? $settings['default_fee_deduction_source'] : 'file_paid');
+        $netMergeAmount = 0.0;
+        if($type === 'Merge')
+        {
+            if($feeDeductionSource === 'file_paid')
+            {
+                if($fee > $paid)
+                {
+                    return array('ok' => false, 'message' => sprintf(__('Processing fee (%s) cannot exceed the source deal paid amount (%s) when deducting from paid balance.'), number_format($fee, 2), number_format($paid, 2)));
+                }
+                $netMergeAmount = max(0, round($paid - $fee, 2));
+            }
+            else
+            {
+                $netMergeAmount = $paid;
+            }
+        }
+
         $requestDate = $this->_normalizeDate(isset($row['request_date']) ? $row['request_date'] : date('Y-m-d'));
         $data = array(
             'transfer_no' => !empty($row['transfer_no']) ? $row['transfer_no'] : $this->_nextTransferNo(),
@@ -755,10 +801,12 @@ class DealtransfersController extends AdminAppController
             'processing_fee_type' => $feeType,
             'processing_fee_percent' => $feePercent,
             'processing_fee' => $fee,
+            'fee_deduction_source' => $feeDeductionSource,
+            'net_merge_amount' => $netMergeAmount,
             'status' => 'Draft',
             'request_date' => $requestDate,
             'reason' => isset($row['reason']) ? trim((string)$row['reason']) : '',
-            'steps_json' => json_encode($this->_defaultSteps($type, $fee)),
+            'steps_json' => json_encode($this->_defaultSteps($type, $fee, $feeDeductionSource)),
             'snapshot_json' => json_encode(array('sourceDeal' => $sourceDeal, 'targetDeal' => $targetDeal)),
             'created_by' => (int)$this->luserId
         );
@@ -789,15 +837,37 @@ class DealtransfersController extends AdminAppController
     {
         try
         {
-            return !empty($this->Dealtransfer->query("SHOW TABLES LIKE 'deal_transfers'")) && !empty($this->Dealtransfer->query("SHOW TABLES LIKE 'deal_transfer_settings'"));
+            App::uses('ConnectionManager', 'Model');
+            $db = ConnectionManager::getDataSource('default');
+            $tables = (array)$db->listSources();
+            return in_array('deal_transfers', $tables, true) && in_array('deal_transfer_settings', $tables, true);
         }
         catch(Exception $e) { return false; }
     }
 
     protected function _ensureTransferSchema()
     {
-        $sql = array(
-            "CREATE TABLE IF NOT EXISTS `deal_transfer_settings` (
+        App::uses('ConnectionManager', 'Model');
+        try
+        {
+            $db = ConnectionManager::getDataSource('default');
+            if(!$db || !$db->isConnected())
+            {
+                return false;
+            }
+        }
+        catch(Exception $e)
+        {
+            return false;
+        }
+
+        $tables = (array)$db->listSources();
+        $hasTransfers = in_array('deal_transfers', $tables, true);
+        $hasSettings = in_array('deal_transfer_settings', $tables, true);
+
+        if(!$hasSettings)
+        {
+            $qSettings = "CREATE TABLE IF NOT EXISTS `deal_transfer_settings` (
                 `id` bigint(20) NOT NULL AUTO_INCREMENT,
                 `project_id` int(11) NOT NULL DEFAULT 0,
                 `module_enabled` tinyint(1) NOT NULL DEFAULT 1,
@@ -810,6 +880,7 @@ class DealtransfersController extends AdminAppController
                 `create_fee_voucher` tinyint(1) NOT NULL DEFAULT 1,
                 `fee_voucher_ledger_id` bigint(20) NOT NULL DEFAULT 0,
                 `default_fee_type` varchar(20) NOT NULL DEFAULT 'Fixed',
+                `default_fee_deduction_source` varchar(30) NOT NULL DEFAULT 'file_paid',
                 `default_transfer_fee` decimal(15,2) NOT NULL DEFAULT 0.00,
                 `default_merge_fee` decimal(15,2) NOT NULL DEFAULT 0.00,
                 `default_fee_percent` decimal(8,2) NOT NULL DEFAULT 0.00,
@@ -818,8 +889,13 @@ class DealtransfersController extends AdminAppController
                 `modified` datetime DEFAULT NULL,
                 PRIMARY KEY (`id`),
                 UNIQUE KEY `project_id` (`project_id`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3",
-            "CREATE TABLE IF NOT EXISTS `deal_transfers` (
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
+            try { $db->rawQuery($qSettings); } catch(Exception $e) { try { $db->query($qSettings); } catch(Exception $e2) {} }
+        }
+
+        if(!$hasTransfers)
+        {
+            $qTransfers = "CREATE TABLE IF NOT EXISTS `deal_transfers` (
                 `id` bigint(20) NOT NULL AUTO_INCREMENT,
                 `transfer_no` varchar(40) DEFAULT '',
                 `transfer_type` varchar(20) NOT NULL DEFAULT 'Transfer',
@@ -837,6 +913,8 @@ class DealtransfersController extends AdminAppController
                 `processing_fee_type` varchar(20) NOT NULL DEFAULT 'Fixed',
                 `processing_fee_percent` decimal(8,2) NOT NULL DEFAULT 0.00,
                 `processing_fee` decimal(15,2) NOT NULL DEFAULT 0.00,
+                `fee_deduction_source` varchar(30) NOT NULL DEFAULT 'file_paid',
+                `net_merge_amount` decimal(15,2) NOT NULL DEFAULT 0.00,
                 `status` varchar(20) NOT NULL DEFAULT 'Draft',
                 `request_date` date DEFAULT NULL,
                 `reason` text,
@@ -852,22 +930,33 @@ class DealtransfersController extends AdminAppController
                 `created` datetime DEFAULT NULL,
                 `modified` datetime DEFAULT NULL,
                 PRIMARY KEY (`id`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3"
-        );
-        foreach($sql as $q) { try { $this->Dealtransfer->query($q); } catch(Exception $e) {} }
-        foreach(array(
-            "ALTER TABLE `deal_transfer_settings` ADD COLUMN `create_fee_voucher` tinyint(1) NOT NULL DEFAULT 1 AFTER `create_fee_charge`",
-            "ALTER TABLE `deal_transfer_settings` ADD COLUMN `fee_voucher_ledger_id` bigint(20) NOT NULL DEFAULT 0 AFTER `create_fee_voucher`",
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
+            try { $db->rawQuery($qTransfers); } catch(Exception $e) { try { $db->query($qTransfers); } catch(Exception $e2) {} }
+        }
+
+        $alters = array(
+            "ALTER TABLE `deal_transfers` MODIFY COLUMN `id` bigint(20) NOT NULL AUTO_INCREMENT",
+            "ALTER TABLE `deal_transfer_settings` MODIFY COLUMN `id` bigint(20) NOT NULL AUTO_INCREMENT",
+            "ALTER TABLE `deal_transfers` ADD COLUMN `fee_deduction_source` varchar(30) NOT NULL DEFAULT 'file_paid' AFTER `processing_fee`",
+            "ALTER TABLE `deal_transfers` ADD COLUMN `net_merge_amount` decimal(15,2) NOT NULL DEFAULT 0.00 AFTER `fee_deduction_source`",
             "ALTER TABLE `deal_transfers` ADD COLUMN `fee_voucher_transaction_id` bigint(20) NOT NULL DEFAULT 0 AFTER `fee_charge_id`",
             "ALTER TABLE `deal_transfers` ADD COLUMN `reversed_by` int(11) NOT NULL DEFAULT 0 AFTER `finalized_at`",
-            "ALTER TABLE `deal_transfers` ADD COLUMN `reversed_at` datetime DEFAULT NULL AFTER `reversed_by`"
-        ) as $q) { try { $this->Dealtransfer->query($q); } catch(Exception $e) {} }
+            "ALTER TABLE `deal_transfers` ADD COLUMN `reversed_at` datetime DEFAULT NULL AFTER `reversed_by`",
+            "ALTER TABLE `deal_transfer_settings` ADD COLUMN `create_fee_voucher` tinyint(1) NOT NULL DEFAULT 1 AFTER `create_fee_charge`",
+            "ALTER TABLE `deal_transfer_settings` ADD COLUMN `fee_voucher_ledger_id` bigint(20) NOT NULL DEFAULT 0 AFTER `create_fee_voucher`",
+            "ALTER TABLE `deal_transfer_settings` ADD COLUMN `default_fee_deduction_source` varchar(30) NOT NULL DEFAULT 'file_paid' AFTER `default_fee_percent`"
+        );
+        foreach($alters as $q)
+        {
+            try { $db->rawQuery($q); } catch(Exception $e) { try { $db->query($q); } catch(Exception $e2) {} }
+        }
+        return true;
     }
 
     protected function _refreshTransferModels()
     {
-        try { $this->Dealtransfer->schema(true); } catch(Exception $e) {}
-        try { $this->Dealtransfersetting->schema(true); } catch(Exception $e) {}
+        if(!empty($this->Dealtransfer)) { try { $this->Dealtransfer->schema(true); } catch(Exception $e) {} }
+        if(!empty($this->Dealtransfersetting)) { try { $this->Dealtransfersetting->schema(true); } catch(Exception $e) {} }
     }
 
     protected function _dealOptions()
@@ -1064,10 +1153,20 @@ class DealtransfersController extends AdminAppController
             return array('amount' => 0, 'payment_ids' => array(), 'created_plan_ids' => array(), 'receipt_no' => '', 'source_payment_ids' => $sourcePaymentIds);
         }
 
+        $feeDeductionSource = isset($row['fee_deduction_source']) ? $row['fee_deduction_source'] : 'file_paid';
+        $feeAmount = round((float)(isset($row['processing_fee']) ? $row['processing_fee'] : 0), 2);
+        $mergeCredit = $sourcePaid;
+        $feeDeducted = 0.0;
+        if($feeDeductionSource === 'file_paid' && $feeAmount > 0)
+        {
+            $feeDeducted = ($feeAmount >= $sourcePaid) ? $sourcePaid : $feeAmount;
+            $mergeCredit = max(0, round($sourcePaid - $feeDeducted, 2));
+        }
+
         $sourceDeal = $this->_fetchDealDetails($sourceDealId);
         $targetDeal = $this->_fetchDealDetails($targetDealId);
         $receiptNo = $this->_mergeReceiptNo($row);
-        $remarks = $this->_mergeSummaryRemarks($row, $sourceDeal, $targetDeal, $sourceReceipts);
+        $remarks = $this->_mergeSummaryRemarks($row, $sourceDeal, $targetDeal, $sourceReceipts, $sourcePaid, $feeDeducted, $mergeCredit, $feeDeductionSource);
         $paymentTypeId = $this->_mergePaymentTypeId($sourceRows);
         if($paymentTypeId <= 0)
         {
@@ -1075,7 +1174,7 @@ class DealtransfersController extends AdminAppController
         }
 
         $paymentDate = $this->_normalizeDate(isset($row['request_date']) ? $row['request_date'] : date('Y-m-d'));
-        $mergePlanId = $this->_createMergeCreditPlan($targetDealId, $sourcePaid, $paymentDate);
+        $mergePlanId = $this->_createMergeCreditPlan($targetDealId, $mergeCredit, $paymentDate);
         $this->DealsPayment->create();
         if(!$this->DealsPayment->save(array('DealsPayment' => array(
             'property_id' => $targetPropertyId,
@@ -1083,11 +1182,11 @@ class DealtransfersController extends AdminAppController
             'paymenttype_id' => $paymentTypeId,
             'plans_payment_id' => $mergePlanId,
             'receipt_no' => $receiptNo,
-            'emi' => $sourcePaid,
+            'emi' => $mergeCredit,
             'extra_payment' => round($sourceExtra, 2),
-            'total_amount' => $sourcePaid,
+            'total_amount' => $mergeCredit,
             'tax_amount' => round($sourceTax, 2),
-            'amount' => round($sourcePaid + $sourceExtra + $sourceTax, 2),
+            'amount' => round($mergeCredit + $sourceExtra + $sourceTax, 2),
             'payment_date' => $paymentDate,
             'remarks' => $remarks,
             'ard_transaction_id' => 0,
@@ -1099,7 +1198,10 @@ class DealtransfersController extends AdminAppController
         $createdPaymentId = (int)$this->DealsPayment->id;
 
         return array(
-            'amount' => $sourcePaid,
+            'amount' => $mergeCredit,
+            'gross_paid' => $sourcePaid,
+            'fee_deducted' => $feeDeducted,
+            'fee_deduction_source' => $feeDeductionSource,
             'extra_payment' => round($sourceExtra, 2),
             'tax_amount' => round($sourceTax, 2),
             'receipt_no' => $receiptNo,
@@ -1234,7 +1336,7 @@ class DealtransfersController extends AdminAppController
         return $receiptNo;
     }
 
-    protected function _mergeSummaryRemarks($row, $sourceDeal, $targetDeal, $sourceReceipts = array())
+    protected function _mergeSummaryRemarks($row, $sourceDeal, $targetDeal, $sourceReceipts = array(), $grossPaid = 0, $feeDeducted = 0, $mergeCredit = 0, $feeDeductionSource = 'file_paid')
     {
         $sourceInvoice = !empty($sourceDeal['Deal']['invoice_no']) ? $sourceDeal['Deal']['invoice_no'] : ('#'.(int)$row['source_deal_id']);
         $targetInvoice = !empty($targetDeal['Deal']['invoice_no']) ? $targetDeal['Deal']['invoice_no'] : ('#'.(int)$row['target_deal_id']);
@@ -1242,9 +1344,17 @@ class DealtransfersController extends AdminAppController
         $targetClient = !empty($targetDeal['Client']['name']) ? $targetDeal['Client']['name'] : __('Target Client');
         $parts = array(
             'Internal merge credit',
-            'from '.$sourceClient.' '.$sourceInvoice,
-            'to '.$targetClient.' '.$targetInvoice
+            'from '.$sourceClient.' ('.$sourceInvoice.')',
+            'to '.$targetClient.' ('.$targetInvoice.')'
         );
+        if($feeDeducted > 0)
+        {
+            $parts[] = 'Gross Paid: '.number_format($grossPaid, 2).' - Fee: '.number_format($feeDeducted, 2).' = Net Merge: '.number_format($mergeCredit, 2).' (Deducted from paid balance)';
+        }
+        elseif($mergeCredit > 0)
+        {
+            $parts[] = 'Merged Credit: '.number_format($mergeCredit, 2).' (Fee paid separately)';
+        }
         if(!empty($row['transfer_no']))
         {
             $parts[] = 'Transfer '.$row['transfer_no'];
@@ -1523,14 +1633,22 @@ class DealtransfersController extends AdminAppController
         return $this->_ardRecalculateLedgerBalanceCompat($ledgerId);
     }
 
-    protected function _defaultSteps($type, $fee)
+    protected function _defaultSteps($type, $fee, $feeDeductionSource = 'file_paid')
     {
         $steps = array('Request created', 'Source deal and client verified', 'Processing fee calculated');
         if($type === 'Merge')
         {
             $steps[] = 'Target deal selected for same-client merge';
             $steps[] = 'Source payment history will remain on source deal for audit';
-            $steps[] = 'Single merge payment receipt will be posted on target deal';
+            if((float)$fee > 0 && $feeDeductionSource === 'file_paid')
+            {
+                $steps[] = 'Processing fee will be auto-deducted from paid file amount';
+                $steps[] = 'Net remaining paid amount will merge into target deal';
+            }
+            else
+            {
+                $steps[] = 'Single merge payment receipt will be posted on target deal';
+            }
         }
         else
         {
@@ -1539,7 +1657,14 @@ class DealtransfersController extends AdminAppController
         if((float)$fee > 0)
         {
             $steps[] = 'Processing fee charge will be created on finalization';
-            $steps[] = 'Processing fee voucher must be paid before finalization';
+            if($feeDeductionSource === 'cash_separate')
+            {
+                $steps[] = 'Processing fee voucher must be paid before finalization';
+            }
+            else
+            {
+                $steps[] = 'Processing fee voucher auto-settled from paid funds';
+            }
         }
         $steps[] = 'Original deal history remains available';
         return $steps;
@@ -1547,19 +1672,25 @@ class DealtransfersController extends AdminAppController
 
     protected function _feeVoucherCreatedSteps($row, $feeVoucher)
     {
+        $feeDeductionSource = isset($row['fee_deduction_source']) ? $row['fee_deduction_source'] : 'file_paid';
         $steps = $this->_decodeJson(isset($row['steps_json']) ? $row['steps_json'] : '');
-        if(empty($steps)) { $steps = $this->_defaultSteps(isset($row['transfer_type']) ? $row['transfer_type'] : 'Transfer', isset($row['processing_fee']) ? $row['processing_fee'] : 0); }
+        if(empty($steps)) { $steps = $this->_defaultSteps(isset($row['transfer_type']) ? $row['transfer_type'] : 'Transfer', isset($row['processing_fee']) ? $row['processing_fee'] : 0, $feeDeductionSource); }
         $ref = !empty($feeVoucher['ref_no']) ? ' '.$feeVoucher['ref_no'] : ' #'.(int)$feeVoucher['id'];
         return $this->_appendTransferStep($steps, 'Processing fee voucher created'.$ref);
     }
 
     protected function _finalizedSteps($row, $feeChargeId = 0, $feeVoucher = array())
     {
+        $feeDeductionSource = isset($row['fee_deduction_source']) ? $row['fee_deduction_source'] : 'file_paid';
         $steps = $this->_decodeJson(isset($row['steps_json']) ? $row['steps_json'] : '');
-        if(empty($steps)) { $steps = $this->_defaultSteps(isset($row['transfer_type']) ? $row['transfer_type'] : 'Transfer', isset($row['processing_fee']) ? $row['processing_fee'] : 0); }
+        if(empty($steps)) { $steps = $this->_defaultSteps(isset($row['transfer_type']) ? $row['transfer_type'] : 'Transfer', isset($row['processing_fee']) ? $row['processing_fee'] : 0, $feeDeductionSource); }
         $steps = $this->_appendTransferStep($steps, 'Deal transfer finalized');
         if(isset($row['transfer_type']) && $row['transfer_type'] === 'Merge')
         {
+            if((float)(isset($row['processing_fee']) ? $row['processing_fee'] : 0) > 0 && $feeDeductionSource === 'file_paid')
+            {
+                $steps = $this->_appendTransferStep($steps, 'Fee deducted from paid balance (Net merge: '.number_format(isset($row['net_merge_amount']) ? (float)$row['net_merge_amount'] : 0, 2).')');
+            }
             $steps = $this->_appendTransferStep($steps, 'Target merge payment receipt created');
             $steps = $this->_appendTransferStep($steps, 'Source deal payment history kept for audit');
         }

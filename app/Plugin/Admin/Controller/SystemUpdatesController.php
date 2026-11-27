@@ -90,6 +90,93 @@ class SystemUpdatesController extends AdminAppController
             // Ignore if column already exists
         }
 
+        // 2c. Ensure deal transfers and settings tables & self-healing columns
+        try {
+            $tables = (array)$db->listSources();
+            if(!in_array('deal_transfer_settings', $tables, true)) {
+                $db->query("CREATE TABLE IF NOT EXISTS `deal_transfer_settings` (
+                    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+                    `project_id` int(11) NOT NULL DEFAULT 0,
+                    `module_enabled` tinyint(1) NOT NULL DEFAULT 1,
+                    `transfer_enabled` tinyint(1) NOT NULL DEFAULT 1,
+                    `merge_enabled` tinyint(1) NOT NULL DEFAULT 1,
+                    `agency_transfer_enabled` tinyint(1) NOT NULL DEFAULT 0,
+                    `same_client_merge_only` tinyint(1) NOT NULL DEFAULT 1,
+                    `require_reason` tinyint(1) NOT NULL DEFAULT 1,
+                    `create_fee_charge` tinyint(1) NOT NULL DEFAULT 1,
+                    `create_fee_voucher` tinyint(1) NOT NULL DEFAULT 1,
+                    `fee_voucher_ledger_id` bigint(20) NOT NULL DEFAULT 0,
+                    `default_fee_type` varchar(20) NOT NULL DEFAULT 'Fixed',
+                    `default_fee_deduction_source` varchar(30) NOT NULL DEFAULT 'file_paid',
+                    `default_transfer_fee` decimal(15,2) NOT NULL DEFAULT 0.00,
+                    `default_merge_fee` decimal(15,2) NOT NULL DEFAULT 0.00,
+                    `default_fee_percent` decimal(8,2) NOT NULL DEFAULT 0.00,
+                    `notes` text,
+                    `created` datetime DEFAULT NULL,
+                    `modified` datetime DEFAULT NULL,
+                    PRIMARY KEY (`id`),
+                    UNIQUE KEY `project_id` (`project_id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+                $syncedTables++;
+            }
+            if(!in_array('deal_transfers', $tables, true)) {
+                $db->query("CREATE TABLE IF NOT EXISTS `deal_transfers` (
+                    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+                    `transfer_no` varchar(40) DEFAULT '',
+                    `transfer_type` varchar(20) NOT NULL DEFAULT 'Transfer',
+                    `source_deal_id` bigint(20) NOT NULL DEFAULT 0,
+                    `target_deal_id` bigint(20) NOT NULL DEFAULT 0,
+                    `source_client_id` bigint(20) NOT NULL DEFAULT 0,
+                    `target_client_id` bigint(20) NOT NULL DEFAULT 0,
+                    `source_project_id` int(11) NOT NULL DEFAULT 0,
+                    `target_project_id` int(11) NOT NULL DEFAULT 0,
+                    `source_property_id` bigint(20) NOT NULL DEFAULT 0,
+                    `target_property_id` bigint(20) NOT NULL DEFAULT 0,
+                    `deal_total_amount` decimal(15,2) NOT NULL DEFAULT 0.00,
+                    `deal_paid_amount` decimal(15,2) NOT NULL DEFAULT 0.00,
+                    `deal_balance_amount` decimal(15,2) NOT NULL DEFAULT 0.00,
+                    `processing_fee_type` varchar(20) NOT NULL DEFAULT 'Fixed',
+                    `processing_fee_percent` decimal(8,2) NOT NULL DEFAULT 0.00,
+                    `processing_fee` decimal(15,2) NOT NULL DEFAULT 0.00,
+                    `fee_deduction_source` varchar(30) NOT NULL DEFAULT 'file_paid',
+                    `net_merge_amount` decimal(15,2) NOT NULL DEFAULT 0.00,
+                    `status` varchar(20) NOT NULL DEFAULT 'Draft',
+                    `request_date` date DEFAULT NULL,
+                    `reason` text,
+                    `steps_json` longtext,
+                    `snapshot_json` longtext,
+                    `fee_charge_id` bigint(20) NOT NULL DEFAULT 0,
+                    `fee_voucher_transaction_id` bigint(20) NOT NULL DEFAULT 0,
+                    `created_by` int(11) NOT NULL DEFAULT 0,
+                    `finalized_by` int(11) NOT NULL DEFAULT 0,
+                    `finalized_at` datetime DEFAULT NULL,
+                    `reversed_by` int(11) NOT NULL DEFAULT 0,
+                    `reversed_at` datetime DEFAULT NULL,
+                    `created` datetime DEFAULT NULL,
+                    `modified` datetime DEFAULT NULL,
+                    PRIMARY KEY (`id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+                $syncedTables++;
+            }
+            $alters = array(
+                "ALTER TABLE `deal_transfers` MODIFY COLUMN `id` bigint(20) NOT NULL AUTO_INCREMENT",
+                "ALTER TABLE `deal_transfer_settings` MODIFY COLUMN `id` bigint(20) NOT NULL AUTO_INCREMENT",
+                "ALTER TABLE `deal_transfers` ADD COLUMN `fee_deduction_source` varchar(30) NOT NULL DEFAULT 'file_paid' AFTER `processing_fee`",
+                "ALTER TABLE `deal_transfers` ADD COLUMN `net_merge_amount` decimal(15,2) NOT NULL DEFAULT 0.00 AFTER `fee_deduction_source`",
+                "ALTER TABLE `deal_transfers` ADD COLUMN `fee_voucher_transaction_id` bigint(20) NOT NULL DEFAULT 0 AFTER `fee_charge_id`",
+                "ALTER TABLE `deal_transfers` ADD COLUMN `reversed_by` int(11) NOT NULL DEFAULT 0 AFTER `finalized_at`",
+                "ALTER TABLE `deal_transfers` ADD COLUMN `reversed_at` datetime DEFAULT NULL AFTER `reversed_by`",
+                "ALTER TABLE `deal_transfer_settings` ADD COLUMN `create_fee_voucher` tinyint(1) NOT NULL DEFAULT 1 AFTER `create_fee_charge`",
+                "ALTER TABLE `deal_transfer_settings` ADD COLUMN `fee_voucher_ledger_id` bigint(20) NOT NULL DEFAULT 0 AFTER `create_fee_voucher`",
+                "ALTER TABLE `deal_transfer_settings` ADD COLUMN `default_fee_deduction_source` varchar(30) NOT NULL DEFAULT 'file_paid' AFTER `default_fee_percent`"
+            );
+            foreach($alters as $alt) {
+                try { $db->rawQuery($alt); } catch(Exception $e) { try { $db->query($alt); } catch(Exception $e2) {} }
+            }
+        } catch (Exception $e) {
+            // Ignore if columns/tables exist
+        }
+
         // 3. Scan for any pending .sql files in database/migrations or app/Config/Schema
         $migrationDirs = array(APP . 'Config' . DS . 'Schema', APP . 'tmp' . DS . 'migrations');
         $executedQueries = 0;

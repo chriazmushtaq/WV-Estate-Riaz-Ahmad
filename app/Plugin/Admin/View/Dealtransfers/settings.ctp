@@ -517,6 +517,12 @@ form.wv-no-auto-layout {
                         <?php echo $this->Form->text('default_merge_fee', array('class'=>'form-control','placeholder'=>'0.00'));?>
                         <span class="dt-field-hint"><?php echo __('Fixed fee for consolidating deals.');?></span>
                     </div>
+
+                    <div class="dt-form-group" style="grid-column: span 2;">
+                        <label><i class="fa fa-sliders" style="color:#0b63ce;"></i> <?php echo __('Default Fee Settlement Method');?></label>
+                        <?php echo $this->Form->select('default_fee_deduction_source', $feeDeductionSources, array('class'=>'form-control','style'=>'font-weight:700;'));?>
+                        <span class="dt-field-hint"><?php echo __('Choose whether the processing fee is deducted from property paid balance by default or collected separately in cash/bank.');?></span>
+                    </div>
                 </div>
 
                 <div class="dt-form-group">

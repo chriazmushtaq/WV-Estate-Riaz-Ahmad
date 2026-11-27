@@ -158,9 +158,13 @@ $pdfFileName = 'Deal-Transfer-'.preg_replace('/[^A-Za-z0-9_-]/', '-', !empty($t[
                     <div class="dt-item"><span class="k"><?php echo __('Source Deal');?></span><span class="v"><?php echo h($sourceDealNo);?></span></div>
                     <div class="dt-item"><span class="k"><?php echo __('Target Deal');?></span><span class="v"><?php echo h($targetDealNo);?></span></div>
                     <div class="dt-item"><span class="k"><?php echo __('Processing Fee');?></span><span class="v"><?php echo h($displayCurrency.' '.number_format((float)$t['processing_fee'],2));?></span></div>
+                    <div class="dt-item"><span class="k"><?php echo __('Fee Settlement Mode');?></span><span class="v"><?php echo (!empty($t['fee_deduction_source']) && $t['fee_deduction_source'] === 'file_paid') ? '<span class="label label-success">'.__('Deduct from Paid Balance').'</span>' : '<span class="label label-warning">'.__('Cash / Bank (Separate)').'</span>';?></span></div>
+                    <?php if(!empty($t['transfer_type']) && $t['transfer_type'] === 'Merge'){ ?>
+                    <div class="dt-item"><span class="k"><?php echo __('Net Merged Credit');?></span><span class="v" style="font-weight:900;color:#0b63ce;"><?php echo h($displayCurrency.' '.number_format((float)(isset($t['net_merge_amount']) ? $t['net_merge_amount'] : ($t['deal_paid_amount'] - $t['processing_fee'])),2));?></span></div>
+                    <?php } ?>
                     <div class="dt-item"><span class="k"><?php echo __('Deal Total');?></span><span class="v"><?php echo h($displayCurrency.' '.number_format((float)$t['deal_total_amount'],2));?></span></div>
-                    <div class="dt-item"><span class="k"><?php echo __('Paid');?></span><span class="v"><?php echo h($displayCurrency.' '.number_format((float)$t['deal_paid_amount'],2));?></span></div>
-                    <div class="dt-item"><span class="k"><?php echo __('Balance');?></span><span class="v"><?php echo h($displayCurrency.' '.number_format((float)$t['deal_balance_amount'],2));?></span></div>
+                    <div class="dt-item"><span class="k"><?php echo __('Paid Balance');?></span><span class="v"><?php echo h($displayCurrency.' '.number_format((float)$t['deal_paid_amount'],2));?></span></div>
+                    <div class="dt-item"><span class="k"><?php echo __('Remaining Balance');?></span><span class="v"><?php echo h($displayCurrency.' '.number_format((float)$t['deal_balance_amount'],2));?></span></div>
                     <div class="dt-item"><span class="k"><?php echo __('Fee Voucher');?></span><span class="v"><?php
                         if($feeVoucherTxId > 0)
                         {
@@ -168,9 +172,16 @@ $pdfFileName = 'Deal-Transfer-'.preg_replace('/[^A-Za-z0-9_-]/', '-', !empty($t[
                         }
                         elseif(isset($t['status']) && $t['status'] !== 'Rejected' && (float)$t['processing_fee'] > 0)
                         {
-                            echo $this->Html->link(__('Print Voucher'), array('controller'=>'Dealtransfers','action'=>'printfeevoucher',(int)$t['id']), array('target'=>'_blank'));
-                            echo ' | ';
-                            echo $this->Html->link(__('Pay Fee'), array('controller'=>'Dealtransfers','action'=>'payfeevoucher',(int)$t['id']), array('confirm'=>__('Mark processing fee as paid and create Accounts voucher now?')));
+                            if(!empty($t['fee_deduction_source']) && $t['fee_deduction_source'] === 'file_paid')
+                            {
+                                echo '<span class="text-success"><i class="fa fa-check-circle"></i> '.__('Auto-Deducted from Paid Balance').'</span>';
+                            }
+                            else
+                            {
+                                echo $this->Html->link(__('Print Voucher'), array('controller'=>'Dealtransfers','action'=>'printfeevoucher',(int)$t['id']), array('target'=>'_blank'));
+                                echo ' | ';
+                                echo $this->Html->link(__('Pay Fee'), array('controller'=>'Dealtransfers','action'=>'payfeevoucher',(int)$t['id']), array('confirm'=>__('Mark processing fee as paid and create Accounts voucher now?')));
+                            }
                         }
                         else
                         {
