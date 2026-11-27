@@ -6334,6 +6334,13 @@ HTML;
             $rendered = preg_replace('/(<\/style>)/i', $borderLinesCss . '$1', $rendered, 1);
         }
 
+        if ($isBookingOrWelcome)
+        {
+            $rendered = preg_replace('/padding\s*:\s*(?:30px\s+24px|44px\s+42px\s+38px\s+42px|44px\s+44px\s+38px\s+44px|24px|28px\s+24px)(?:\s*!important)?/i', 'padding: 60px 44px 38px 44px', $rendered);
+            $rendered = preg_replace('/(<div[^>]*class=["\']col-span-)4(\s+space-y-3\s+flex\s+flex-col\s+justify-center["\']>)/i', '$13$2', $rendered);
+            $rendered = preg_replace('/(<div[^>]*class=["\']col-span-)6(\s+flex\s+justify-center\s+items-stretch\s+p-0\.5\s+pt-0["\']>)/i', '$17$2', $rendered);
+        }
+
         $isBookingOrWelcome = (
             in_array($letterType, array('RLT_BOOKING', 'RLT_WELCOME'), true) ||
             stripos($rendered, '13in') !== false ||
@@ -7983,6 +7990,13 @@ HTML;
         {
             $borderLinesCss = "\n        .wv-outer-border-line { position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px; border: 1.5px solid #064e3b; pointer-events: none; z-index: 52; box-sizing: border-box; }\n        .wv-inner-border-line { position: absolute; top: 31px; left: 31px; right: 31px; bottom: 31px; border: 1.5px solid #064e3b; pointer-events: none; z-index: 52; box-sizing: border-box; }\n";
             $rendered = preg_replace('/(<\/style>)/i', $borderLinesCss . '$1', $rendered, 1);
+        }
+
+        if ($isBookingOrWelcome)
+        {
+            $rendered = preg_replace('/padding\s*:\s*(?:30px\s+24px|44px\s+42px\s+38px\s+42px|44px\s+44px\s+38px\s+44px|24px|28px\s+24px)(?:\s*!important)?/i', 'padding: 60px 44px 38px 44px', $rendered);
+            $rendered = preg_replace('/(<div[^>]*class=["\']col-span-)4(\s+space-y-3\s+flex\s+flex-col\s+justify-center["\']>)/i', '$13$2', $rendered);
+            $rendered = preg_replace('/(<div[^>]*class=["\']col-span-)6(\s+flex\s+justify-center\s+items-stretch\s+p-0\.5\s+pt-0["\']>)/i', '$17$2', $rendered);
         }
 
         if (!$isBookingOrWelcome)
