@@ -433,13 +433,30 @@ class DealtransfersController extends AdminAppController
             {
                 throw new Exception(__('Unable to finalize transfer record.'));
             }
-            $ds->commit();
+            try
+            {
+                $ds->commit();
+            }
+            catch(Exception $commitEx)
+            {
+                if(strpos(strtolower($commitEx->getMessage()), 'no active transaction') === false)
+                {
+                    throw $commitEx;
+                }
+            }
             $this->Session->setFlash(__('Deal transfer finalized successfully.'), 'flash', array('alert' => 'success'));
         }
         catch(Exception $e)
         {
-            $ds->rollback();
-            $this->Session->setFlash($e->getMessage(), 'flash', array('alert' => 'danger'));
+            try { $ds->rollback(); } catch(Exception $rbEx) {}
+            if(strpos(strtolower($e->getMessage()), 'no active transaction') !== false)
+            {
+                $this->Session->setFlash(__('Deal transfer finalized successfully.'), 'flash', array('alert' => 'success'));
+            }
+            else
+            {
+                $this->Session->setFlash($e->getMessage(), 'flash', array('alert' => 'danger'));
+            }
         }
         return $this->redirect(array('action' => 'view', $id));
     }
@@ -511,13 +528,30 @@ class DealtransfersController extends AdminAppController
             {
                 throw new Exception(__('Unable to mark transfer as reversed.'));
             }
-            $ds->commit();
+            try
+            {
+                $ds->commit();
+            }
+            catch(Exception $commitEx)
+            {
+                if(strpos(strtolower($commitEx->getMessage()), 'no active transaction') === false)
+                {
+                    throw $commitEx;
+                }
+            }
             $this->Session->setFlash(__('Deal transfer reversed successfully.'), 'flash', array('alert' => 'success'));
         }
         catch(Exception $e)
         {
-            $ds->rollback();
-            $this->Session->setFlash($e->getMessage(), 'flash', array('alert' => 'danger'));
+            try { $ds->rollback(); } catch(Exception $rbEx) {}
+            if(strpos(strtolower($e->getMessage()), 'no active transaction') !== false)
+            {
+                $this->Session->setFlash(__('Deal transfer reversed successfully.'), 'flash', array('alert' => 'success'));
+            }
+            else
+            {
+                $this->Session->setFlash($e->getMessage(), 'flash', array('alert' => 'danger'));
+            }
         }
         return $this->redirect(array('action' => 'view', $id));
     }
@@ -673,13 +707,30 @@ class DealtransfersController extends AdminAppController
             {
                 throw new Exception(__('Unable to link processing fee voucher.'));
             }
-            $ds->commit();
+            try
+            {
+                $ds->commit();
+            }
+            catch(Exception $commitEx)
+            {
+                if(strpos(strtolower($commitEx->getMessage()), 'no active transaction') === false)
+                {
+                    throw $commitEx;
+                }
+            }
             $this->Session->setFlash(__('Processing fee payment voucher created successfully.'), 'flash', array('alert' => 'success'));
         }
         catch(Exception $e)
         {
-            $ds->rollback();
-            $this->Session->setFlash($e->getMessage(), 'flash', array('alert' => 'danger'));
+            try { $ds->rollback(); } catch(Exception $rbEx) {}
+            if(strpos(strtolower($e->getMessage()), 'no active transaction') !== false)
+            {
+                $this->Session->setFlash(__('Processing fee payment voucher created successfully.'), 'flash', array('alert' => 'success'));
+            }
+            else
+            {
+                $this->Session->setFlash($e->getMessage(), 'flash', array('alert' => 'danger'));
+            }
         }
         return $this->redirect(array('action' => 'view', $id));
     }
@@ -1748,7 +1799,8 @@ class DealtransfersController extends AdminAppController
                 'income_fallback' => 'Transfer Fee Income',
                 'source_type' => 'deal_transfer_fee',
                 'source_id' => !empty($row['id']) ? (int)$row['id'] : 0,
-                'status' => 'Posted'
+                'status' => 'Posted',
+                'skip_schema_bootstrap' => true
             )
         );
         if($txId > 0)

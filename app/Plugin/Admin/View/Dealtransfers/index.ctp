@@ -270,7 +270,7 @@ $currency = isset($currency) ? $currency : '';
                                         <?php if($feePaymentPending){ ?>
                                             <li class="disabled"><span title="<?php echo __('Pay processing fee before finalization.');?>"><span class="fa fa-lock"></span> <?php echo __('Fee Pending');?></span></li>
                                         <?php } else { ?>
-                                            <li><?php echo $this->Html->link('<span class="fa fa-check"></span> '.__('Finalize Deal Transfer'), array('controller'=>'Dealtransfers','action'=>'finalize',(int)$t['id']), array('escape'=>false,'confirm'=>__('Finalize this deal transfer now?')));?></li>
+                                            <li><a href="javascript:void(0);" class="btn-trigger-index-finalize" data-id="<?php echo (int)$t['id'];?>" data-ref="<?php echo h(!empty($t['transfer_no']) ? $t['transfer_no'] : ('#'.(int)$t['id']));?>" data-type="<?php echo h($t['transfer_type']);?>" data-source="<?php echo h($sourceTitle);?>" data-target="<?php echo h($targetTitle);?>" data-url="<?php echo $this->Html->url(array('controller'=>'Dealtransfers','action'=>'finalize',(int)$t['id']));?>"><span class="fa fa-check text-success"></span> <?php echo __('Finalize Deal Transfer');?></a></li>
                                         <?php } ?>
                                         <li><?php echo $this->Html->link('<span class="fa fa-ban"></span> '.__('Reject Request'), array('controller'=>'Dealtransfers','action'=>'reject',(int)$t['id']), array('escape'=>false,'confirm'=>__('Reject this request?')));?></li>
                                     <?php } ?>
@@ -298,3 +298,74 @@ $currency = isset($currency) ? $currency : '';
         <?php } ?>
     </div>
 </div>
+
+<!-- Professional Finalize Confirmation Modal for Index -->
+<div class="modal fade" id="modalIndexFinalize" tabindex="-1" role="dialog" aria-labelledby="modalIndexFinalizeTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="border-radius:12px;overflow:hidden;border:none;box-shadow:0 15px 35px rgba(0,0,0,0.25);">
+            <div class="modal-header" style="background:#08213f;color:#fff;padding:16px 20px;border-bottom:none;">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color:#fff;opacity:0.8;font-size:24px;text-shadow:none;">&times;</button>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div style="width:36px;height:36px;border-radius:50%;background:rgba(22,138,83,0.25);border:2px solid #168a53;display:flex;align-items:center;justify-content:center;color:#2ecc71;font-size:16px;">
+                        <i class="fa fa-shield"></i>
+                    </div>
+                    <div>
+                        <h4 class="modal-title" id="modalIndexFinalizeTitle" style="margin:0;font-weight:900;color:#fff;font-size:17px;">
+                            <?php echo __('Confirm & Finalize Deal Transfer');?>
+                        </h4>
+                        <div style="font-size:12px;color:#cfe0f5;margin-top:2px;">
+                            <span id="idxModalRef">-</span> &nbsp;|&nbsp; <span id="idxModalType">Transfer</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body" style="background:#f8fafc;padding:20px;">
+                <div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:14px;margin-bottom:14px;">
+                    <div style="font-size:11px;font-weight:900;text-transform:uppercase;color:#64748b;margin-bottom:4px;"><?php echo __('Transfer Details:');?></div>
+                    <div style="font-size:14px;font-weight:800;color:#0f172a;margin-bottom:6px;" id="idxModalSource">-</div>
+                    <div style="font-size:13px;color:#3b82f6;font-weight:800;" id="idxModalTarget">-</div>
+                </div>
+                <div style="background:#effdf5;border:1px solid #bbf7d0;border-radius:8px;padding:12px 14px;color:#14532d;font-size:12px;line-height:1.5;">
+                    <i class="fa fa-info-circle text-success"></i> <?php echo __('Finalizing will commit the financial transfer, post accounting vouchers, update deal ownership, and unlock the final agreement.');?>
+                </div>
+            </div>
+            <div class="modal-footer" style="background:#f1f5f9;border-top:1px solid #e2e8f0;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    <i class="fa fa-times"></i> <?php echo __('Cancel');?>
+                </button>
+                <a href="#" id="idxBtnDoFinalize" class="btn btn-success" style="font-weight:900;padding:8px 20px;">
+                    <i class="fa fa-check-circle"></i> <?php echo __('Confirm & Finalize Now');?>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+(function(){
+    $(document).on('click', '.btn-trigger-index-finalize', function(e){
+        e.preventDefault();
+        var $el = $(this);
+        var ref = $el.data('ref');
+        var type = $el.data('type');
+        var source = $el.data('source');
+        var target = $el.data('target');
+        var url = $el.data('url');
+
+        $('#idxModalRef').text(ref);
+        $('#idxModalType').text(type);
+        $('#idxModalSource').html('<strong><?php echo __('Source:');?></strong> ' + $('<div>').text(source).html());
+        $('#idxModalTarget').html('<strong><?php echo __('Destination:');?></strong> ' + $('<div>').text(target).html());
+        $('#idxBtnDoFinalize').attr('href', url).removeClass('disabled').html('<i class="fa fa-check-circle"></i> <?php echo __('Confirm & Finalize Now');?>');
+        $('#modalIndexFinalize').modal('show');
+    });
+
+    $(document).on('click', '#idxBtnDoFinalize', function(e){
+        var $btn = $(this);
+        if($btn.hasClass('disabled')){
+            e.preventDefault();
+            return false;
+        }
+        $btn.addClass('disabled').html('<i class="fa fa-spinner fa-spin"></i> <?php echo __('Finalizing... Please wait...');?>');
+    });
+})();
+</script>

@@ -117,7 +117,9 @@ $pdfFileName = 'Deal-Transfer-'.preg_replace('/[^A-Za-z0-9_-]/', '-', !empty($t[
         <div class="dt-page-actions dt-no-print">
             <div class="btn-group">
                 <?php if(isset($t['status']) && $t['status'] === 'Draft'){ ?>
-                    <?php echo $this->Html->link('<span class="fa fa-check"></span> '.__('Finalize'), array('controller'=>'Dealtransfers','action'=>'finalize',(int)$t['id']), array('escape'=>false,'class'=>'btn btn-success','confirm'=>__('Finalize this deal transfer now?')));?>
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalFinalizeTransfer">
+                        <span class="fa fa-check-circle"></span> <?php echo __('Finalize Transfer');?>
+                    </button>
                     <?php echo $this->Html->link('<span class="fa fa-edit"></span> '.__('Edit'), array('controller'=>'Dealtransfers','action'=>'edit',(int)$t['id']), array('escape'=>false,'class'=>'btn btn-warning'));?>
                 <?php } ?>
                 <?php echo $this->Html->link('<span class="fa fa-list"></span> '.__('All Transfers'), array('controller'=>'Dealtransfers','action'=>'index'), array('escape'=>false,'class'=>'btn btn-default'));?>
@@ -232,6 +234,134 @@ $pdfFileName = 'Deal-Transfer-'.preg_replace('/[^A-Za-z0-9_-]/', '-', !empty($t[
         </div>
     </div>
 </div>
+
+<?php if(isset($t['status']) && $t['status'] === 'Draft'){ ?>
+<!-- Professional Finalize Confirmation Modal -->
+<div class="modal fade" id="modalFinalizeTransfer" tabindex="-1" role="dialog" aria-labelledby="modalFinalizeTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" style="border-radius:12px;overflow:hidden;border:none;box-shadow:0 15px 35px rgba(0,0,0,0.25);">
+            <div class="modal-header" style="background:#08213f;color:#fff;padding:18px 24px;border-bottom:none;">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color:#fff;opacity:0.8;font-size:24px;text-shadow:none;">&times;</button>
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div style="width:40px;height:40px;border-radius:50%;background:rgba(22,138,83,0.25);border:2px solid #168a53;display:flex;align-items:center;justify-content:center;color:#2ecc71;font-size:18px;">
+                        <i class="fa fa-shield"></i>
+                    </div>
+                    <div>
+                        <h4 class="modal-title" id="modalFinalizeTitle" style="margin:0;font-weight:900;color:#fff;font-size:18px;">
+                            <?php echo (!empty($t['transfer_type']) && $t['transfer_type'] === 'Merge') ? __('Confirm & Finalize Deal Merge') : __('Confirm & Finalize Deal Transfer');?>
+                        </h4>
+                        <div style="font-size:12px;color:#cfe0f5;margin-top:2px;">
+                            <?php echo __('Transfer Ref:'); ?> <strong><?php echo h(!empty($t['transfer_no']) ? $t['transfer_no'] : ('#'.(int)$t['id']));?></strong> &nbsp;|&nbsp; 
+                            <?php echo __('Action: Finalize Financial Settlement'); ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body" style="background:#f8fafc;padding:24px;">
+                <!-- Summary Grid -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+                    <!-- Source Deal Card -->
+                    <div style="background:#fff;border:1px solid #e2e8f0;border-left:4px solid #c0392b;border-radius:8px;padding:14px;">
+                        <div style="font-size:11px;font-weight:900;text-transform:uppercase;color:#e74c3c;margin-bottom:6px;">
+                            <i class="fa fa-sign-out"></i> <?php echo __('Source Deal (To be Transferred / Closed)');?>
+                        </div>
+                        <div style="font-size:15px;font-weight:900;color:#0f172a;"><?php echo h($sourceDealNo);?></div>
+                        <div style="font-size:13px;color:#475569;margin-top:4px;">
+                            <i class="fa fa-user-circle"></i> <?php echo h(!empty($sourceDeal['Client']['name']) ? $sourceDeal['Client']['name'] : '-');?>
+                        </div>
+                        <div style="font-size:12px;color:#64748b;">
+                            <i class="fa fa-building-o"></i> <?php echo h(!empty($sourceDeal['Property']['name']) ? $sourceDeal['Property']['name'] : '-');?>
+                        </div>
+                        <div style="margin-top:8px;padding-top:8px;border-top:1px dashed #e2e8f0;font-size:12px;color:#334155;">
+                            <?php echo __('Paid Balance:'); ?> <strong class="text-success"><?php echo h($displayCurrency.' '.number_format((float)$t['deal_paid_amount'],2));?></strong>
+                        </div>
+                    </div>
+
+                    <!-- Target Deal / Client Card -->
+                    <div style="background:#fff;border:1px solid #e2e8f0;border-left:4px solid #168a53;border-radius:8px;padding:14px;">
+                        <div style="font-size:11px;font-weight:900;text-transform:uppercase;color:#168a53;margin-bottom:6px;">
+                            <i class="fa fa-sign-in"></i> <?php echo (!empty($t['transfer_type']) && $t['transfer_type'] === 'Merge') ? __('Destination Deal (Receives Credit)') : __('New Assigned Client');?>
+                        </div>
+                        <div style="font-size:15px;font-weight:900;color:#0f172a;"><?php echo h($targetDealNo);?></div>
+                        <div style="font-size:13px;color:#475569;margin-top:4px;">
+                            <i class="fa fa-user-circle"></i> <?php echo h(!empty($targetDeal['Client']['name']) ? $targetDeal['Client']['name'] : (!empty($sourceDeal['Client']['name']) ? $sourceDeal['Client']['name'] : '-'));?>
+                        </div>
+                        <div style="font-size:12px;color:#64748b;">
+                            <i class="fa fa-building-o"></i> <?php echo h(!empty($targetDeal['Property']['name']) ? $targetDeal['Property']['name'] : (!empty($sourceDeal['Property']['name']) ? $sourceDeal['Property']['name'] : '-'));?>
+                        </div>
+                        <?php if(!empty($t['transfer_type']) && $t['transfer_type'] === 'Merge'){ ?>
+                        <div style="margin-top:8px;padding-top:8px;border-top:1px dashed #e2e8f0;font-size:12px;color:#334155;">
+                            <?php echo __('Credit to Post:'); ?> <strong class="text-primary"><?php echo h($displayCurrency.' '.number_format((float)(isset($t['net_merge_amount']) ? $t['net_merge_amount'] : ($t['deal_paid_amount'] - $t['processing_fee'])),2));?></strong>
+                        </div>
+                        <?php } else { ?>
+                        <div style="margin-top:8px;padding-top:8px;border-top:1px dashed #e2e8f0;font-size:12px;color:#334155;">
+                            <?php echo __('Transfer Status:'); ?> <span class="badge badge-success"><?php echo __('Ownership Shift');?></span>
+                        </div>
+                        <?php } ?>
+                    </div>
+                </div>
+
+                <!-- Financial Settlement Table Card -->
+                <div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin-bottom:16px;">
+                    <div style="font-size:12px;font-weight:900;text-transform:uppercase;color:#0f172a;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;">
+                        <span><i class="fa fa-money text-primary"></i> <?php echo __('Financial Settlement Breakdown');?></span>
+                        <?php if(!empty($t['fee_deduction_source']) && $t['fee_deduction_source'] === 'file_paid'){ ?>
+                            <span class="label label-success" style="font-size:11px;padding:4px 8px;"><i class="fa fa-check-circle"></i> <?php echo __('Deducted from Paid Balance');?></span>
+                        <?php } else { ?>
+                            <span class="label label-warning" style="font-size:11px;padding:4px 8px;"><i class="fa fa-info-circle"></i> <?php echo __('Paid Separately (Cash/Bank)');?></span>
+                        <?php } ?>
+                    </div>
+                    <table class="table table-bordered table-condensed" style="margin-bottom:0;font-size:13px;background:#fcfdfd;">
+                        <tbody>
+                            <tr>
+                                <td style="width:50%;color:#475569;"><?php echo __('Source Deal Total Paid Balance:');?></td>
+                                <td style="font-weight:800;text-align:right;color:#0f172a;"><?php echo h($displayCurrency.' '.number_format((float)$t['deal_paid_amount'],2));?></td>
+                            </tr>
+                            <tr>
+                                <td style="color:#475569;"><?php echo __('Transfer / Merge Processing Fee:');?></td>
+                                <td style="font-weight:800;text-align:right;color:#c0392b;"><?php echo ((float)$t['processing_fee'] > 0) ? ('- ' . h($displayCurrency.' '.number_format((float)$t['processing_fee'],2))) : __('Waived (Rs 0.00)');?></td>
+                            </tr>
+                            <?php if(!empty($t['transfer_type']) && $t['transfer_type'] === 'Merge'){ ?>
+                            <tr style="background:#eff6ff;font-size:14px;">
+                                <td style="font-weight:900;color:#1e40af;"><?php echo __('Net Merge Balance Credited to Target File:');?></td>
+                                <td style="font-weight:900;text-align:right;color:#1e40af;font-size:16px;">
+                                    <?php echo h($displayCurrency.' '.number_format((float)(isset($t['net_merge_amount']) ? $t['net_merge_amount'] : ($t['deal_paid_amount'] - $t['processing_fee'])),2));?>
+                                </td>
+                            </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Audit Assurance Checklist -->
+                <div style="background:#effdf5;border:1px solid #bbf7d0;border-radius:8px;padding:12px 16px;color:#14532d;font-size:12px;line-height:1.6;">
+                    <div style="font-weight:900;margin-bottom:4px;display:flex;align-items:center;gap:6px;">
+                        <i class="fa fa-lock text-success"></i> <?php echo __('Safe & Non-Destructive Finalization Rules:');?>
+                    </div>
+                    <ul style="margin:0;padding-left:18px;">
+                        <li><?php echo __('Source payment history is retained in full for audit ledger and tax reconciliation.');?></li>
+                        <?php if(!empty($t['transfer_type']) && $t['transfer_type'] === 'Merge'){ ?>
+                        <li><?php echo __('Single official merge payment receipt will be generated on target deal with full cross-reference remarks.');?></li>
+                        <li><?php echo __('Source file status will be marked as "Transferred" to prevent further duplicate entries.');?></li>
+                        <?php } else { ?>
+                        <li><?php echo __('Client ownership will be updated to target client while keeping complete historical ledger intact.');?></li>
+                        <?php } ?>
+                        <li><?php echo __('Official Deal Transfer / Merge Agreement will be available to print immediately upon completion.');?></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer" style="background:#f1f5f9;border-top:1px solid #e2e8f0;padding:14px 24px;display:flex;justify-content:space-between;align-items:center;">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    <i class="fa fa-times"></i> <?php echo __('Cancel / Review');?>
+                </button>
+                <a href="<?php echo $this->Html->url(array('controller'=>'Dealtransfers','action'=>'finalize',(int)$t['id']));?>" id="btnDoFinalizeSubmit" class="btn btn-success btn-lg" style="font-weight:900;padding:10px 24px;">
+                    <i class="fa fa-check-circle"></i> <?php echo __('Confirm & Finalize Transfer Now');?>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<?php } ?>
 <script type="text/javascript">
 (function(){
     var fileName = <?php echo json_encode($pdfFileName);?>;
@@ -260,6 +390,14 @@ $pdfFileName = 'Deal-Transfer-'.preg_replace('/[^A-Za-z0-9_-]/', '-', !empty($t[
                 pagebreak: { mode: ['css', 'legacy'] }
             };
             html2pdf().set(options).from(area).save();
+        };
+    }
+    var finalizeBtn = document.getElementById('btnDoFinalizeSubmit');
+    if(finalizeBtn)
+    {
+        finalizeBtn.onclick = function(){
+            finalizeBtn.classList.add('disabled');
+            finalizeBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> <?php echo __('Finalizing... Please wait...');?>';
         };
     }
 })();
