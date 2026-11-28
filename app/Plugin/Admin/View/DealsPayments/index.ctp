@@ -1,12 +1,41 @@
 <?php
 echo $this->Html->css('print.css');
-$this->Js->JqueryEngine->jQueryObject = 'jQuery';
-$this->Paginator->options(array(
-    'update' => '#resultDiv',
-    'evalScripts' => true,
-));
+
+// Ensure all required helpers are loaded safely
+if (empty($this->Number) || !is_object($this->Number)) {
+    try { $this->Number = $this->loadHelper('Number'); } catch (Throwable $eH) {}
+}
+if (empty($this->Time) || !is_object($this->Time)) {
+    try { $this->Time = $this->loadHelper('Time'); } catch (Throwable $eH) {}
+}
+if (empty($this->Js) || !is_object($this->Js)) {
+    try { $this->Js = $this->loadHelper('Js', array('Jquery')); } catch (Throwable $eH) {}
+}
+if (empty($this->Paginator) || !is_object($this->Paginator)) {
+    try { $this->Paginator = $this->loadHelper('Paginator'); } catch (Throwable $eH) {}
+}
+
+if (!empty($this->Js) && is_object($this->Js) && isset($this->Js->JqueryEngine)) {
+    $this->Js->JqueryEngine->jQueryObject = 'jQuery';
+}
+if (!empty($this->Paginator) && is_object($this->Paginator)) {
+    $this->Paginator->options(array(
+        'update' => '#resultDiv',
+        'evalScripts' => true,
+    ));
+}
 $clientLedgerPreview = !empty($clientLedgerPreview);
 
+// Safe fallbacks for view variables
+$siteOrganization = isset($siteOrganization) && strlen(trim((string)$siteOrganization)) > 0 ? $siteOrganization : 'White Villas';
+$siteAddress = isset($siteAddress) ? $siteAddress : '';
+$currency = isset($currency) && strlen(trim((string)$currency)) > 0 ? $currency : 'PKR ';
+$sysDay = isset($sysDay) ? $sysDay : 'd';
+$dateSep = isset($dateSep) ? $dateSep : '-';
+$sysMonth = isset($sysMonth) ? $sysMonth : 'M';
+$sysYear = isset($sysYear) ? $sysYear : 'Y';
+$dealPayment = (!empty($dealPayment) && is_array($dealPayment)) ? $dealPayment : array();
+$dealHeaderRow = (!empty($dealHeaderRow) && is_array($dealHeaderRow)) ? $dealHeaderRow : array();
 $firstRow = !empty($dealPayment[0]) ? $dealPayment[0] : (!empty($dealHeaderRow) ? $dealHeaderRow : array());
 $receiptNo = !empty($firstRow['DealsPayment']['receipt_no']) ? $firstRow['DealsPayment']['receipt_no'] : (!empty($firstRow['Deal']['invoice_no']) ? $firstRow['Deal']['invoice_no'] : 'ledger');
 $safeReceiptNo = preg_replace('/[^A-Za-z0-9_-]/', '_', $receiptNo);
@@ -183,7 +212,7 @@ $qrVendorPath = APP . 'Vendor' . DS . 'php-qrcode' . DS . 'qrcode.php';
 if (file_exists($qrVendorPath)) {
     try {
         require_once $qrVendorPath;
-        if (class_exists('QRCode')) {
+        if (class_exists('QRCode') && function_exists('imagecreate') && function_exists('imagepng')) {
             $qrObj = new QRCode($dealQrText, array('s' => 'qrm'));
             $qrImgResource = $qrObj->render_image();
             if ($qrImgResource) {
@@ -196,7 +225,7 @@ if (file_exists($qrVendorPath)) {
                 }
             }
         }
-    } catch (Exception $e) {
+    } catch (Throwable $e) {
         $dealQrDataUri = '';
     }
 }
@@ -234,7 +263,7 @@ $propertyCardTitle = __('Property Price');
 $metricCardsCount = 5 + ($hasDealCharges ? 1 : 0) + ($hasDealDiscount ? 1 : 0);
 $metricCardsClass = 'metric-count-' . (int)$metricCardsCount;
 $paidEquity = 0;
-foreach($dealPayment as $paymentRow)
+foreach((array)$dealPayment as $paymentRow)
 {
     $paidEquity += isset($paymentRow['DealsPayment']['emi']) ? (float)$paymentRow['DealsPayment']['emi'] : 0;
 }

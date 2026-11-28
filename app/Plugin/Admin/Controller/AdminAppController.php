@@ -6,7 +6,7 @@ App::uses('Inflector', 'Utility');
 
 class AdminAppController extends AppController
 {
-    public $helpers = array('Html', 'Form','Session','Paginator','MenuBuilder.MenuBuilder');
+    public $helpers = array('Html', 'Form', 'Session', 'Paginator', 'Time', 'Number', 'NumToWord', 'Js' => array('Jquery'), 'MenuBuilder.MenuBuilder');
     public $components = array('Session','Paginator');
     protected $_userMenuCache = array();
     protected $_menuBootstrapVersion = '2026-11-23.transactions.2';

@@ -10,6 +10,7 @@ $contract = !empty($post['Contract']) ? $post['Contract'] : array();
 $unit = !empty($post['Unit']) ? $post['Unit'] : array();
 $dealTotal = isset($deal['total_amount']) ? (float)$deal['total_amount'] : 0;
 $balanceDue = max(0, $dealTotal - (float)$paidAmount);
+$currency = isset($currency) && strlen(trim((string)$currency)) > 0 ? $currency : 'PKR ';
 $money = function($value) use ($currency) {
     return $currency.number_format((float)$value, 0);
 };

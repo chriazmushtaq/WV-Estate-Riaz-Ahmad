@@ -5,7 +5,7 @@ App::uses('CakeNumber', 'Utility');
 App::uses('Hash', 'Utility');
 App::uses('CakeEmail', 'Network/Email');
 class DealsPaymentsController extends AdminAppController {
-    public $helpers = array('Html', 'Form','Session','NumToWord');
+    public $helpers = array('Html', 'Form', 'Session', 'Paginator', 'Time', 'Number', 'NumToWord', 'Js' => array('Jquery'), 'MenuBuilder.MenuBuilder');
     public $components = array('Session');
     public $uses = array('DealsPayment', 'Deal');
     protected $_dealPaymentBlockedStatuses = array('Transferd','Transferred','Permanent Blocked','Pemanent Blocked','Refund','Refund-Running');
@@ -3215,42 +3215,49 @@ class DealsPaymentsController extends AdminAppController {
                 $allottedUnitNumber = '';
             }
             $agencyLogoFile = '';
-            $projectId = !empty($dealHeaderRow['Project']['id']) ? (int)$dealHeaderRow['Project']['id'] : 0;
-            if($projectId > 0)
-            {
-                $this->loadModel('User');
-                $userFields = array('User.id');
-                if($this->User->hasField('photo'))
+            try {
+                $projectId = !empty($dealHeaderRow['Project']['id']) ? (int)$dealHeaderRow['Project']['id'] : 0;
+                if($projectId > 0)
                 {
-                    $userFields[] = 'User.photo';
+                    $this->loadModel('User');
+                    $userFields = array('User.id');
+                    if($this->User->hasField('photo'))
+                    {
+                        $userFields[] = 'User.photo';
+                    }
+                    $baseConditions = array(
+                        'User.project_id' => $projectId,
+                    );
+                    if($this->User->hasField('photo'))
+                    {
+                        $baseConditions['User.photo <>'] = '';
+                    }
+                    $agencyUserRow = array();
+                    if($this->User->hasField('ugroup_id'))
+                    {
+                        $agencyUserRow = $this->User->find('first', array(
+                            'fields' => $userFields,
+                            'conditions' => array_merge($baseConditions, array('User.ugroup_id' => 4)),
+                            'order' => array('User.id' => 'asc'),
+                            'recursive' => -1
+                        ));
+                    }
+                    if(empty($agencyUserRow))
+                    {
+                        $agencyUserRow = $this->User->find('first', array(
+                            'fields' => $userFields,
+                            'conditions' => $baseConditions,
+                            'order' => array('User.id' => 'asc'),
+                            'recursive' => -1
+                        ));
+                    }
+                    if(!empty($agencyUserRow['User']['photo']))
+                    {
+                        $agencyLogoFile = trim((string)$agencyUserRow['User']['photo']);
+                    }
                 }
-                $baseConditions = array(
-                    'User.project_id' => $projectId,
-                    'User.photo <>' => ''
-                );
-                $agencyUserRow = array();
-                if($this->User->hasField('ugroup_id'))
-                {
-                    $agencyUserRow = $this->User->find('first', array(
-                        'fields' => $userFields,
-                        'conditions' => array_merge($baseConditions, array('User.ugroup_id' => 4)),
-                        'order' => array('User.id' => 'asc'),
-                        'recursive' => -1
-                    ));
-                }
-                if(empty($agencyUserRow))
-                {
-                    $agencyUserRow = $this->User->find('first', array(
-                        'fields' => $userFields,
-                        'conditions' => $baseConditions,
-                        'order' => array('User.id' => 'asc'),
-                        'recursive' => -1
-                    ));
-                }
-                if(!empty($agencyUserRow['User']['photo']))
-                {
-                    $agencyLogoFile = trim((string)$agencyUserRow['User']['photo']);
-                }
+            } catch (Throwable $eLogo) {
+                $agencyLogoFile = '';
             }
             $dealChargeSummary = array();
             try {
@@ -3265,6 +3272,10 @@ class DealsPaymentsController extends AdminAppController {
             } catch (Throwable $eStatus) {
                 CakeLog::write('error', 'Status analysis computation failed for deal '.$id.': '.$eStatus->getMessage());
             }
+            $siteOrganization = !empty($this->siteOrganization) ? $this->siteOrganization : 'White Villas';
+            $siteAddress = !empty($this->siteAddress) ? $this->siteAddress : '';
+            $this->set('siteOrganization', $siteOrganization);
+            $this->set('siteAddress', $siteAddress);
             $this->set('dealPayment',$post);
             $this->set('dealId',$id);
             $this->set('overdueAmount',$overdueAmount);
