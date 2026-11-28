@@ -23,7 +23,7 @@ class RealestatelettersController extends AdminAppController
     {
         $this->_letterTypeArr = $this->_letterTypes();
         $this->_autoLetterTypeArr = $this->_autoLetterTypes();
-        if($this->_shouldRunControllerBootstrap('realestateletters.schema', '2026-06-21.approval.1'))
+        if($this->_shouldRunControllerBootstrap('realestateletters.schema', '2026-11-28.auto_increment.1'))
         {
             $this->_ensureLettersSchema();
             $this->_ensureLettersTrashSchema();
@@ -307,6 +307,35 @@ class RealestatelettersController extends AdminAppController
           $this->_ensureLetterApprovalColumns();
           try
           {
+              $cols = $this->Realestateletter->query("SHOW FULL COLUMNS FROM `{$this->_lettersTableName}` LIKE 'id'");
+              if (!empty($cols[0]['COLUMNS'])) {
+                  $col = $cols[0]['COLUMNS'];
+                  $extra = strtolower(isset($col['Extra']) ? $col['Extra'] : '');
+                  $key = strtoupper(isset($col['Key']) ? $col['Key'] : '');
+                  $type = isset($col['Type']) ? $col['Type'] : 'int(11)';
+                  if (strpos($extra, 'auto_increment') === false) {
+                      if ($key === 'PRI') {
+                          $this->Realestateletter->query("ALTER TABLE `{$this->_lettersTableName}` MODIFY `id` {$type} NOT NULL AUTO_INCREMENT");
+                      } else {
+                          $this->Realestateletter->query("ALTER TABLE `{$this->_lettersTableName}` MODIFY `id` {$type} NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY (`id`)");
+                      }
+                  }
+              }
+              $maxRow = $this->Realestateletter->query("SELECT MAX(`id`) AS max_id FROM `{$this->_lettersTableName}`");
+              $maxId = !empty($maxRow[0][0]['max_id']) ? (int)$maxRow[0][0]['max_id'] : (!empty($maxRow[0][$this->_lettersTableName]['max_id']) ? (int)$maxRow[0][$this->_lettersTableName]['max_id'] : 0);
+              if ($maxId > 0) {
+                  $st = $this->Realestateletter->query("SHOW TABLE STATUS LIKE '{$this->_lettersTableName}'");
+                  $curAi = !empty($st[0]['TABLES']['Auto_increment']) ? (int)$st[0]['TABLES']['Auto_increment'] : (!empty($st[0][0]['Auto_increment']) ? (int)$st[0][0]['Auto_increment'] : 0);
+                  if ($curAi <= $maxId) {
+                      $this->Realestateletter->query("ALTER TABLE `{$this->_lettersTableName}` AUTO_INCREMENT = " . ($maxId + 1));
+                  }
+              }
+          }
+          catch (Exception $e)
+          {
+          }
+          try
+          {
               $this->Realestateletter->schema(true);
           }
           catch (Exception $e)
@@ -429,6 +458,35 @@ class RealestatelettersController extends AdminAppController
           }
           $this->_ensureChargeAgreementColumns($this->_lettersTrashTableName);
           $this->_ensureDealAgreementColumns($this->_lettersTrashTableName);
+          try
+          {
+              $cols = $this->Realestateletter->query("SHOW FULL COLUMNS FROM `{$this->_lettersTrashTableName}` LIKE 'id'");
+              if (!empty($cols[0]['COLUMNS'])) {
+                  $col = $cols[0]['COLUMNS'];
+                  $extra = strtolower(isset($col['Extra']) ? $col['Extra'] : '');
+                  $key = strtoupper(isset($col['Key']) ? $col['Key'] : '');
+                  $type = isset($col['Type']) ? $col['Type'] : 'int(11)';
+                  if (strpos($extra, 'auto_increment') === false) {
+                      if ($key === 'PRI') {
+                          $this->Realestateletter->query("ALTER TABLE `{$this->_lettersTrashTableName}` MODIFY `id` {$type} NOT NULL AUTO_INCREMENT");
+                      } else {
+                          $this->Realestateletter->query("ALTER TABLE `{$this->_lettersTrashTableName}` MODIFY `id` {$type} NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY (`id`)");
+                      }
+                  }
+              }
+              $maxRow = $this->Realestateletter->query("SELECT MAX(`id`) AS max_id FROM `{$this->_lettersTrashTableName}`");
+              $maxId = !empty($maxRow[0][0]['max_id']) ? (int)$maxRow[0][0]['max_id'] : (!empty($maxRow[0][$this->_lettersTrashTableName]['max_id']) ? (int)$maxRow[0][$this->_lettersTrashTableName]['max_id'] : 0);
+              if ($maxId > 0) {
+                  $st = $this->Realestateletter->query("SHOW TABLE STATUS LIKE '{$this->_lettersTrashTableName}'");
+                  $curAi = !empty($st[0]['TABLES']['Auto_increment']) ? (int)$st[0]['TABLES']['Auto_increment'] : (!empty($st[0][0]['Auto_increment']) ? (int)$st[0][0]['Auto_increment'] : 0);
+                  if ($curAi <= $maxId) {
+                      $this->Realestateletter->query("ALTER TABLE `{$this->_lettersTrashTableName}` AUTO_INCREMENT = " . ($maxId + 1));
+                  }
+              }
+          }
+          catch (Exception $e)
+          {
+          }
       }
 
     protected function _ensureTemplateSignatureColumns()
@@ -8295,6 +8353,7 @@ HTML;
 
         if ($this->request->is('post'))
         {
+            $this->_ensureLettersSchema();
             $this->Realestateletter->create();
             try
             {
@@ -8406,7 +8465,27 @@ HTML;
                     $this->request->data['Realestateletter']['approval_status'] = ($this->request->data['Realestateletter']['status'] === 'Published') ? 'Issued' : 'Draft';
                 }
                 unset($this->request->data['Realestateletter']['_force_type']);
-                if ($this->Realestateletter->save($this->request->data))
+                $saved = false;
+                try
+                {
+                    $saved = (bool)$this->Realestateletter->save($this->request->data);
+                }
+                catch (Exception $eLetterSave)
+                {
+                    try
+                    {
+                        $maxRow = $this->Realestateletter->query("SELECT MAX(`id`) AS max_id FROM `{$this->_lettersTableName}`");
+                        $maxId = !empty($maxRow[0][0]['max_id']) ? (int)$maxRow[0][0]['max_id'] : (!empty($maxRow[0][$this->_lettersTableName]['max_id']) ? (int)$maxRow[0][$this->_lettersTableName]['max_id'] : 0);
+                        $this->request->data['Realestateletter']['id'] = $maxId + 1;
+                        $this->Realestateletter->create();
+                        $saved = (bool)$this->Realestateletter->save($this->request->data);
+                    }
+                    catch (Exception $eRetry)
+                    {
+                        throw $eLetterSave;
+                    }
+                }
+                if ($saved)
                 {
                     $savedLetterId = (int)$this->Realestateletter->id;
                     if ($savedLetterId > 0)

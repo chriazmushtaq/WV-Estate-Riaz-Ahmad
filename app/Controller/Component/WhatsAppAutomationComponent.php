@@ -227,18 +227,20 @@ class WhatsAppAutomationComponent extends Component {
                 'recursive' => -1
             ));
             if (empty($existingNotif)) {
-                $notifModel->create();
-                $notifModel->save(array('ClientNotification' => array(
-                    'client_id' => $clientId,
-                    'notif_key' => $notifKey,
-                    'title' => 'Official Letter Issued: ' . $letterType,
-                    'type' => 'letter_issued',
-                    'message' => 'An official ' . $letterType . ' (Ref: ' . $refNo . ') has been issued for your property ' . $propName . '.',
-                    'is_read' => 0,
-                    'action_route' => 'MyDeals/letterview/' . $letterId,
-                    'action_url' => Router::url(array('controller' => 'MyDeals', 'action' => 'letterview', $letterId), true),
-                    'created' => date('Y-m-d H:i:s')
-                )));
+                try {
+                    $notifModel->create();
+                    $notifModel->save(array('ClientNotification' => array(
+                        'client_id' => $clientId,
+                        'notif_key' => $notifKey,
+                        'title' => 'Official Letter Issued: ' . $letterType,
+                        'type' => 'letter_issued',
+                        'message' => 'An official ' . $letterType . ' (Ref: ' . $refNo . ') has been issued for your property ' . $propName . '.',
+                        'is_read' => 0,
+                        'action_route' => 'MyDeals/letterview/' . $letterId,
+                        'action_url' => Router::url(array('controller' => 'MyDeals', 'action' => 'letterview', $letterId), true),
+                        'created' => date('Y-m-d H:i:s')
+                    )));
+                } catch (Exception $eNotifSave) {}
             }
         }
 

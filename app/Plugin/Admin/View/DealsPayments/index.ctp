@@ -181,17 +181,19 @@ $dealQrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=600x600&ecc=L&qzo
 $dealQrDataUri = '';
 $qrVendorPath = APP . 'Vendor' . DS . 'php-qrcode' . DS . 'qrcode.php';
 if (file_exists($qrVendorPath)) {
-    require_once $qrVendorPath;
     try {
-        $qrObj = new QRCode($dealQrText, array('s' => 'qrm'));
-        $qrImgResource = $qrObj->render_image();
-        if ($qrImgResource) {
-            ob_start();
-            imagepng($qrImgResource);
-            $qrPngBytes = ob_get_clean();
-            imagedestroy($qrImgResource);
-            if ($qrPngBytes && strlen($qrPngBytes) > 50) {
-                $dealQrDataUri = 'data:image/png;base64,' . base64_encode($qrPngBytes);
+        require_once $qrVendorPath;
+        if (class_exists('QRCode')) {
+            $qrObj = new QRCode($dealQrText, array('s' => 'qrm'));
+            $qrImgResource = $qrObj->render_image();
+            if ($qrImgResource) {
+                ob_start();
+                imagepng($qrImgResource);
+                $qrPngBytes = ob_get_clean();
+                imagedestroy($qrImgResource);
+                if ($qrPngBytes && strlen($qrPngBytes) > 50) {
+                    $dealQrDataUri = 'data:image/png;base64,' . base64_encode($qrPngBytes);
+                }
             }
         }
     } catch (Exception $e) {

@@ -9231,50 +9231,76 @@ protected function _ensureDealTransferMenu()
     protected function _ensureRealestateLettersStorage()
     {
         $this->loadModel('Admin.Realestateletter');
-        $tableName = 'real_estate_letters';
-        $exists = array();
-        try
-        {
-            $exists = $this->Realestateletter->query("SHOW TABLES LIKE '".$tableName."'");
-        }
-        catch(Exception $e)
-        {
+        $tablesToCheck = array('real_estate_letters', 'real_estate_letters_trash', 'client_notifications');
+        foreach ($tablesToCheck as $tName) {
             $exists = array();
+            try {
+                $exists = $this->Realestateletter->query("SHOW TABLES LIKE '{$tName}'");
+            } catch (Exception $e) {
+                $exists = array();
+            }
+            if (empty($exists)) {
+                if ($tName === 'real_estate_letters') {
+                    $tableSql = "CREATE TABLE IF NOT EXISTS `{$tName}` (
+                        `id` int(11) NOT NULL AUTO_INCREMENT,
+                        `deal_id` int(11) NOT NULL,
+                        `client_id` int(11) DEFAULT NULL,
+                        `template_id` int(11) DEFAULT NULL,
+                        `user_id` int(11) DEFAULT NULL,
+                        `letter_type` varchar(30) DEFAULT NULL,
+                        `reference_no` varchar(60) DEFAULT NULL,
+                        `title` varchar(255) DEFAULT NULL,
+                        `letter_date` date DEFAULT NULL,
+                        `description` longtext,
+                        `status` varchar(15) NOT NULL DEFAULT 'Published',
+                        `created` datetime DEFAULT NULL,
+                        `modified` datetime DEFAULT NULL,
+                        PRIMARY KEY (`id`),
+                        KEY `deal_id` (`deal_id`),
+                        KEY `client_id` (`client_id`),
+                        KEY `template_id` (`template_id`),
+                        KEY `user_id` (`user_id`),
+                        KEY `letter_type` (`letter_type`)
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci";
+                    try {
+                        $this->Realestateletter->query($tableSql);
+                    } catch (Exception $e) {}
+                }
+            } else {
+                try {
+                    $cols = $this->Realestateletter->query("SHOW FULL COLUMNS FROM `{$tName}` LIKE 'id'");
+                    if (!empty($cols[0]['COLUMNS'])) {
+                        $col = $cols[0]['COLUMNS'];
+                        $extra = strtolower(isset($col['Extra']) ? $col['Extra'] : '');
+                        $key = strtoupper(isset($col['Key']) ? $col['Key'] : '');
+                        $type = isset($col['Type']) ? $col['Type'] : ($tName === 'client_notifications' ? 'bigint(20) unsigned' : 'int(11)');
+                        if (strpos($extra, 'auto_increment') === false) {
+                            if ($key === 'PRI') {
+                                $this->Realestateletter->query("ALTER TABLE `{$tName}` MODIFY `id` {$type} NOT NULL AUTO_INCREMENT");
+                            } else {
+                                $this->Realestateletter->query("ALTER TABLE `{$tName}` MODIFY `id` {$type} NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY (`id`)");
+                            }
+                        }
+                    }
+                    $maxRow = $this->Realestateletter->query("SELECT MAX(`id`) AS max_id FROM `{$tName}`");
+                    $maxId = 0;
+                    if (!empty($maxRow[0][0]['max_id'])) { $maxId = (int)$maxRow[0][0]['max_id']; }
+                    elseif (!empty($maxRow[0][$tName]['max_id'])) { $maxId = (int)$maxRow[0][$tName]['max_id']; }
+                    if ($maxId > 0) {
+                        $st = $this->Realestateletter->query("SHOW TABLE STATUS LIKE '{$tName}'");
+                        $curAi = 0;
+                        if (!empty($st[0]['TABLES']['Auto_increment'])) { $curAi = (int)$st[0]['TABLES']['Auto_increment']; }
+                        elseif (!empty($st[0][0]['Auto_increment'])) { $curAi = (int)$st[0][0]['Auto_increment']; }
+                        if ($curAi <= $maxId) {
+                            $this->Realestateletter->query("ALTER TABLE `{$tName}` AUTO_INCREMENT = " . ($maxId + 1));
+                        }
+                    }
+                } catch (Exception $e) {}
+            }
         }
-        if(!empty($exists))
-        {
-            return true;
-        }
-        $tableSql = "CREATE TABLE IF NOT EXISTS `".$tableName."` (
-            `id` int(11) NOT NULL AUTO_INCREMENT,
-            `deal_id` int(11) NOT NULL,
-            `client_id` int(11) DEFAULT NULL,
-            `template_id` int(11) DEFAULT NULL,
-            `user_id` int(11) DEFAULT NULL,
-            `letter_type` varchar(30) DEFAULT NULL,
-            `reference_no` varchar(60) DEFAULT NULL,
-            `title` varchar(255) DEFAULT NULL,
-            `letter_date` date DEFAULT NULL,
-            `description` longtext,
-            `status` varchar(15) NOT NULL DEFAULT 'Published',
-            `created` datetime DEFAULT NULL,
-            `modified` datetime DEFAULT NULL,
-            PRIMARY KEY (`id`),
-            KEY `deal_id` (`deal_id`),
-            KEY `client_id` (`client_id`),
-            KEY `template_id` (`template_id`),
-            KEY `user_id` (`user_id`),
-            KEY `letter_type` (`letter_type`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci";
-        try
-        {
-            $this->Realestateletter->query($tableSql);
+        try {
             $this->Realestateletter->schema(true);
-        }
-        catch(Exception $e)
-        {
-            return false;
-        }
+        } catch (Exception $e) {}
         return true;
     }
 
@@ -9884,21 +9910,48 @@ protected function _ensureDealTransferMenu()
             'status' => 'Published'
         );
         $this->Realestateletter->create();
-        $saved = (bool)$this->Realestateletter->save(array('Realestateletter' => $saveRow), array(
-            'validate' => false,
-            'fieldList' => array(
-                'deal_id',
-                'client_id',
-                'template_id',
-                'user_id',
-                'letter_type',
-                'reference_no',
-                'title',
-                'letter_date',
-                'description',
-                'status'
-            )
-        ));
+        $saved = false;
+        $saveFieldList = array(
+            'id',
+            'deal_id',
+            'client_id',
+            'template_id',
+            'user_id',
+            'letter_type',
+            'reference_no',
+            'title',
+            'letter_date',
+            'description',
+            'status'
+        );
+        try
+        {
+            $saved = (bool)$this->Realestateletter->save(array('Realestateletter' => $saveRow), array(
+                'validate' => false,
+                'fieldList' => $saveFieldList
+            ));
+        }
+        catch (Exception $eLetterSave)
+        {
+            try
+            {
+                $maxRow = $this->Realestateletter->find('first', array(
+                    'fields' => array('MAX(Realestateletter.id) AS max_id'),
+                    'recursive' => -1
+                ));
+                $nextId = (!empty($maxRow[0]['max_id']) ? (int)$maxRow[0]['max_id'] : 0) + 1;
+                $saveRow['id'] = $nextId;
+                $this->Realestateletter->create();
+                $saved = (bool)$this->Realestateletter->save(array('Realestateletter' => $saveRow), array(
+                    'validate' => false,
+                    'fieldList' => $saveFieldList
+                ));
+            }
+            catch (Exception $eRetry)
+            {
+                CakeLog::write('error', 'Auto real estate letter retry failed for deal '.$dealId.' type '.$letterType.': '.$eRetry->getMessage());
+            }
+        }
         if($saved)
         {
             $savedLetterId = (int)$this->Realestateletter->id;
