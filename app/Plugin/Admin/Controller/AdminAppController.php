@@ -78,7 +78,7 @@ class AdminAppController extends AppController
             $isEnsured = true;
             return true;
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             CakeLog::write('error', 'CEO permission coverage sync failed: '.$e->getMessage());
             return false;
@@ -202,7 +202,7 @@ class AdminAppController extends AppController
             $isEnsured = true;
             return true;
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             CakeLog::write('error', 'Ensure Lead dashboard permissions failed: '.$e->getMessage());
             return false;
@@ -293,7 +293,7 @@ class AdminAppController extends AppController
             $schemaDone = true;
             return true;
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             return false;
         }
@@ -538,7 +538,7 @@ class AdminAppController extends AppController
             // Invalidate menu caches
             $this->_bumpMenuPermissionVersion(1);
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             // Silent fallback
         }
@@ -625,7 +625,7 @@ class AdminAppController extends AppController
 
             return $saved;
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             return false;
         }
@@ -1042,6 +1042,19 @@ class AdminAppController extends AppController
         return !in_array($groupType, array('ADR', 'ADMIN', 'SUP', 'SAD', 'AGY', 'AGT', 'RCO'), true);
     }
 
+    public function _isManagerRoleSession($sessionUser = null)
+    {
+        $sessionUser = $sessionUser === null ? (array)$this->adminValue : (array)$sessionUser;
+        if(empty($sessionUser['User']['id']) && isset($this->Session))
+        {
+            $sessionUser = (array)$this->Session->read('User');
+        }
+        $groupId = !empty($sessionUser['User']['ugroup_id']) ? (int)$sessionUser['User']['ugroup_id'] : 0;
+        $groupType = strtoupper(trim((string)(isset($sessionUser['Ugroup']['type']) ? $sessionUser['Ugroup']['type'] : '')));
+        $userType = strtoupper(trim((string)(isset($sessionUser['User']['type']) ? $sessionUser['User']['type'] : '')));
+        return ($groupId === 3 || $groupType === 'MAR' || $userType === 'MAR' || $this->_isAgencySystemManagerRoleContext($sessionUser));
+    }
+
     public function _isAgencyAdminSession($sessionUser = null)
     {
         $sessionUser = $sessionUser === null ? (array)$this->adminValue : (array)$sessionUser;
@@ -1079,7 +1092,7 @@ class AdminAppController extends AppController
             $roleIds = array_values(array_unique(array_filter(array_map('intval', array_keys($roles)))));
             return !empty($roleIds) ? $roleIds : array(2);
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             return array(2);
         }
@@ -1125,7 +1138,7 @@ class AdminAppController extends AppController
                 $projectIds = (array)$AdminUser->assignedProjectIds($userId, true);
             }
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             $projectIds = array();
         }
@@ -1142,7 +1155,7 @@ class AdminAppController extends AppController
                 }
             }
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             // Primary agency below remains the safe fallback.
         }
@@ -1165,7 +1178,7 @@ class AdminAppController extends AppController
                     'recursive' => -1
                 ));
             }
-            catch(Exception $e)
+            catch(Throwable $e)
             {
                 $projectList = array();
             }
@@ -1264,7 +1277,7 @@ class AdminAppController extends AppController
                     }
                 }
             }
-            catch(Exception $e)
+            catch(Throwable $e)
             {
                 $isSuperFromDb = false;
             }
@@ -1335,7 +1348,7 @@ class AdminAppController extends AppController
             $this->Session->write('User', $freshUser);
             return $freshUser;
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             return $sessionUser;
         }
@@ -1381,7 +1394,7 @@ class AdminAppController extends AppController
             $this->Session->write('User', $targetUser);
             return $targetUser;
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             return $sessionUser;
         }
@@ -1621,7 +1634,7 @@ class AdminAppController extends AppController
                 $PageRight->save(array('PageRight' => $rightData), array('validate' => false));
             }
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             // Ignore
         }
@@ -1753,7 +1766,7 @@ class AdminAppController extends AppController
                 }
             }
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             // keep app flow safe
         }
@@ -1936,7 +1949,7 @@ class AdminAppController extends AppController
                 }
             }
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             CakeLog::write('error', 'Modules menu bootstrap failed: '.$e->getMessage());
         }
@@ -2141,7 +2154,7 @@ class AdminAppController extends AppController
                 }
             }
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             CakeLog::write('error', 'ModuleThemeSettingManager menu bootstrap failed: '.$e->getMessage());
         }
@@ -2307,7 +2320,7 @@ class AdminAppController extends AppController
                 }
             }
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             // Menu registration must not block the admin panel.
         }
@@ -2575,7 +2588,7 @@ class AdminAppController extends AppController
                 $PageRight->save(array('PageRight' => $rightData), array('validate' => false));
             }
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             // Menu registration must not block the admin panel.
         }
@@ -2716,7 +2729,7 @@ class AdminAppController extends AppController
                 $PageRight->save(array('PageRight' => $rightData), array('validate' => false));
             }
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             // Menu registration must not block the admin panel.
         }
@@ -2802,7 +2815,7 @@ class AdminAppController extends AppController
                 $PageRight->save(array('PageRight' => $rightData), array('validate' => false));
             }
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             // Menu bootstrap must not block the admin panel if the media page cannot be registered.
         }
@@ -2982,7 +2995,7 @@ class AdminAppController extends AppController
             $PageRight->create();
             $PageRight->save(array('PageRight' => $adminSave), array('validate' => false));
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             // Keep normal admin flow safe if theme menu bootstrap fails.
         }
@@ -3155,7 +3168,7 @@ class AdminAppController extends AppController
             $PageRight->create();
             $PageRight->save(array('PageRight' => $adminSave), array('validate' => false));
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             // Keep normal admin flow safe if payment-plan menu registration fails.
         }
@@ -3199,7 +3212,7 @@ class AdminAppController extends AppController
                  WHERE `ugroup_id`=1"
             );
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             // Keep normal flow even if rights sync fails.
         }
@@ -3238,7 +3251,7 @@ class AdminAppController extends AppController
                 return $groupId;
             }
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
         }
         return 0;
@@ -3334,7 +3347,7 @@ class AdminAppController extends AppController
                 $this->_bumpMenuPermissionVersion($groupId);
             }
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
         }
     }
@@ -3457,7 +3470,7 @@ class AdminAppController extends AppController
             $PageRight->deleteAll(array('PageRight.page_id' => $legacyPageIds), false);
             $Page->deleteAll(array('Page.id' => $legacyPageIds), false);
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             // keep app flow safe if menu cleanup fails
         }
@@ -4155,7 +4168,7 @@ class AdminAppController extends AppController
                 }
             }
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             // Keep normal flow even if menu bootstrap fails.
         }
@@ -4232,7 +4245,7 @@ class AdminAppController extends AppController
                 'grant_all_groups' => true
             ));
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
         }
     }
@@ -4421,7 +4434,7 @@ class AdminAppController extends AppController
                 }
             }
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             // Keep normal flow even if menu bootstrap fails.
         }
@@ -4959,7 +4972,7 @@ class AdminAppController extends AppController
                 }
             }
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
         }
     }
@@ -5249,7 +5262,7 @@ class AdminAppController extends AppController
                 )), array('validate' => false));
             }
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             // Keep normal flow even if menu bootstrap fails.
         }
@@ -5371,7 +5384,7 @@ class AdminAppController extends AppController
                 )), array('validate' => false));
             }
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             // Keep normal flow even if menu bootstrap fails.
         }
@@ -5510,7 +5523,7 @@ class AdminAppController extends AppController
                 )), array('validate' => false));
             }
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             // Keep normal flow even if menu bootstrap fails.
         }
@@ -5539,7 +5552,7 @@ class AdminAppController extends AppController
                 }
             }
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             $dealRootId = 0;
         }
@@ -5714,7 +5727,7 @@ class AdminAppController extends AppController
                 }
             }
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             // Keep admin loading if menu bootstrap cannot run on an older database.
         }
@@ -5851,7 +5864,7 @@ protected function _ensureDealTransferMenu()
                 )), array('validate' => false));
             }
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             // Keep normal flow even if menu bootstrap fails.
         }
@@ -5981,7 +5994,7 @@ protected function _ensureDealTransferMenu()
                 )), array('validate' => false));
             }
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             // Keep normal flow even if menu bootstrap fails.
         }
@@ -6245,7 +6258,7 @@ protected function _ensureDealTransferMenu()
                 $defaultTheme = $ThemeSetting->normalizeThemeKey(isset($settings['admin_default_theme']) ? $settings['admin_default_theme'] : 'theme-light');
             }
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             $defaultTheme = 'theme-light';
         }
@@ -6489,7 +6502,7 @@ protected function _ensureDealTransferMenu()
 
             $this->_writeAuditEntry($auditData);
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             // Do not block user actions if audit log fails.
         }
@@ -6511,7 +6524,7 @@ protected function _ensureDealTransferMenu()
             $existsRows = $Audittrail->query("SHOW TABLES LIKE 'audit_trails'");
             $tableExists = !empty($existsRows);
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             $tableExists = false;
         }
@@ -6544,7 +6557,7 @@ protected function _ensureDealTransferMenu()
         {
             $Audittrail->save(array('Audittrail' => $auditData), array('validate' => false, 'callbacks' => false));
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             // Silently handle audit trail log failures so logout and primary operations never crash
         }
@@ -6759,7 +6772,7 @@ protected function _ensureDealTransferMenu()
                 {
                     $Model->query("ALTER TABLE `ardaccounts_settings` ADD COLUMN `".$safeField."` bigint(20) NOT NULL DEFAULT 0 AFTER `".$afterField."`");
                 }
-                catch(Exception $e)
+                catch(Throwable $e)
                 {
                     // Column already exists or previous after-field is unavailable.
                     try { $Model->query("ALTER TABLE `ardaccounts_settings` ADD COLUMN `".$safeField."` bigint(20) NOT NULL DEFAULT 0"); } catch(Exception $ignored) {}
@@ -6901,11 +6914,11 @@ protected function _ensureDealTransferMenu()
                     try { $Model->query($sql); } catch(Exception $ignored) {}
                 }
             }
-            catch(Exception $e) {}
+            catch(Throwable $e) {}
 
             try { Cache::clear(false, '_cake_model_'); } catch(Exception $e) {}
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             // Keep legacy pages alive if schema bootstrap cannot run on restricted hosting.
         }
@@ -6932,7 +6945,7 @@ protected function _ensureDealTransferMenu()
             ));
             return !empty($row['Ardsetting']) ? (array)$row['Ardsetting'] : array();
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             return array();
         }
@@ -6974,7 +6987,7 @@ protected function _ensureDealTransferMenu()
             $row = (array)$Ledger->find('first', array('fields' => array('Ardledger.id'), 'conditions' => $conditions, 'recursive' => -1));
             return !empty($row['Ardledger']['id']) ? (int)$row['Ardledger']['id'] : 0;
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             return 0;
         }
@@ -7023,7 +7036,7 @@ protected function _ensureDealTransferMenu()
                 return (int)$Ledger->id;
             }
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             return 0;
         }
@@ -7073,7 +7086,7 @@ protected function _ensureDealTransferMenu()
                     array('Ardsetting.project_id' => $projectId)
                 );
             }
-            catch(Exception $e)
+            catch(Throwable $e)
             {
                 CakeLog::write('error', 'Rental adjustment ledger mapping failed for agency '.$projectId.': '.$e->getMessage());
             }
@@ -7126,7 +7139,7 @@ protected function _ensureDealTransferMenu()
             }
             return true;
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             CakeLog::write('error', 'Agency accounting ledger provisioning failed for agency '.$projectId.': '.$e->getMessage());
             return false;
@@ -7420,7 +7433,7 @@ protected function _ensureDealTransferMenu()
 
             return true;
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             CakeLog::write('error', 'COA provisioning failed for agency '.$projectId.': '.$e->getMessage());
             return false;
@@ -7494,7 +7507,7 @@ protected function _ensureDealTransferMenu()
                 return (int)$row['Ardledger']['id'];
             }
         }
-        catch(Exception $e) {}
+        catch(Throwable $e) {}
         return $this->_ardGetOrCreateLedger($projectId, 'Cash In Hand', 'bank', 'Auto Receipt Account');
     }
 
@@ -7538,7 +7551,7 @@ protected function _ensureDealTransferMenu()
                         $tx = (array)$row['Ardtransaction'];
                     }
                 }
-                catch(Exception $e) {}
+                catch(Throwable $e) {}
             }
         }
         if(empty($tx))
@@ -7710,7 +7723,7 @@ protected function _ensureDealTransferMenu()
             $JournalEntry->create();
             return (bool)$JournalEntry->save(array('Ardjournalentry' => $payload), false);
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             return false;
         }
@@ -7883,7 +7896,7 @@ protected function _ensureDealTransferMenu()
             $Ledger->saveField('balance', $balance, false);
             return $balance;
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             return 0.0;
         }
@@ -8016,7 +8029,7 @@ protected function _ensureDealTransferMenu()
             $this->_ardSyncJournalForTransaction($txId, isset($options['source_type']) ? $options['source_type'] : 'auto', isset($options['source_id']) ? (int)$options['source_id'] : $txId);
             return $txId;
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             return 0;
         }
@@ -8125,7 +8138,7 @@ protected function _ensureDealTransferMenu()
                 }
             }
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             return false;
         }
@@ -8158,7 +8171,7 @@ protected function _ensureDealTransferMenu()
                 $agentLabel = $agentName;
             }
         }
-        catch(Exception $e) {}
+        catch(Throwable $e) {}
         $entryDate = trim((string)$entryDate);
         if($entryDate === '')
         {
@@ -8410,7 +8423,7 @@ protected function _ensureDealTransferMenu()
             
             return (bool)$MediaFile->save(array('MediaFile' => $saveRecord), array('validate' => false));
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             return false;
         }
@@ -8515,7 +8528,7 @@ protected function _ensureDealTransferMenu()
                 catch(Exception $tblEx) {}
             }
         }
-        catch(Exception $e) {}
+        catch(Throwable $e) {}
         return true;
     }
 
@@ -8583,7 +8596,7 @@ protected function _ensureDealTransferMenu()
                 }
             }
         }
-        catch(Exception $e) {}
+        catch(Throwable $e) {}
         return false;
     }
 
@@ -9147,7 +9160,7 @@ protected function _ensureDealTransferMenu()
         {
             $this->loadModel('Admin.Ardsetting');
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             return;
         }
@@ -9187,7 +9200,7 @@ protected function _ensureDealTransferMenu()
             {
                 $this->Ardsetting->query($sql);
             }
-            catch(Exception $e)
+            catch(Throwable $e)
             {
                 // Ignore if column already exists.
             }
@@ -9212,7 +9225,7 @@ protected function _ensureDealTransferMenu()
                 'recursive' => -1
             ));
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             $row = array();
         }
@@ -9331,7 +9344,7 @@ protected function _ensureDealTransferMenu()
         {
             return ((int)$this->Realestateletter->find('count', $query) > 0);
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             return false;
         }
@@ -9412,7 +9425,7 @@ protected function _ensureDealTransferMenu()
                 }
                 $this->Ardsetting->save(array('Ardsetting' => $saveRow), false);
             }
-            catch(Exception $e)
+            catch(Throwable $e)
             {
                 // Keep flow alive even if counter update fails.
             }
@@ -9540,7 +9553,7 @@ protected function _ensureDealTransferMenu()
             $this->loadModel('Smstemplate');
             $this->loadModel('Emailtemplate');
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             return;
         }
@@ -9569,7 +9582,7 @@ protected function _ensureDealTransferMenu()
                     )), array('validate' => false, 'callbacks' => false));
                 }
             }
-            catch(Exception $e)
+            catch(Throwable $e)
             {
                 // Notification template ensure should never block flow.
             }
@@ -9591,7 +9604,7 @@ protected function _ensureDealTransferMenu()
                     )), array('validate' => false, 'callbacks' => false));
                 }
             }
-            catch(Exception $e)
+            catch(Throwable $e)
             {
                 // Notification template ensure should never block flow.
             }
@@ -9725,7 +9738,7 @@ protected function _ensureDealTransferMenu()
         {
             $this->CustomFunction->sendSms($mobile, $message, $this->smsSettingArr);
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             // Keep flow running.
         }
@@ -9787,7 +9800,7 @@ protected function _ensureDealTransferMenu()
             $Email->subject($subject);
             $Email->send($message);
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             // Keep flow running.
         }
@@ -9818,13 +9831,13 @@ protected function _ensureDealTransferMenu()
             $this->_sendAutoLetterEmailNotification($row);
             $this->_sendAutoLetterSmsNotification($row);
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             // Keep flow running.
         }
     }
 
-    public function _createAutoDealLetter($dealId, $projectId, $userId, $letterType)
+    public function _createAutoDealLetter($dealId, $projectId, $userId, $letterType, $dispatchNotifications = true)
     {
         $dealId = (int)$dealId;
         $projectId = (int)$projectId;
@@ -9931,7 +9944,7 @@ protected function _ensureDealTransferMenu()
                 'fieldList' => $saveFieldList
             ));
         }
-        catch (Exception $eLetterSave)
+        catch (Throwable $eLetterSave)
         {
             try
             {
@@ -9947,7 +9960,7 @@ protected function _ensureDealTransferMenu()
                     'fieldList' => $saveFieldList
                 ));
             }
-            catch (Exception $eRetry)
+            catch (Throwable $eRetry)
             {
                 CakeLog::write('error', 'Auto real estate letter retry failed for deal '.$dealId.' type '.$letterType.': '.$eRetry->getMessage());
             }
@@ -9955,7 +9968,7 @@ protected function _ensureDealTransferMenu()
         if($saved)
         {
             $savedLetterId = (int)$this->Realestateletter->id;
-            if($savedLetterId > 0)
+            if($savedLetterId > 0 && $dispatchNotifications)
             {
                 $this->_dispatchAutoLetterNotificationsById($savedLetterId);
             }
@@ -9982,10 +9995,10 @@ protected function _ensureDealTransferMenu()
             }
             $this->_ensureAutoLetterReferenceSettingsColumns();
             $this->_ensureAutoLetterNotificationTemplates();
-            $this->_createAutoDealLetter($dealId, $projectId, $userId, 'RLT_WELCOME');
-            $this->_createAutoDealLetter($dealId, $projectId, $userId, 'RLT_BOOKING');
+            $this->_createAutoDealLetter($dealId, $projectId, $userId, 'RLT_WELCOME', true);
+            $this->_createAutoDealLetter($dealId, $projectId, $userId, 'RLT_BOOKING', true);
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             // Auto letters should never block deal flow.
         }
@@ -9999,6 +10012,13 @@ protected function _ensureDealTransferMenu()
             return;
         }
         $hasRun = true;
+        $lastChecked = (int)$this->Session->read('LetterPatch.last_checked');
+        $now = time();
+        if ($lastChecked > 0 && ($now - $lastChecked) < 1800)
+        {
+            return;
+        }
+        $this->Session->write('LetterPatch.last_checked', $now);
         try
         {
             if(!$this->_ensureRealestateLettersStorage())
@@ -10048,29 +10068,36 @@ protected function _ensureDealTransferMenu()
 
             foreach($deals as $d)
             {
-                $dId = (int)$d['Deal']['id'];
-                $pId = !empty($d['Property']['project_id']) ? (int)$d['Property']['project_id'] : 0;
-                $uId = !empty($d['Deal']['user_id']) ? (int)$d['Deal']['user_id'] : (!empty($this->luserId) ? (int)$this->luserId : 1);
-
-                $hasWelcome = !empty($letterMap[$dId]['RLT_WELCOME']);
-                $hasBooking = !empty($letterMap[$dId]['RLT_BOOKING']);
-
-                if(!$hasWelcome || !$hasBooking)
+                try
                 {
-                    $this->_ensureAutoLetterReferenceSettingsColumns();
-                    $this->_ensureAutoLetterNotificationTemplates();
-                    if(!$hasWelcome)
+                    $dId = (int)$d['Deal']['id'];
+                    $pId = !empty($d['Property']['project_id']) ? (int)$d['Property']['project_id'] : 0;
+                    $uId = !empty($d['Deal']['user_id']) ? (int)$d['Deal']['user_id'] : (!empty($this->luserId) ? (int)$this->luserId : 1);
+
+                    $hasWelcome = !empty($letterMap[$dId]['RLT_WELCOME']);
+                    $hasBooking = !empty($letterMap[$dId]['RLT_BOOKING']);
+
+                    if(!$hasWelcome || !$hasBooking)
                     {
-                        $this->_createAutoDealLetter($dId, $pId, $uId, 'RLT_WELCOME');
+                        $this->_ensureAutoLetterReferenceSettingsColumns();
+                        $this->_ensureAutoLetterNotificationTemplates();
+                        if(!$hasWelcome)
+                        {
+                            $this->_createAutoDealLetter($dId, $pId, $uId, 'RLT_WELCOME', false);
+                        }
+                        if(!$hasBooking)
+                        {
+                            $this->_createAutoDealLetter($dId, $pId, $uId, 'RLT_BOOKING', false);
+                        }
                     }
-                    if(!$hasBooking)
-                    {
-                        $this->_createAutoDealLetter($dId, $pId, $uId, 'RLT_BOOKING');
-                    }
+                }
+                catch(Throwable $eDeal)
+                {
+                    // Single deal failure in loop must never stop the sweep.
                 }
             }
         }
-        catch(Exception $e)
+        catch(Throwable $e)
         {
             // Auto letters patch should never block any request.
         }

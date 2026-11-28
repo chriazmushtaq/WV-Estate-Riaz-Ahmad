@@ -291,6 +291,14 @@ if ($applicationInstalled && !$isExplicitInstallUrl) {
     Router::connect('/admin/FacebookAccounts', array('plugin' => 'admin', 'controller' => 'facebook_integrations', 'action' => 'settings', 'admin' => true));
     Router::connect('/admin/FacebookAccounts/:action/*', array('plugin' => 'admin', 'controller' => 'facebook_integrations', 'admin' => true));
 
+    // Direct Deals & Deals Payments Aliases to Admin Plugin
+    Router::connect('/admin/deals_payments', array('plugin' => 'admin', 'controller' => 'deals_payments', 'action' => 'index', 'admin' => true));
+    Router::connect('/admin/deals_payments/:action/*', array('plugin' => 'admin', 'controller' => 'deals_payments', 'admin' => true));
+    Router::connect('/deals', array('plugin' => 'admin', 'controller' => 'deals', 'action' => 'index', 'admin' => true));
+    Router::connect('/Deals', array('plugin' => 'admin', 'controller' => 'deals', 'action' => 'index', 'admin' => true));
+    Router::connect('/deals/:action/*', array('plugin' => 'admin', 'controller' => 'deals', 'admin' => true));
+    Router::connect('/Deals/:action/*', array('plugin' => 'admin', 'controller' => 'deals', 'admin' => true));
+
     // Admin Plugin Generic Routes (maps all backend controllers cleanly without /index/admin:1 named parameter)
     Router::connect('/admin/:controller', array('plugin' => 'admin', 'action' => 'index', 'admin' => true));
     Router::connect('/admin/:controller/:action/*', array('plugin' => 'admin', 'admin' => true));
